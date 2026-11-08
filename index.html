@@ -126,5 +126,28 @@ footer {
   © 2026 TMK VIDEO
 </footer>
 
-</body>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
+  authDomain: "tmk-video.firebaseapp.com",
+  databaseURL: "https://tmk-video-default-rtdb.firebaseio.com",
+  projectId: "tmk-video",
+  storageBucket: "tmk-video.firebasestorage.app",
+  messagingSenderId: "763253894514",
+  appId: "1:763253894514:web:5b671edd58fe2d312381eb",
+  measurementId: "G-NZXE0Y822B"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
+window.tmkFirebase = { app, auth, database };
+
+console.log("TMK VIDEO Firebase Connected!");
+</script></body>
 </html>
