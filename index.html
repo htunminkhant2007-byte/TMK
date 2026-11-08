@@ -221,6 +221,69 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("message").textContent = "Not logged in";
   }
 });
+
+document.getElementById("addVideoBtn").addEventListener("click", () => {
+  const title = document.getElementById("videoTitle").value.trim();
+  const link = document.getElementById("videoLink").value.trim();
+  const videoList = document.getElementById("videoList");
+
+  let videoId = "";
+
+  try {
+    const url = new URL(link);
+
+    if (url.hostname === "youtu.be") {
+      videoId = url.pathname.slice(1);
+    } else if (
+      url.hostname.includes("youtube.com") ||
+      url.hostname.includes("youtube-nocookie.com")
+    ) {
+      videoId =
+        url.searchParams.get("v") ||
+        url.pathname.split("/").filter(Boolean).pop();
+    }
+  } catch (error) {}
+
+  if (!title || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+    alert("ဗီဒီယိုအမည်နဲ့ YouTube Link မှန်မှန်ထည့်ပါ။");
+    return;
+  }
+
+  const item = document.createElement("div");
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+
+  const player = document.createElement("iframe");
+  player.src = "https://www.youtube.com/embed/" + videoId;
+  player.width = "100%";
+  player.height = "250";
+  player.allowFullscreen = true;
+
+  item.append(heading, player);
+  videoList.prepend(item);
+
+  document.getElementById("videoTitle").value = "";
+  document.getElementById("videoLink").value = "";
+});
 console.log("TMK VIDEO Firebase Connected!");
-</script></body>
+</script>
+
+<h2>TMK VIDEO - Add Video</h2>
+
+<input
+  type="text"
+  id="videoTitle"
+  placeholder="ဗီဒီယိုအမည် ရေးပါ"
+>
+
+<input
+  type="text"
+  id="videoLink"
+  placeholder="YouTube Video Link ထည့်ပါ"
+>
+
+<button id="addVideoBtn">Add Video</button>
+
+<div id="videoList"></div>
+</body>
 </html>
