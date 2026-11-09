@@ -452,6 +452,250 @@ card.append(title,watch);results.append(card);
 });
 console.log("TMK VIDEO ready");
 
+let tmkStream = null;
+let tmkRecorder = null;
+let tmkChunks = [];
+let tmkFacing = "user";
+let tmkRecordedBlob = null;
+
+async function tmkStartCamera() {
+  try {
+    if (tmkStream) {
+      tmkStream.getTracks().forEach(t => t.stop());
+    }
+
+    tmkStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: tmkFacing,
+        width: {ideal:1280},
+        height: {ideal:720}
+      },
+      audio: true
+    });
+
+    document.getElementById("tmkCamera").srcObject = tmkStream;
+    tmkApplyEffect();
+    document.getElementById("tmkStatus").textContent = "Camera Ready";
+  } catch(e) {
+    alert("Camera ဖွင့်မရပါ။ Permission စစ်ပါ။");
+  }
+}
+
+async function tmkSwitchCamera() {
+  tmkFacing = tmkFacing === "user" ? "environment" : "user";
+  await tmkStartCamera();
+}
+
+function tmkApplyEffect() {
+  document.getElementById("tmkCamera").style.filter =
+    document.getElementById("tmkEffect").value;
+}
+
+function tmkStartRecord() {
+  if (!tmkStream) {
+    alert("အရင် Camera ဖွင့်ပါ");
+    return;
+  }
+
+  if (!window.MediaRecorder) {
+    alert("ဒီ Browser မှာ Recording မရပါ");
+    return;
+  }
+
+  tmkChunks = [];
+  tmkRecordedBlob = null;
+
+  let options = {};
+  if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
+    options.mimeType = "video/webm;codecs=vp8";
+  } else if (MediaRecorder.isTypeSupported("video/webm")) {
+    options.mimeType = "video/webm";
+  }
+
+  tmkRecorder = new MediaRecorder(tmkStream, options);
+
+  tmkRecorder.ondataavailable = e => {
+    if (e.data.size > 0) tmkChunks.push(e.data);
+  };
+
+  tmkRecorder.onstop = () => {
+    tmkRecordedBlob = new Blob(tmkChunks, {
+      type: tmkRecorder.mimeType || "video/webm"
+    });
+
+    document.getElementById("tmkPreview").src =
+      URL.createObjectURL(tmkRecordedBlob);
+
+    document.getElementById("tmkStatus").textContent =
+      "Recording Complete";
+  };
+
+  tmkRecorder.start();
+  document.getElementById("tmkStatus").textContent = "🔴 Recording...";
+}
+
+function tmkStopRecord() {
+  if (tmkRecorder && tmkRecorder.state === "recording") {
+    tmkRecorder.stop();
+  }
+}
+
+async function tmkUploadVideo() {
+  if (!tmkRecordedBlob) {
+    alert("အရင် Video ရိုက်ပြီး Stop နှိပ်ပါ");
+    return;
+  }
+
+  const user = window.firebaseAuth?.currentUser;
+  const client = window.supabaseClient;
+
+  if (!user || !client) {
+    alert("Login သို့မဟုတ် Supabase ချိတ်ဆက်မှု မရှိပါ");
+    return;
+  }
+
+  try {
+    const token = await user.getIdToken();
+    const filename = "tmk-" + Date.now() + ".webm";
+
+    const response = await fetch(window.UPLOAD_FUNCTION_URL, {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json",
+        "apikey": window.SUPABASE_PUBLISHABLE_KEY
+      },
+      body: JSON.stringify({
+        filename,
+        contentType: tmkRecordedBlob.type
+      })
+    });
+
+    const permission = await response.json();
+    if (!response.ok) {
+      throw new Error(permission.error || "Permission failed");
+    }
+
+    const {error} = await client.storage
+      .from("tmk-videos")
+      .uploadToSignedUrl(
+        permission.path,
+        permission.token,
+        tmkRecordedBlob,
+        {contentType: tmkRecordedBlob.type}
+      );
+
+    if (error) throw error;
+
+    const db = window.firebaseDatabase;
+    const videoRef = window.firebasePush(
+      window.firebaseRef(db, "videos")
+    );
+
+    await window.firebaseSet(videoRef, {
+      title: filename,
+      videoUrl: permission.publicUrl,
+      storagePath: permission.path,
+      uid: user.uid,
+      username: user.displayName || "TMK User",
+      createdAt: Date.now()
+    });
+
+    document.getElementById("tmkProgressBar").style.width = "100%";
+    document.getElementById("tmkPercent").textContent = "100%";
+    document.getElementById("tmkStatus").textContent = "Upload Complete!";
+    alert("Video တင်ပြီးပါပြီ");
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById("tmkStatus").textContent = "Upload Error: " + e.message;
+    alert("Upload မအောင်မြင်ပါ: " + e.message);
+  }
+}
+
 </script>
+
+<!-- TMK VIDEO CAMERA -->
+<style>
+#tmkCameraBox {
+  background:#15151f;
+  color:white;
+  padding:15px;
+  border-radius:16px;
+  margin:15px 0;
+}
+#tmkCameraBox video {
+  width:100%;
+  max-height:480px;
+  background:#000;
+  border-radius:12px;
+  object-fit:contain;
+}
+.tmk-controls {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:12px 0;
+}
+#tmkCameraBox button,
+#tmkCameraBox select {
+  padding:11px;
+  border:0;
+  border-radius:9px;
+  background:#29293b;
+  color:white;
+}
+#tmkCameraBox .record {
+  background:#ed3157;
+}
+#tmkProgress {
+  width:100%;
+  height:12px;
+  background:#333;
+  border-radius:10px;
+  overflow:hidden;
+}
+#tmkProgressBar {
+  width:0%;
+  height:100%;
+  background:#00d68f;
+}
+</style>
+
+<div id="tmkCameraBox">
+  <h3>🎥 TMK VIDEO CAMERA</h3>
+  <video id="tmkCamera" autoplay muted playsinline></video>
+
+  <div class="tmk-controls">
+    <button onclick="tmkStartCamera()">📷 Open Camera</button>
+    <button onclick="tmkSwitchCamera()">🔄 Switch</button>
+    <button class="record" onclick="tmkStartRecord()">🔴 Record</button>
+    <button onclick="tmkStopRecord()">⏹ Stop</button>
+  </div>
+
+  <p>✨ Effects</p>
+  <select id="tmkEffect" onchange="tmkApplyEffect()">
+    <option value="none">Normal</option>
+    <option value="brightness(1.3) contrast(1.1)">Bright</option>
+    <option value="grayscale(1)">Black & White</option>
+    <option value="sepia(0.8)">Vintage</option>
+    <option value="sepia(0.5) contrast(1.2)">Sepia</option>
+    <option value="brightness(1.1) saturate(1.5)">Colorful</option>
+  </select>
+
+  <h4>🎬 Preview</h4>
+  <video id="tmkPreview" controls playsinline></video>
+
+  <div class="tmk-controls">
+    <button onclick="tmkUploadVideo()">⬆️ Upload Video</button>
+  </div>
+
+  <div id="tmkProgress">
+    <div id="tmkProgressBar"></div>
+  </div>
+  <p id="tmkPercent">0%</p>
+  <p id="tmkStatus">Ready</p>
+</div>
+
 </body>
 </html>
