@@ -240,7 +240,10 @@ onValue(videosRef, (snapshot) => {
   const videos = [];
 
   snapshot.forEach((childSnapshot) => {
-    videos.push(childSnapshot.val());
+    videos.push({
+  id: childSnapshot.key,
+  ...childSnapshot.val()
+});
   });
 
   videos.reverse().forEach((video) => {
