@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="my">
 <head>
@@ -22,6 +23,7 @@ header {
   padding: 18px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
@@ -63,8 +65,30 @@ iframe {
 button {
   background: #00c8ff;
   padding: 12px;
+  margin: 5px;
   border: 0;
   border-radius: 8px;
+  cursor: pointer;
+}
+
+input {
+  display: block;
+  width: calc(100% - 30px);
+  margin: 10px 15px;
+  padding: 13px;
+  border-radius: 8px;
+  border: 1px solid #555;
+}
+
+#message {
+  padding: 10px 15px;
+  color: #00e5ff;
+}
+
+.delete-btn {
+  background: #ff3333;
+  color: white;
+  margin-top: 10px;
 }
 
 footer {
@@ -85,6 +109,7 @@ footer {
 <nav>
   <a href="#home">Home</a>
   <a href="#videos">Videos</a>
+  <a href="#account">Account</a>
   <a href="#about">About</a>
 </nav>
 
@@ -103,18 +128,50 @@ footer {
     <h3>PUBG MOBILE</h3>
     <p>Gaming Videos</p>
     <iframe
-  width="100%"
-  height="250"
-  src="https://www.youtube.com/embed/xs0xcwDQ0WQ"
-  title="PUBG MOBILE"
-  frameborder="0"
-  allowfullscreen>
-</iframe>
-</div>
- <div class="card">
+      src="https://www.youtube.com/embed/xs0xcwDQ0WQ"
+      title="PUBG MOBILE"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="card">
     <h3>GODOT GAME</h3>
     <p>Game Development</p>
   </div>
+
+  <div id="videoList"></div>
+</section>
+
+<section id="account">
+  <h2>TMK VIDEO Account</h2>
+
+  <input id="email" type="email" placeholder="Email">
+
+  <input id="password" type="password" placeholder="Password">
+
+  <button id="registerBtn">Register</button>
+  <button id="loginBtn">Login</button>
+  <button id="logoutBtn" style="background:#ff4444;color:white;display:none;">
+    Logout
+  </button>
+
+  <p id="message">Not logged in</p>
+</section>
+
+<section id="addVideo">
+  <h2>TMK VIDEO - Add Video</h2>
+
+  <input
+    type="text"
+    id="videoTitle"
+    placeholder="ဗီဒီယိုအမည် ရေးပါ">
+
+  <input
+    type="text"
+    id="videoLink"
+    placeholder="YouTube Video Link ထည့်ပါ">
+
+  <button id="addVideoBtn">Add Video</button>
 </section>
 
 <section id="about">
@@ -126,20 +183,8 @@ footer {
   © 2026 TMK VIDEO
 </footer>
 
-<section id="account">
-  <h2>TMK VIDEO Account</h2>
-
-  <input id="email" type="email" placeholder="Email">
-
-  <input id="password" type="password" placeholder="Password">
-
-  <button id="registerBtn">Register</button>
-
-  <button id="loginBtn">Login</button>
-
-  <p id="message"></p>
-</section>
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
 import {
@@ -149,13 +194,16 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
 import {
   getDatabase,
   ref,
   push,
-  onValue
-remove
+  onValue,
+  remove
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+// Firebase Configuration
 
 const firebaseConfig = {
   apiKey: "AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
@@ -168,16 +216,25 @@ const firebaseConfig = {
   measurementId: "G-NZXE0Y822B"
 };
 
+// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-window.tmkFirebase = { app, auth, database };
+const message = document.getElementById("message");
+const videoList = document.getElementById("videoList");
+
+const videosRef = ref(database, "videos");
+
+let savedVideos = [];
+
+// Register
 
 document.getElementById("registerBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
+
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  const message = document.getElementById("message");
 
   try {
     await createUserWithEmailAndPassword(auth, email, password);
@@ -185,12 +242,15 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
   } catch (error) {
     message.textContent = error.message;
   }
+
 });
 
+// Login
+
 document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
+
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  const message = document.getElementById("message");
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -198,158 +258,188 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   } catch (error) {
     message.textContent = error.message;
   }
+
 });
-const logoutBtn = document.createElement("button");
-logoutBtn.textContent = "Logout";
-logoutBtn.style.background = "#ff4444";
-logoutBtn.style.color = "white";
-logoutBtn.style.padding = "12px";
-logoutBtn.style.margin = "10px";
-logoutBtn.style.border = "none";
-logoutBtn.style.borderRadius = "8px";
 
-document.getElementById("message").after(logoutBtn);
+// Logout
 
-logoutBtn.addEventListener("click", async () => {
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+
   try {
     await signOut(auth);
-    document.getElementById("message").textContent = "Logout successful!";
+    message.textContent = "Logout successful!";
   } catch (error) {
-    document.getElementById("message").textContent = error.message;
+    message.textContent = error.message;
   }
+
 });
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById("message").textContent =
-      "Logged in as: " + user.email;
-  } else {
-    document.getElementById("message").textContent = "Not logged in";
-  }
-});
+// Render Videos
 
+function renderVideos() {
 
-      
-const videoList = document.getElementById("videoList");
-const videosRef = ref(database, "videos");
-
-// Database ထဲက Video တွေကို ပြသမယ်
-onValue(videosRef, (snapshot) => {
   videoList.innerHTML = "";
 
-  const videos = [];
+  savedVideos.forEach((video) => {
 
-  snapshot.forEach((childSnapshot) => {
-    videos.push({
-  id: childSnapshot.key,
-  ...childSnapshot.val()
-});
-  });
-
-  videos.reverse().forEach((video) => {
     const item = document.createElement("div");
+    item.className = "card";
+
     const heading = document.createElement("h3");
-    heading.textContent = video.title;
+    heading.textContent = video.title || "Untitled Video";
 
     const player = document.createElement("iframe");
     player.src = "https://www.youtube.com/embed/" + video.youtubeId;
-    player.width = "100%";
-    player.height = "250";
     player.allowFullscreen = true;
 
+    item.append(heading, player);
+
     if (auth.currentUser && auth.currentUser.uid === video.uid) {
-  const deleteBtn = document.createElement("button");
 
-  deleteBtn.textContent = "Delete Video";
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete Video";
+      deleteBtn.className = "delete-btn";
 
-  deleteBtn.addEventListener("click", async () => {
-    if (!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား။")) {
-      return;
+      deleteBtn.addEventListener("click", async () => {
+
+        if (!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား။")) {
+          return;
+        }
+
+        try {
+          await remove(ref(database, "videos/" + video.id));
+          alert("Video ဖျက်ပြီးပါပြီ!");
+        } catch (error) {
+          alert("ဖျက်မရပါ: " + error.message);
+        }
+
+      });
+
+      item.appendChild(deleteBtn);
     }
 
-    try {
-      await remove(ref(database, "videos/" + video.id));
-      alert("Video ဖျက်ပြီးပါပြီ!");
-    } catch (error) {
-      alert("ဖျက်မရပါ: " + error.message);
-    }
-  });
-
-  item.append(heading, player, deleteBtn);
-} else {
-  item.append(heading, player);
-}
     videoList.appendChild(item);
+
   });
+
+}
+
+// Load Videos from Firebase
+
+onValue(videosRef, (snapshot) => {
+
+  savedVideos = [];
+
+  snapshot.forEach((childSnapshot) => {
+
+    savedVideos.push({
+      id: childSnapshot.key,
+      ...childSnapshot.val()
+    });
+
+  });
+
+  savedVideos.reverse();
+
+  renderVideos();
+
+}, (error) => {
+  message.textContent = "Video loading error: " + error.message;
 });
 
-// Video အသစ် Database ထဲ သိမ်းမယ်
+// Authentication State
+
+onAuthStateChanged(auth, (user) => {
+
+  if (user) {
+
+    message.textContent = "Logged in as: " + user.email;
+
+    document.getElementById("logoutBtn").style.display = "inline-block";
+
+  } else {
+
+    message.textContent = "Not logged in";
+
+    document.getElementById("logoutBtn").style.display = "none";
+
+  }
+
+  renderVideos();
+
+});
+
+// Add Video
+
 document.getElementById("addVideoBtn").addEventListener("click", async () => {
+
   const title = document.getElementById("videoTitle").value.trim();
   const link = document.getElementById("videoLink").value.trim();
 
   let videoId = "";
 
   try {
+
     const url = new URL(link);
 
     if (url.hostname === "youtu.be") {
+
       videoId = url.pathname.slice(1);
+
     } else if (
       url.hostname.includes("youtube.com") ||
       url.hostname.includes("youtube-nocookie.com")
     ) {
+
       videoId =
         url.searchParams.get("v") ||
         url.pathname.split("/").filter(Boolean).pop();
+
     }
+
   } catch (error) {}
 
   if (!title || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+
     alert("ဗီဒီယိုအမည်နဲ့ YouTube Link မှန်မှန်ထည့်ပါ။");
     return;
+
   }
 
   if (!auth.currentUser) {
+
     alert("Video ထည့်ရန် Login ဝင်ထားပါ။");
     return;
+
   }
 
   try {
+
     await push(videosRef, {
+
       title: title,
       youtubeId: videoId,
       uid: auth.currentUser.uid,
       createdAt: Date.now()
+
     });
 
     document.getElementById("videoTitle").value = "";
     document.getElementById("videoLink").value = "";
 
     alert("Video saved successfully!");
+
   } catch (error) {
+
     alert("Video သိမ်းမရပါ: " + error.message);
+
   }
+
 });
+
 console.log("TMK VIDEO Firebase Connected!");
+
 </script>
 
-<h2>TMK VIDEO - Add Video</h2>
-
-<input
-  type="text"
-  id="videoTitle"
-  placeholder="ဗီဒီယိုအမည် ရေးပါ"
->
-
-<input
-  type="text"
-  id="videoLink"
-  placeholder="YouTube Video Link ထည့်ပါ"
->
- 
-<button id="addVideoBtn">Add Video</button>
-
-<div id="videoList"></div>
 </body>
 </html>
