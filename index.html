@@ -1561,5 +1561,23 @@ window.addEventListener("pagehide",()=>{
 console.log("TMK VIDEO ready");
 
 </script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(registration => {
+        console.log(
+          "TMK Service Worker Ready:",
+          registration.scope
+        );
+      })
+      .catch(error => {
+        console.error(
+          "TMK Service Worker Error:",
+          error
+        );
+      });
+  });
+}
+</script>
 </body>
 </html>
