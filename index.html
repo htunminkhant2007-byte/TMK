@@ -151,6 +151,19 @@ hr{border:0;border-top:1px solid #30303c;margin:14px 0}
 </nav>
 
 <script type="module">
+// TMK VIDEO - Auto pause other videos
+document.addEventListener("play", function(e) {
+  if (e.target.tagName === "VIDEO") {
+    document.querySelectorAll("video").forEach(video => {
+      if (video !== e.target) {
+        video.pause();
+        video.muted = true;
+      }
+    });
+
+    e.target.muted = false;
+  }
+}, true);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
