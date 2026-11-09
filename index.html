@@ -451,6 +451,273 @@ card.append(title,watch);results.append(card);
 });
 });
 console.log("TMK VIDEO ready");
+
+
+<!-- TMK VIDEO CAMERA & EFFECTS -->
+<style>
+#tmkCameraBox{
+  background:#15151f;
+  color:white;
+  padding:15px;
+  border-radius:16px;
+  margin:15px 0;
+  font-family:Arial,sans-serif;
+}
+#tmkCameraBox video{
+  width:100%;
+  max-height:480px;
+  background:#000;
+  border-radius:12px;
+  object-fit:contain;
+}
+.tmk-controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+#tmkCameraBox button,
+#tmkCameraBox select{
+  padding:11px;
+  border:0;
+  border-radius:9px;
+  background:#29293b;
+  color:white;
+}
+#tmkCameraBox .record{
+  background:#ed3157;
+}
+#tmkProgress{
+  width:100%;
+  height:12px;
+  background:#333;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:12px;
+}
+#tmkProgressBar{
+  width:0%;
+  height:100%;
+  background:#00d68f;
+}
+#tmkPercent{
+  margin-top:6px;
+  color:#00e5a0;
+  font-weight:bold;
+}
+</style>
+
+<div id="tmkCameraBox">
+  <h3>🎥 TMK VIDEO CAMERA</h3>
+
+  <video id="tmkCamera" autoplay muted playsinline></video>
+
+  <div class="tmk-controls">
+    <button onclick="tmkStartCamera()">📷 Open Camera</button>
+    <button onclick="tmkSwitchCamera()">🔄 Switch Camera</button>
+    <button class="record" onclick="tmkStartRecord()">🔴 Record</button>
+    <button onclick="tmkStopRecord()">⏹ Stop</button>
+  </div>
+
+  <p>✨ Choose Effects</p>
+  <select id="tmkEffect" onchange="tmkApplyEffect()">
+    <option value="none">Normal</option>
+    <option value="brightness(1.3) contrast(1.1)">Bright</option>
+    <option value="grayscale(1)">Black & White</option>
+    <option value="sepia(0.8)">Vintage</option>
+    <option value="sepia(0.5) contrast(1.2)">Sepia</option>
+    <option value="brightness(1.1) saturate(1.5)">Colorful</option>
+  </select>
+
+  <h4>🎬 Video Preview</h4>
+  <video id="tmkPreview" controls playsinline></video>
+
+  <div class="tmk-controls">
+    <button onclick="tmkUploadVideo()">⬆️ Upload Video</button>
+  </div>
+
+  <div id="tmkProgress">
+    <div id="tmkProgressBar"></div>
+  </div>
+  <div id="tmkPercent">0%</div>
+  <p id="tmkStatus">Ready</p>
+</div>
+
+<script>
+let tmkStream=null;
+let tmkRecorder=null;
+let tmkChunks=[];
+let tmkFacing="user";
+let tmkRecordedBlob=null;
+
+async function tmkStartCamera(){
+  try{
+    if(tmkStream){
+      tmkStream.getTracks().forEach(t=>t.stop());
+    }
+
+    tmkStream=await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:tmkFacing,
+        width:{ideal:1280},
+        height:{ideal:720}
+      },
+      audio:true
+    });
+
+    const camera=document.getElementById("tmkCamera");
+    camera.srcObject=tmkStream;
+    tmkApplyEffect();
+    document.getElementById("tmkStatus").textContent="Camera Ready";
+  }catch(e){
+    alert("Camera ဖွင့်မရပါ။ Permission ပေးပြီး HTTPS Website မှာ ပြန်စမ်းပါ။");
+  }
+}
+
+async function tmkSwitchCamera(){
+  tmkFacing=tmkFacing==="user"?"environment":"user";
+  await tmkStartCamera();
+}
+
+function tmkApplyEffect(){
+  document.getElementById("tmkCamera").style.filter=
+    document.getElementById("tmkEffect").value;
+}
+
+/* Effects are applied to the live preview.
+   Recording below captures the camera stream itself. */
+
+function tmkStartRecord(){
+  if(!tmkStream){
+    alert("အရင်ဆုံး Open Camera နှိပ်ပါ");
+    return;
+  }
+
+  if(!window.MediaRecorder){
+    alert("ဒီ Browser မှာ Video Recording မရနိုင်ပါ");
+    return;
+  }
+
+  tmkChunks=[];
+  tmkRecordedBlob=null;
+
+  let options={};
+  if(MediaRecorder.isTypeSupported("video/webm;codecs=vp9")){
+    options.mimeType="video/webm;codecs=vp9";
+  }else if(MediaRecorder.isTypeSupported("video/webm")){
+    options.mimeType="video/webm";
+  }
+
+  tmkRecorder=new MediaRecorder(tmkStream,options);
+
+  tmkRecorder.ondataavailable=e=>{
+    if(e.data.size>0)tmkChunks.push(e.data);
+  };
+
+  tmkRecorder.onstop=()=>{
+    tmkRecordedBlob=new Blob(tmkChunks,{
+      type:tmkRecorder.mimeType || "video/webm"
+    });
+
+    const url=URL.createObjectURL(tmkRecordedBlob);
+    const preview=document.getElementById("tmkPreview");
+    preview.src=url;
+    document.getElementById("tmkStatus").textContent=
+      "Recording Complete - Preview Ready";
+  };
+
+  tmkRecorder.start();
+  document.getElementById("tmkStatus").textContent="🔴 Recording...";
+}
+
+function tmkStopRecord(){
+  if(tmkRecorder && tmkRecorder.state==="recording"){
+    tmkRecorder.stop();
+  }
+}
+
+/* Upload through the existing Supabase Edge Function */
+async function tmkUploadVideo(){
+  if(!tmkRecordedBlob){
+    alert("အရင်ဆုံး Video ရိုက်ပြီး Stop နှိပ်ပါ");
+    return;
+  }
+
+  if(!window.supabaseClient){
+    alert("Supabase client မတွေ့ပါ။ လက်ရှိ Supabase client ကို ချိတ်ဆက်ပေးပါ");
+    return;
+  }
+
+  try{
+    const user=window.firebaseAuth?.currentUser;
+    if(!user){
+      alert("အရင် Login ဝင်ပါ");
+      return;
+    }
+
+    const token=await user.getIdToken();
+    const ext=tmkRecordedBlob.type.includes("mp4")?"mp4":"webm";
+    const filename="tmk-video-"+Date.now()+"."+ext;
+
+    document.getElementById("tmkStatus").textContent="Preparing upload...";
+
+    const response=await fetch(
+      window.UPLOAD_FUNCTION_URL,
+      {
+        method:"POST",
+        headers:{
+          "Authorization":"Bearer "+token,
+          "Content-Type":"application/json",
+          "apikey":window.SUPABASE_PUBLISHABLE_KEY
+        },
+        body:JSON.stringify({
+          filename,
+          contentType:tmkRecordedBlob.type
+        })
+      }
+    );
+
+    const permission=await response.json();
+    if(!response.ok)throw new Error(permission.error || "Upload permission failed");
+
+    const {data,error}=await window.supabaseClient.storage
+      .from("tmk-videos")
+      .uploadToSignedUrl(permission.path,permission.token,tmkRecordedBlob,{
+        contentType:tmkRecordedBlob.type
+      });
+
+    if(error)throw error;
+
+    const videoUrl=permission.publicUrl;
+
+    document.getElementById("tmkProgressBar").style.width="100%";
+    document.getElementById("tmkPercent").textContent="100%";
+    document.getElementById("tmkStatus").textContent="Upload Complete!";
+
+    alert("Video Upload ပြီးပါပြီ။");
+
+    /* Save video metadata to Firebase */
+    const db=window.firebaseDatabase;
+    const uid=user.uid;
+    const videoRef=window.firebasePush(window.firebaseRef(db,"videos"));
+
+    await window.firebaseSet(videoRef,{
+      title:filename,
+      videoUrl:videoUrl,
+      storagePath:permission.path,
+      uid:uid,
+      username:user.displayName || "TMK User",
+      createdAt:Date.now()
+    });
+
+  }catch(error){
+    console.error(error);
+    document.getElementById("tmkStatus").textContent=
+      "Upload Error: "+error.message;
+    alert("Upload မအောင်မြင်ပါ: "+error.message);
+  }
+}
+
 </script>
 </body>
 </html>
