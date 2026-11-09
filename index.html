@@ -257,7 +257,28 @@ onValue(videosRef, (snapshot) => {
     player.height = "250";
     player.allowFullscreen = true;
 
-    item.append(heading, player);
+    if (auth.currentUser && auth.currentUser.uid === video.uid) {
+  const deleteBtn = document.createElement("button");
+
+  deleteBtn.textContent = "Delete Video";
+
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား။")) {
+      return;
+    }
+
+    try {
+      await remove(ref(database, "videos/" + video.id));
+      alert("Video ဖျက်ပြီးပါပြီ!");
+    } catch (error) {
+      alert("ဖျက်မရပါ: " + error.message);
+    }
+  });
+
+  item.append(heading, player, deleteBtn);
+} else {
+  item.append(heading, player);
+}
     videoList.appendChild(item);
   });
 });
