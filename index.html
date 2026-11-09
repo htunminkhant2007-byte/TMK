@@ -3,146 +3,168 @@
 <html lang="my">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#08080d">
 <title>TMK VIDEO</title>
 
 <style>
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:#08080d;color:white;
+  font-family:Arial,sans-serif;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
-body {
-  margin: 0;
-  background: #101018;
-  color: white;
-  font-family: Arial, sans-serif;
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:20;
+  height:58px;background:#101018;
+  display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;
+  border-bottom:1px solid #292936;
+}
+.logo{font-size:23px;font-weight:900;color:#00e5ff}
+.header-search{
+  width:42px;height:38px;border:0;border-radius:50%;
+  background:#252535;color:white;font-size:19px;
 }
 
-header {
-  background: #191925;
-  padding: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* PAGE */
+.page{display:none;padding-bottom:80px}
+.page.active{display:block}
+.page-title{padding:18px 16px 8px;font-size:21px}
+.muted{color:#aaa}
+
+/* VIDEO FEED */
+.feed{
+  width:100%;max-width:650px;margin:auto;
+}
+.video-card{
+  position:relative;width:100%;
+  min-height:calc(100svh - 140px);
+  height:calc(100svh - 140px);
+  background:#15151e;
+  margin-bottom:12px;overflow:hidden;
+  border-radius:12px;
+  scroll-snap-align:start;
+}
+.video-card iframe{
+  width:100%;height:100%;border:0;
+  background:#000;
+}
+.video-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:65px 80px 18px 15px;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  pointer-events:none;
+}
+.video-title{
+  font-size:17px;font-weight:bold;
+  margin-bottom:7px;overflow-wrap:anywhere;
+}
+.video-owner{font-size:13px;color:#ddd}
+.video-actions{
+  position:absolute;right:10px;bottom:25px;
+  display:flex;flex-direction:column;
+  align-items:center;gap:17px;
+}
+.action-btn{
+  border:0;background:rgba(0,0,0,.5);
+  color:white;width:48px;height:48px;
+  border-radius:50%;font-size:23px;
+}
+.action-btn.liked{color:#ff315b}
+.action-label{font-size:11px;text-align:center}
+.video-delete{
+  background:#ed3434;color:white;border:0;
+  padding:7px 10px;border-radius:7px;font-size:12px;
 }
 
-.logo {
-  font-size: 25px;
-  color: #00e5ff;
-  font-weight: bold;
+/* EMPTY */
+.empty{
+  padding:45px 20px;text-align:center;
+  color:#aaa;line-height:1.8;
 }
 
-nav {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 15px 5px;
-  background: #222;
+/* SEARCH */
+.search-box{
+  margin:12px 15px;display:flex;gap:8px;
+}
+.search-box input{flex:1}
+input{
+  width:100%;padding:13px;margin:7px 0;
+  border-radius:9px;border:1px solid #393948;
+  background:#191923;color:white;outline:none;
+}
+input:focus{border-color:#00d9ee}
+input[type=file]{background:#191923}
+.primary-btn{
+  border:0;background:#00d9ee;color:#08080d;
+  padding:12px 17px;border-radius:9px;
+  font-weight:bold;
+}
+.danger-btn{background:#ed3434;color:white}
+.card{
+  background:#171721;border:1px solid #292936;
+  border-radius:13px;padding:16px;margin:12px;
+}
+.card h3{margin-top:0}
+#message,#profileMessage{
+  color:#00e5ff;padding:8px 0;
+  overflow-wrap:anywhere;
 }
 
-nav a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
+/* PROFILE */
+.profile-box{text-align:center;padding:20px 10px}
+.profile-photo{
+  width:115px;height:115px;border-radius:50%;
+  object-fit:cover;border:3px solid #00e5ff;
+  background:#333;
+}
+.profile-name{font-size:22px;color:#00e5ff}
+.profile-email{color:#aaa;overflow-wrap:anywhere}
+.stats{
+  display:flex;justify-content:center;gap:35px;
+  margin:20px 0;padding:16px;
+  background:#22222f;border-radius:12px;
+}
+.stats strong{display:block;font-size:23px;color:#00e5ff}
+.stats span{font-size:12px;color:#aaa}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:30;height:65px;
+  display:flex;justify-content:space-around;
+  align-items:center;background:#111119;
+  border-top:1px solid #30303a;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-btn{
+  border:0;background:none;color:#aaa;
+  display:flex;flex-direction:column;
+  align-items:center;gap:3px;font-size:11px;
+  min-width:55px;
+}
+.nav-btn .nav-icon{font-size:22px}
+.nav-btn.active{color:#00e5ff}
+.upload-nav{
+  background:#00d9ee;color:#08080d;
+  width:43px;height:31px;border-radius:9px;
+  font-size:25px;font-weight:bold;
+  line-height:28px;
 }
 
-h2 { padding: 15px; }
-
-.card {
-  background: #252535;
-  margin: 15px;
-  padding: 15px;
-  border-radius: 12px;
+/* RESPONSIVE */
+@media(min-width:700px){
+  .video-card{height:650px;min-height:500px}
+  .feed{padding:12px}
+  .page{padding-bottom:90px}
 }
-
-iframe {
-  width: 100%;
-  height: 220px;
-  border: 0;
-  border-radius: 10px;
-}
-
-button {
-  background: #00c8ff;
-  color: #101018;
-  padding: 12px 16px;
-  margin: 5px;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-input {
-  display: block;
-  width: calc(100% - 30px);
-  margin: 10px 15px;
-  padding: 13px;
-  border-radius: 8px;
-  border: 1px solid #555;
-  background: #171725;
-  color: white;
-}
-
-input[type="file"] {
-  background: #252535;
-}
-
-#message, #profileMessage {
-  padding: 10px 15px;
-  color: #00e5ff;
-  overflow-wrap: anywhere;
-}
-
-.delete-btn {
-  background: #ff3333;
-  color: white;
-}
-
-.hidden { display: none !important; }
-
-.profile-box {
-  text-align: center;
-  padding: 20px 10px;
-}
-
-.profile-photo {
-  width: 125px;
-  height: 125px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #00e5ff;
-  background: #333;
-}
-
-.profile-name {
-  color: #00e5ff;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.profile-email {
-  color: #bbb;
-  overflow-wrap: anywhere;
-}
-
-.stats {
-  background: #191925;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 15px 0;
-}
-
-.stats strong {
-  color: #00e5ff;
-  font-size: 24px;
-}
-
-footer {
-  text-align: center;
-  padding: 25px;
-  color: #aaa;
-}
-
+footer{text-align:center;color:#777;padding:20px}
 </style>
 </head>
 
@@ -150,175 +172,110 @@ footer {
 
 <header>
   <div class="logo">TMK VIDEO</div>
-  <div>🎬</div>
+  <button class="header-search" id="searchHeader">⌕</button>
 </header>
 
-<nav>
-  <a href="#home">Home</a>
-  <a href="#videos">Videos</a>
-  <a href="#account">Account</a>
-  <a href="#addVideo">Add Video</a>
-  <a href="#about">About</a>
-</nav>
+<!-- HOME FEED -->
+<section id="homePage" class="page active">
+  <div class="feed" id="videoFeed"></div>
+</section>
 
-<section id="home">
-  <h2>Welcome to TMK VIDEO</h2>
+<!-- DISCOVER -->
+<section id="discoverPage" class="page">
+  <h2 class="page-title">🔎 Discover</h2>
+  <div class="search-box">
+    <input id="searchInput" placeholder="Video အမည် ရှာပါ...">
+  </div>
+  <div id="searchResults"></div>
+</section>
+
+<!-- UPLOAD -->
+<section id="uploadPage" class="page">
+  <h2 class="page-title">🎥 Video တင်ရန်</h2>
   <div class="card">
-    <h3>🎬 Watch Videos</h3>
-    <p>Enjoy your favorite videos!</p>
+    <h3>Upload YouTube Video</h3>
+    <p class="muted">YouTube Video Link ကို ထည့်ပေးပါ။</p>
+    <input id="videoTitle" placeholder="ဗီဒီယိုအမည်">
+    <input id="videoLink" placeholder="YouTube Video Link">
+    <button class="primary-btn" id="addVideoBtn">＋ Video တင်မည်</button>
+    <p id="uploadMessage"></p>
   </div>
 </section>
 
-<section id="videos">
-  <h2>Latest Videos</h2>
-
-  <div class="card">
-    <h3>PUBG MOBILE</h3>
-    <p>Gaming Videos</p>
-    <iframe
-      src="https://www.youtube.com/embed/xs0xcwDQ0WQ"
-      title="PUBG MOBILE"
-      allowfullscreen>
-    </iframe>
-  </div>
-
-  <div class="card">
-    <h3>GODOT GAME</h3>
-    <p>Game Development</p>
-  </div>
-
-  <div id="videoList"></div>
-</section>
-
-<!-- ACCOUNT -->
-<section id="account">
-  <h2>👤 TMK VIDEO Account</h2>
+<!-- PROFILE / ACCOUNT -->
+<section id="profilePage" class="page">
+  <h2 class="page-title">👤 My Profile</h2>
 
   <div id="authBox" class="card">
     <h3>Login / Register</h3>
-
-    <input id="email" type="email"
-      placeholder="Email">
-
-    <input id="password" type="password"
-      placeholder="Password">
-
-    <button id="registerBtn">Register</button>
-    <button id="loginBtn">Login</button>
-
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button class="primary-btn" id="registerBtn">Register</button>
+    <button class="primary-btn" id="loginBtn">Login</button>
     <p id="message">Not logged in</p>
   </div>
 
-  <!-- PROFILE -->
   <div id="profileBox" class="card hidden">
-
     <div class="profile-box">
-      <img
-        id="profilePhoto"
-        class="profile-photo"
+      <img id="profilePhoto" class="profile-photo"
         src="https://placehold.co/200x200/252535/00e5ff?text=TMK"
-        alt="Profile Photo">
-
-      <h3 id="displayName" class="profile-name">
-        TMK User
-      </h3>
-
+        alt="Profile">
+      <h3 id="displayName" class="profile-name">TMK User</h3>
       <p id="displayEmail" class="profile-email"></p>
 
       <div class="stats">
-        <strong id="videoCount">0</strong>
-        <p>My Videos</p>
+        <div><strong id="videoCount">0</strong><span>My Videos</span></div>
       </div>
     </div>
 
     <h3>Change Profile</h3>
-
-    <label style="padding:15px;display:block;">
-      Profile ဓာတ်ပုံရွေးပါ
-    </label>
-
-    <input
-      type="file"
-      id="profilePhotoInput"
-      accept="image/*">
-
-    <input
-      type="text"
-      id="usernameInput"
-      maxlength="30"
-      placeholder="Username အသစ်ထည့်ပါ">
-
-    <button id="saveProfileBtn">
-      Save Profile
-    </button>
-
+    <label>Profile ဓာတ်ပုံ</label>
+    <input type="file" id="profilePhotoInput" accept="image/*">
+    <input id="usernameInput" maxlength="30"
+      placeholder="Username အသစ်">
+    <button class="primary-btn" id="saveProfileBtn">Save Profile</button>
     <p id="profileMessage"></p>
-
-    <button id="logoutBtn"
-      style="background:#ff4444;color:white;width:90%;">
-      Logout
-    </button>
-
+    <button class="primary-btn danger-btn" id="logoutBtn"
+      style="width:100%">Logout</button>
   </div>
-</section>
-
-<!-- ADD VIDEO -->
-<section id="addVideo">
-  <h2>🎥 Add Video</h2>
 
   <div class="card">
-    <input
-      type="text"
-      id="videoTitle"
-      placeholder="ဗီဒီယိုအမည် ရေးပါ">
-
-    <input
-      type="text"
-      id="videoLink"
-      placeholder="YouTube Video Link ထည့်ပါ">
-
-    <button id="addVideoBtn">Add Video</button>
+    <h3>About TMK VIDEO</h3>
+    <p class="muted">Welcome to TMK Official Video Platform.</p>
+    <p class="muted">© 2026 TMK VIDEO</p>
   </div>
 </section>
 
-<section id="about">
-  <h2>About TMK</h2>
-  <div class="card">
-    <p>Welcome to TMK Official Website.</p>
-    <p>© TMK VIDEO 2026</p>
-  </div>
-</section>
-
-<footer>
-  © 2026 TMK VIDEO
-</footer>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="homePage">
+    <span class="nav-icon">⌂</span>Home
+  </button>
+  <button class="nav-btn" data-page="discoverPage">
+    <span class="nav-icon">⌕</span>Discover
+  </button>
+  <button class="nav-btn" data-page="uploadPage">
+    <span class="upload-nav">＋</span>Upload
+  </button>
+  <button class="nav-btn" data-page="profilePage">
+    <span class="nav-icon">♙</span>Profile
+  </button>
+</nav>
 
 <script type="module">
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
 import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+  getAuth,createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,signOut,onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 import {
-  getDatabase,
-  ref,
-  push,
-  set,
-  onValue,
-  off,
-  remove
+  getDatabase,ref,push,set,onValue,off,remove
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-// FIREBASE CONFIG
-
+/* FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
   authDomain: "tmk-video.firebaseapp.com",
@@ -330,486 +287,460 @@ const firebaseConfig = {
   measurementId: "G-NZXE0Y822B"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const database=getDatabase(app);
+const videosRef=ref(database,"videos");
 
-const videosRef = ref(database, "videos");
+let savedVideos=[];
+let profileData={};
+let selectedPhoto=null;
+let currentProfileRef=null;
+let currentProfileCallback=null;
 
-const message = document.getElementById("message");
-const profileMessage =
-  document.getElementById("profileMessage");
+/* PAGE NAVIGATION */
+function showPage(pageId){
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
+  document.getElementById(pageId).classList.add("active");
 
-const authBox = document.getElementById("authBox");
-const profileBox = document.getElementById("profileBox");
-
-let savedVideos = [];
-let selectedPhoto = null;
-let currentProfileRef = null;
-let currentProfileCallback = null;
-let profileData = {};
-
-// REGISTER
-
-document.getElementById("registerBtn")
-.addEventListener("click", async () => {
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || !password) {
-    message.textContent = "Email နဲ့ Password ထည့်ပါ။";
-    return;
-  }
-
-  try {
-    await createUserWithEmailAndPassword(
-      auth, email, password
-    );
-
-    message.textContent = "Register successful!";
-
-  } catch (error) {
-    message.textContent = error.message;
-  }
-
-});
-
-// LOGIN
-
-document.getElementById("loginBtn")
-.addEventListener("click", async () => {
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || !password) {
-    message.textContent = "Email နဲ့ Password ထည့်ပါ။";
-    return;
-  }
-
-  try {
-    await signInWithEmailAndPassword(
-      auth, email, password
-    );
-
-    message.textContent = "Login successful!";
-
-  } catch (error) {
-    message.textContent = error.message;
-  }
-
-});
-
-// LOGOUT
-
-document.getElementById("logoutBtn")
-.addEventListener("click", async () => {
-
-  try {
-    await signOut(auth);
-    message.textContent = "Logout successful!";
-
-  } catch (error) {
-    message.textContent = error.message;
-  }
-
-});
-
-// PROFILE DISPLAY
-
-function renderProfile(user) {
-
-  const photo = profileData.photoData || "";
-
-  document.getElementById("profilePhoto").src =
-    photo || "https://placehold.co/200x200/252535/00e5ff?text=TMK";
-
-  document.getElementById("displayName").textContent =
-    profileData.username || user.email.split("@")[0];
-
-  document.getElementById("displayEmail").textContent =
-    user.email;
-
-  document.getElementById("usernameInput").value =
-    profileData.username || "";
-
-  const myCount = savedVideos.filter(
-    video => video.uid === user.uid
-  ).length;
-
-  document.getElementById("videoCount").textContent =
-    myCount;
-
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.page===pageId);
+  });
+  window.scrollTo(0,0);
 }
 
-// AUTH STATE
-
-onAuthStateChanged(auth, (user) => {
-
-  if (currentProfileRef && currentProfileCallback) {
-    off(currentProfileRef, "value", currentProfileCallback);
-  }
-
-  currentProfileRef = null;
-  currentProfileCallback = null;
-  profileData = {};
-
-  if (user) {
-
-    authBox.classList.add("hidden");
-    profileBox.classList.remove("hidden");
-
-    message.textContent = "Login successful!";
-
-    currentProfileRef = ref(
-      database, "users/" + user.uid
-    );
-
-    currentProfileCallback = (snapshot) => {
-
-      profileData = snapshot.val() || {};
-      renderProfile(user);
-
-    };
-
-    onValue(
-      currentProfileRef,
-      currentProfileCallback,
-      (error) => {
-        profileMessage.textContent =
-          "Profile loading error: " + error.message;
-      }
-    );
-
-  } else {
-
-    authBox.classList.remove("hidden");
-    profileBox.classList.add("hidden");
-
-    message.textContent = "Not logged in";
-
-  }
-
-  renderVideos();
-
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    showPage(btn.dataset.page);
+  });
 });
 
-// PROFILE PHOTO SELECT
+document.getElementById("searchHeader").onclick=()=>{
+  showPage("discoverPage");
+  document.getElementById("searchInput").focus();
+};
 
-document.getElementById("profilePhotoInput")
-.addEventListener("change", async (event) => {
+/* AUTH */
+document.getElementById("registerBtn").onclick=async()=>{
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  const message=document.getElementById("message");
 
-  const file = event.target.files[0];
+  if(!email||!password){
+    message.textContent="Email နဲ့ Password ထည့်ပါ။";
+    return;
+  }
+  try{
+    await createUserWithEmailAndPassword(auth,email,password);
+    message.textContent="Register successful!";
+  }catch(error){
+    message.textContent=error.message;
+  }
+};
 
-  if (!file) return;
+document.getElementById("loginBtn").onclick=async()=>{
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  const message=document.getElementById("message");
 
-  if (!file.type.startsWith("image/")) {
+  if(!email||!password){
+    message.textContent="Email နဲ့ Password ထည့်ပါ။";
+    return;
+  }
+  try{
+    await signInWithEmailAndPassword(auth,email,password);
+    message.textContent="Login successful!";
+  }catch(error){
+    message.textContent=error.message;
+  }
+};
+
+document.getElementById("logoutBtn").onclick=async()=>{
+  try{
+    await signOut(auth);
+    document.getElementById("message").textContent="Logout successful!";
+  }catch(error){
+    document.getElementById("profileMessage").textContent=error.message;
+  }
+};
+
+/* PROFILE */
+function renderProfile(user){
+  const photo=profileData.photoData||"";
+  document.getElementById("profilePhoto").src=
+    photo||"https://placehold.co/200x200/252535/00e5ff?text=TMK";
+
+  document.getElementById("displayName").textContent=
+    profileData.username||user.email.split("@")[0];
+
+  document.getElementById("displayEmail").textContent=user.email;
+  document.getElementById("usernameInput").value=profileData.username||"";
+
+  document.getElementById("videoCount").textContent=
+    savedVideos.filter(v=>v.uid===user.uid).length;
+}
+
+/* AUTH STATE */
+onAuthStateChanged(auth,user=>{
+  if(currentProfileRef&&currentProfileCallback){
+    off(currentProfileRef,"value",currentProfileCallback);
+  }
+  currentProfileRef=null;
+  currentProfileCallback=null;
+  profileData={};
+
+  if(user){
+    document.getElementById("authBox").classList.add("hidden");
+    document.getElementById("profileBox").classList.remove("hidden");
+
+    currentProfileRef=ref(database,"users/"+user.uid);
+    currentProfileCallback=snapshot=>{
+      profileData=snapshot.val()||{};
+      renderProfile(user);
+    };
+    onValue(currentProfileRef,currentProfileCallback,error=>{
+      document.getElementById("profileMessage").textContent=
+        "Profile error: "+error.message;
+    });
+  }else{
+    document.getElementById("authBox").classList.remove("hidden");
+    document.getElementById("profileBox").classList.add("hidden");
+    document.getElementById("message").textContent="Not logged in";
+  }
+  renderVideos();
+});
+
+/* PHOTO SELECT */
+document.getElementById("profilePhotoInput").onchange=async event=>{
+  const file=event.target.files[0];
+  if(!file)return;
+
+  if(!file.type.startsWith("image/")){
     alert("ဓာတ်ပုံဖိုင်ကိုသာ ရွေးပါ။");
-    event.target.value = "";
+    event.target.value="";
+    return;
+  }
+  if(file.size>5*1024*1024){
+    alert("ဓာတ်ပုံ 5MB ထက် မကြီးရပါ။");
+    event.target.value="";
     return;
   }
 
-  if (file.size > 5 * 1024 * 1024) {
-    alert("မူရင်းဓာတ်ပုံ 5MB ထက် မကြီးရပါ။");
-    event.target.value = "";
-    return;
-  }
+  const image=new Image();
+  const url=URL.createObjectURL(file);
+  image.src=url;
 
-  try {
-
-    const image = new Image();
-
-    const imageURL = URL.createObjectURL(file);
-
-    image.src = imageURL;
-
-    await new Promise((resolve, reject) => {
-      image.onload = resolve;
-      image.onerror = reject;
+  try{
+    await new Promise((resolve,reject)=>{
+      image.onload=resolve;
+      image.onerror=reject;
     });
 
-    const canvas = document.createElement("canvas");
+    const canvas=document.createElement("canvas");
+    const scale=Math.min(1,400/Math.max(image.width,image.height));
+    canvas.width=Math.round(image.width*scale);
+    canvas.height=Math.round(image.height*scale);
+    canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
 
-    const maxSize = 400;
-
-    const scale = Math.min(
-      1,
-      maxSize / Math.max(image.width, image.height)
-    );
-
-    canvas.width = Math.round(image.width * scale);
-    canvas.height = Math.round(image.height * scale);
-
-    const context = canvas.getContext("2d");
-
-    context.drawImage(
-      image, 0, 0, canvas.width, canvas.height
-    );
-
-    selectedPhoto = canvas.toDataURL(
-      "image/jpeg", 0.65
-    );
-
-    URL.revokeObjectURL(imageURL);
-
-    document.getElementById("profilePhoto").src =
-      selectedPhoto;
-
-    profileMessage.textContent =
+    selectedPhoto=canvas.toDataURL("image/jpeg",0.65);
+    document.getElementById("profilePhoto").src=selectedPhoto;
+    document.getElementById("profileMessage").textContent=
       "ဓာတ်ပုံရွေးပြီးပါပြီ။ Save Profile နှိပ်ပါ။";
-
-  } catch (error) {
-
-    alert("ဓာတ်ပုံဖတ်မရပါ။ နောက်တစ်ပုံရွေးပါ။");
-
+  }catch(error){
+    alert("ဓာတ်ပုံဖတ်မရပါ။");
+  }finally{
+    URL.revokeObjectURL(url);
   }
+};
 
-});
-
-// SAVE PROFILE
-
-document.getElementById("saveProfileBtn")
-.addEventListener("click", async () => {
-
-  const user = auth.currentUser;
-
-  if (!user) {
+/* SAVE PROFILE */
+document.getElementById("saveProfileBtn").onclick=async()=>{
+  const user=auth.currentUser;
+  if(!user){
     alert("Login အရင်ဝင်ပါ။");
     return;
   }
 
-  const username = document
-    .getElementById("usernameInput")
-    .value.trim();
+  const username=document.getElementById("usernameInput").value.trim();
+  const msg=document.getElementById("profileMessage");
 
-  if (!username) {
-    profileMessage.textContent =
-      "Username ထည့်ပေးပါ။";
+  if(!username){
+    msg.textContent="Username ထည့်ပေးပါ။";
+    return;
+  }
+  if(username.length>30){
+    msg.textContent="Username အရှည်ဆုံး 30 လုံးသာ ရပါမယ်။";
     return;
   }
 
-  if (username.length > 30) {
-    profileMessage.textContent =
-      "Username အရှည်ဆုံး 30 လုံးသာ ရပါမယ်။";
+  const photoData=selectedPhoto!==null?
+    selectedPhoto:(profileData.photoData||"");
+
+  if(photoData.length>350000){
+    msg.textContent="ဓာတ်ပုံအရွယ်အစား ကြီးနေပါတယ်။";
     return;
   }
 
-  try {
-
-    const photoData =
-      selectedPhoto !== null
-        ? selectedPhoto
-        : (profileData.photoData || "");
-
-    if (photoData.length > 350000) {
-      profileMessage.textContent =
-        "ဓာတ်ပုံအရွယ်အစား ကြီးနေပါတယ်။ နောက်တစ်ပုံရွေးပါ။";
-      return;
-    }
-
-    profileMessage.textContent = "Saving...";
-
-    await set(
-      ref(database, "users/" + user.uid),
-      {
-        username: username,
-        photoData: photoData,
-        updatedAt: Date.now()
-      }
-    );
-
-    selectedPhoto = null;
-
-    document.getElementById("profilePhotoInput").value = "";
-
-    profileMessage.textContent =
-      "Profile သိမ်းဆည်းပြီးပါပြီ။";
-
-  } catch (error) {
-
-    profileMessage.textContent =
-      "Profile သိမ်းမရပါ: " + error.message;
-
+  try{
+    msg.textContent="Saving...";
+    await set(ref(database,"users/"+user.uid),{
+      username:username,
+      photoData:photoData,
+      updatedAt:Date.now()
+    });
+    selectedPhoto=null;
+    document.getElementById("profilePhotoInput").value="";
+    msg.textContent="Profile သိမ်းဆည်းပြီးပါပြီ။";
+  }catch(error){
+    msg.textContent="သိမ်းမရပါ: "+error.message;
   }
+};
 
-});
-
-// RENDER VIDEOS
-
-function renderVideos() {
-
-  const videoList = document.getElementById("videoList");
-
-  videoList.innerHTML = "";
-
-  savedVideos.forEach((video) => {
-
-    const item = document.createElement("div");
-    item.className = "card";
-
-    const heading = document.createElement("h3");
-    heading.textContent = video.title || "Untitled Video";
-
-    const player = document.createElement("iframe");
-
-    player.src =
-      "https://www.youtube.com/embed/" + video.youtubeId;
-
-    player.allowFullscreen = true;
-
-    item.append(heading, player);
-
-    if (
-      auth.currentUser &&
-      auth.currentUser.uid === video.uid
-    ) {
-
-      const deleteBtn = document.createElement("button");
-
-      deleteBtn.textContent = "Delete Video";
-      deleteBtn.className = "delete-btn";
-
-      deleteBtn.addEventListener("click", async () => {
-
-        if (!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား။")) {
-          return;
-        }
-
-        try {
-
-          await remove(
-            ref(database, "videos/" + video.id)
-          );
-
-          alert("Video ဖျက်ပြီးပါပြီ!");
-
-        } catch (error) {
-
-          alert("ဖျက်မရပါ: " + error.message);
-
-        }
-
-      });
-
-      item.appendChild(deleteBtn);
-
-    }
-
-    videoList.appendChild(item);
-
-  });
-
-  if (auth.currentUser) {
-    renderProfile(auth.currentUser);
-  }
-
+/* LIKE STORAGE - THIS DEVICE ONLY */
+function getLikes(){
+  try{return JSON.parse(localStorage.getItem("tmkLikes")||"{}");}
+  catch(e){return {};}
+}
+function saveLike(id,liked){
+  const likes=getLikes();
+  likes[id]=liked;
+  localStorage.setItem("tmkLikes",JSON.stringify(likes));
 }
 
-// LOAD VIDEOS
+/* VIDEO FEED */
+function renderVideos(){
+  const feed=document.getElementById("videoFeed");
+  feed.innerHTML="";
 
-onValue(videosRef, (snapshot) => {
+  if(savedVideos.length===0){
+    feed.innerHTML=`
+      <div class="empty">
+        <h2>🎬 TMK VIDEO</h2>
+        <p>ဗီဒီယို မရှိသေးပါ။</p>
+        <p>Upload ကိုနှိပ်ပြီး Video တင်နိုင်ပါတယ်။</p>
+      </div>`;
+  }
 
-  savedVideos = [];
+  savedVideos.forEach(video=>{
+    const card=document.createElement("article");
+    card.className="video-card";
 
-  snapshot.forEach((childSnapshot) => {
+    const iframe=document.createElement("iframe");
+    iframe.src="https://www.youtube.com/embed/"+
+      encodeURIComponent(video.youtubeId)+
+      "?playsinline=1&rel=0";
+    iframe.title=video.title||"TMK Video";
+    iframe.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.allowFullscreen=true;
 
-    savedVideos.push({
-      id: childSnapshot.key,
-      ...childSnapshot.val()
-    });
+    const overlay=document.createElement("div");
+    overlay.className="video-overlay";
 
+    const title=document.createElement("div");
+    title.className="video-title";
+    title.textContent=video.title||"TMK Video";
+
+    const owner=document.createElement("div");
+    owner.className="video-owner";
+    owner.textContent="@"+(video.username||"TMK User");
+
+    overlay.append(title,owner);
+
+    const actions=document.createElement("div");
+    actions.className="video-actions";
+
+    const liked=!!getLikes()[video.id];
+
+    const likeWrap=document.createElement("div");
+    const likeBtn=document.createElement("button");
+    likeBtn.className="action-btn"+(liked?" liked":"");
+    likeBtn.textContent="♥";
+    const likeLabel=document.createElement("div");
+    likeLabel.className="action-label";
+    likeLabel.textContent=liked?"Liked":"Like";
+
+    likeBtn.onclick=()=>{
+      const next=!getLikes()[video.id];
+      saveLike(video.id,next);
+      likeBtn.classList.toggle("liked",next);
+      likeLabel.textContent=next?"Liked":"Like";
+    };
+    likeWrap.append(likeBtn,likeLabel);
+
+    const commentWrap=document.createElement("div");
+    const commentBtn=document.createElement("button");
+    commentBtn.className="action-btn";
+    commentBtn.textContent="💬";
+    const commentLabel=document.createElement("div");
+    commentLabel.className="action-label";
+    commentLabel.textContent="Comment";
+    commentBtn.onclick=()=>{
+      window.open(
+        "https://www.youtube.com/watch?v="+encodeURIComponent(video.youtubeId),
+        "_blank"
+      );
+    };
+    commentWrap.append(commentBtn,commentLabel);
+
+    const shareWrap=document.createElement("div");
+    const shareBtn=document.createElement("button");
+    shareBtn.className="action-btn";
+    shareBtn.textContent="↗";
+    const shareLabel=document.createElement("div");
+    shareLabel.className="action-label";
+    shareLabel.textContent="Share";
+    shareBtn.onclick=async()=>{
+      const url="https://www.youtube.com/watch?v="+video.youtubeId;
+      try{
+        if(navigator.share){
+          await navigator.share({title:video.title,url:url});
+        }else if(navigator.clipboard){
+          await navigator.clipboard.writeText(url);
+          alert("Video Link Copy လုပ်ပြီးပါပြီ။");
+        }else{
+          prompt("Video Link",url);
+        }
+      }catch(error){}
+    };
+    shareWrap.append(shareBtn,shareLabel);
+
+    actions.append(likeWrap,commentWrap,shareWrap);
+
+    card.append(iframe,overlay,actions);
+
+    if(auth.currentUser&&auth.currentUser.uid===video.uid){
+      const del=document.createElement("button");
+      del.className="video-delete";
+      del.textContent="Delete";
+      del.style.position="absolute";
+      del.style.top="12px";
+      del.style.left="12px";
+      del.onclick=async()=>{
+        if(!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား။"))return;
+        try{
+          await remove(ref(database,"videos/"+video.id));
+        }catch(error){
+          alert("ဖျက်မရပါ: "+error.message);
+        }
+      };
+      card.appendChild(del);
+    }
+    feed.appendChild(card);
   });
 
+  if(auth.currentUser)renderProfile(auth.currentUser);
+}
+
+/* LOAD VIDEOS */
+onValue(videosRef,snapshot=>{
+  savedVideos=[];
+  snapshot.forEach(child=>{
+    savedVideos.push({id:child.key,...child.val()});
+  });
   savedVideos.reverse();
-
   renderVideos();
-
-}, (error) => {
-
-  message.textContent =
-    "Video loading error: " + error.message;
-
+},error=>{
+  document.getElementById("message").textContent=
+    "Video loading error: "+error.message;
 });
 
-// ADD VIDEO
-
-document.getElementById("addVideoBtn")
-.addEventListener("click", async () => {
-
-  const title = document
-    .getElementById("videoTitle")
-    .value.trim();
-
-  const link = document
-    .getElementById("videoLink")
-    .value.trim();
-
-  let videoId = "";
-
-  try {
-
-    const url = new URL(link);
-
-    if (url.hostname === "youtu.be") {
-
-      videoId = url.pathname.slice(1);
-
-    } else if (
-      url.hostname === "youtube.com" ||
-      url.hostname.endsWith(".youtube.com") ||
-      url.hostname === "youtube-nocookie.com" ||
+/* YOUTUBE LINK */
+function extractYouTubeId(link){
+  try{
+    const url=new URL(link);
+    let id="";
+    if(url.hostname==="youtu.be"){
+      id=url.pathname.split("/").filter(Boolean)[0]||"";
+    }else if(
+      url.hostname==="youtube.com"||
+      url.hostname.endsWith(".youtube.com")||
+      url.hostname==="youtube-nocookie.com"||
       url.hostname.endsWith(".youtube-nocookie.com")
-    ) {
-
-      videoId =
-        url.searchParams.get("v") ||
-        url.pathname.split("/").filter(Boolean).pop();
-
+    ){
+      id=url.searchParams.get("v")||
+        url.pathname.split("/").filter(Boolean).pop()||"";
     }
+    return /^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
+  }catch(error){
+    return "";
+  }
+}
 
-  } catch (error) {}
+/* ADD VIDEO */
+document.getElementById("addVideoBtn").onclick=async()=>{
+  const title=document.getElementById("videoTitle").value.trim();
+  const link=document.getElementById("videoLink").value.trim();
+  const videoId=extractYouTubeId(link);
+  const msg=document.getElementById("uploadMessage");
 
-  if (!title || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
-
-    alert("ဗီဒီယိုအမည်နဲ့ YouTube Link မှန်မှန်ထည့်ပါ။");
+  if(!auth.currentUser){
+    msg.textContent="Video တင်ရန် Login ဝင်ပါ။";
     return;
-
+  }
+  if(!title||!videoId){
+    msg.textContent="Video အမည်နဲ့ YouTube Link မှန်မှန်ထည့်ပါ။";
+    return;
   }
 
-  if (!auth.currentUser) {
-
-    alert("Video ထည့်ရန် Login ဝင်ထားပါ။");
-    return;
-
-  }
-
-  try {
-
-    await push(videosRef, {
-
-      title: title,
-      youtubeId: videoId,
-      uid: auth.currentUser.uid,
-      createdAt: Date.now()
-
+  try{
+    msg.textContent="Video သိမ်းဆည်းနေပါတယ်...";
+    await push(videosRef,{
+      title:title,
+      youtubeId:videoId,
+      uid:auth.currentUser.uid,
+      createdAt:Date.now()
     });
+    document.getElementById("videoTitle").value="";
+    document.getElementById("videoLink").value="";
+    msg.textContent="Video တင်ပြီးပါပြီ။";
+    showPage("homePage");
+  }catch(error){
+    msg.textContent="Video သိမ်းမရပါ: "+error.message;
+  }
+};
 
-    document.getElementById("videoTitle").value = "";
-    document.getElementById("videoLink").value = "";
+/* SEARCH */
+document.getElementById("searchInput").addEventListener("input",event=>{
+  const term=event.target.value.trim().toLowerCase();
+  const results=document.getElementById("searchResults");
+  results.innerHTML="";
 
-    alert("Video saved successfully!");
+  const matches=savedVideos.filter(video=>
+    (video.title||"").toLowerCase().includes(term)
+  );
 
-  } catch (error) {
+  if(!term)return;
 
-    alert("Video သိမ်းမရပါ: " + error.message);
-
+  if(matches.length===0){
+    results.innerHTML='<div class="empty">ရှာမတွေ့ပါ။</div>';
+    return;
   }
 
+  matches.forEach(video=>{
+    const card=document.createElement("div");
+    card.className="card";
+
+    const title=document.createElement("h3");
+    title.textContent=video.title;
+
+    const watch=document.createElement("button");
+    watch.className="primary-btn";
+    watch.textContent="Watch Video";
+    watch.onclick=()=>{
+      showPage("homePage");
+      const index=savedVideos.findIndex(v=>v.id===video.id);
+      const cards=document.querySelectorAll(".video-card");
+      if(cards[index])cards[index].scrollIntoView({behavior:"smooth"});
+    };
+
+    card.append(title,watch);
+    results.appendChild(card);
+  });
 });
 
-console.log("TMK VIDEO Firebase Connected!");
-
+console.log("TMK VIDEO Ready!");
 </script>
 
 </body>
