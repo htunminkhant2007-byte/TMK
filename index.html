@@ -227,10 +227,41 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-document.getElementById("addVideoBtn").addEventListener("click", () => {
+
+      
+const videoList = document.getElementById("videoList");
+const videosRef = ref(database, "videos");
+
+// Database ထဲက Video တွေကို ပြသမယ်
+onValue(videosRef, (snapshot) => {
+  videoList.innerHTML = "";
+
+  const videos = [];
+
+  snapshot.forEach((childSnapshot) => {
+    videos.push(childSnapshot.val());
+  });
+
+  videos.reverse().forEach((video) => {
+    const item = document.createElement("div");
+    const heading = document.createElement("h3");
+    heading.textContent = video.title;
+
+    const player = document.createElement("iframe");
+    player.src = "https://www.youtube.com/embed/" + video.youtubeId;
+    player.width = "100%";
+    player.height = "250";
+    player.allowFullscreen = true;
+
+    item.append(heading, player);
+    videoList.appendChild(item);
+  });
+});
+
+// Video အသစ် Database ထဲ သိမ်းမယ်
+document.getElementById("addVideoBtn").addEventListener("click", async () => {
   const title = document.getElementById("videoTitle").value.trim();
   const link = document.getElementById("videoLink").value.trim();
-  const videoList = document.getElementById("videoList");
 
   let videoId = "";
 
@@ -254,21 +285,26 @@ document.getElementById("addVideoBtn").addEventListener("click", () => {
     return;
   }
 
-  const item = document.createElement("div");
-  const heading = document.createElement("h3");
-  heading.textContent = title;
+  if (!auth.currentUser) {
+    alert("Video ထည့်ရန် Login ဝင်ထားပါ။");
+    return;
+  }
 
-  const player = document.createElement("iframe");
-  player.src = "https://www.youtube.com/embed/" + videoId;
-  player.width = "100%";
-  player.height = "250";
-  player.allowFullscreen = true;
+  try {
+    await push(videosRef, {
+      title: title,
+      youtubeId: videoId,
+      uid: auth.currentUser.uid,
+      createdAt: Date.now()
+    });
 
-  item.append(heading, player);
-  videoList.prepend(item);
+    document.getElementById("videoTitle").value = "";
+    document.getElementById("videoLink").value = "";
 
-  document.getElementById("videoTitle").value = "";
-  document.getElementById("videoLink").value = "";
+    alert("Video saved successfully!");
+  } catch (error) {
+    alert("Video သိမ်းမရပါ: " + error.message);
+  }
 });
 console.log("TMK VIDEO Firebase Connected!");
 </script>
