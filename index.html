@@ -9,91 +9,89 @@
 
 <style>
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;background:#08080d;color:white;
-  font-family:Arial,sans-serif;
-}
+html,body{margin:0;width:100%;height:100%;background:#08080d;color:white;font-family:Arial,sans-serif}
+body{overflow:hidden}
 button,input{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
 /* HEADER */
 header{
-  position:sticky;top:0;z-index:20;
-  height:58px;background:#101018;
-  display:flex;align-items:center;
+  position:relative;z-index:20;height:58px;
+  background:#101018;display:flex;align-items:center;
   justify-content:space-between;padding:0 16px;
   border-bottom:1px solid #292936;
 }
 .logo{font-size:23px;font-weight:900;color:#00e5ff}
 .header-search{
   width:42px;height:38px;border:0;border-radius:50%;
-  background:#252535;color:white;font-size:19px;
+  background:#252535;color:white;font-size:22px;
 }
 
-/* PAGE */
-.page{display:none;padding-bottom:80px}
+/* PAGES */
+.page{display:none;height:calc(100dvh - 123px);overflow-y:auto;padding-bottom:10px}
 .page.active{display:block}
 .page-title{padding:18px 16px 8px;font-size:21px}
 .muted{color:#aaa}
 
-/* VIDEO FEED */
+/* FOR YOU FEED */
 .feed{
-  width:100%;max-width:650px;margin:auto;
+  width:100%;height:100%;max-width:650px;
+  margin:auto;overflow-y:auto;
+  scroll-snap-type:y mandatory;
+  overscroll-behavior-y:contain;
+  scrollbar-width:none;
 }
+.feed::-webkit-scrollbar{display:none}
 .video-card{
   position:relative;width:100%;
-  min-height:calc(100svh - 140px);
-  height:calc(100svh - 140px);
-  background:#15151e;
-  margin-bottom:12px;overflow:hidden;
-  border-radius:12px;
-  scroll-snap-align:start;
+  height:100%;min-height:100%;
+  background:#15151e;overflow:hidden;
+  scroll-snap-align:start;scroll-snap-stop:always;
 }
 .video-card iframe{
   width:100%;height:100%;border:0;
-  background:#000;
+  background:#000;display:block;
 }
 .video-overlay{
   position:absolute;left:0;right:0;bottom:0;
-  padding:65px 80px 18px 15px;
-  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  padding:75px 85px 25px 15px;
+  background:linear-gradient(transparent,rgba(0,0,0,.88));
   pointer-events:none;
 }
 .video-title{
   font-size:17px;font-weight:bold;
-  margin-bottom:7px;overflow-wrap:anywhere;
+  margin-bottom:8px;overflow-wrap:anywhere;
 }
 .video-owner{font-size:13px;color:#ddd}
 .video-actions{
-  position:absolute;right:10px;bottom:25px;
+  position:absolute;right:10px;bottom:35px;
   display:flex;flex-direction:column;
-  align-items:center;gap:17px;
+  align-items:center;gap:18px;
 }
 .action-btn{
-  border:0;background:rgba(0,0,0,.5);
+  border:0;background:rgba(0,0,0,.55);
   color:white;width:48px;height:48px;
   border-radius:50%;font-size:23px;
 }
 .action-btn.liked{color:#ff315b}
 .action-label{font-size:11px;text-align:center}
 .video-delete{
+  position:absolute;top:12px;left:12px;
   background:#ed3434;color:white;border:0;
-  padding:7px 10px;border-radius:7px;font-size:12px;
+  padding:8px 12px;border-radius:7px;font-size:12px;
+}
+.feed-hint{
+  position:absolute;top:12px;right:12px;
+  color:#ddd;background:#0008;padding:7px 10px;
+  border-radius:20px;font-size:11px;pointer-events:none;
 }
 
 /* EMPTY */
-.empty{
-  padding:45px 20px;text-align:center;
-  color:#aaa;line-height:1.8;
-}
+.empty{padding:45px 20px;text-align:center;color:#aaa;line-height:1.8}
 
 /* SEARCH */
-.search-box{
-  margin:12px 15px;display:flex;gap:8px;
-}
-.search-box input{flex:1}
+.search-box{margin:12px 15px;display:flex;gap:8px}
 input{
   width:100%;padding:13px;margin:7px 0;
   border-radius:9px;border:1px solid #393948;
@@ -103,8 +101,7 @@ input:focus{border-color:#00d9ee}
 input[type=file]{background:#191923}
 .primary-btn{
   border:0;background:#00d9ee;color:#08080d;
-  padding:12px 17px;border-radius:9px;
-  font-weight:bold;
+  padding:12px 17px;border-radius:9px;font-weight:bold;
 }
 .danger-btn{background:#ed3434;color:white}
 .card{
@@ -112,17 +109,13 @@ input[type=file]{background:#191923}
   border-radius:13px;padding:16px;margin:12px;
 }
 .card h3{margin-top:0}
-#message,#profileMessage{
-  color:#00e5ff;padding:8px 0;
-  overflow-wrap:anywhere;
-}
+#message,#profileMessage{color:#00e5ff;padding:8px 0;overflow-wrap:anywhere}
 
 /* PROFILE */
 .profile-box{text-align:center;padding:20px 10px}
 .profile-photo{
   width:115px;height:115px;border-radius:50%;
-  object-fit:cover;border:3px solid #00e5ff;
-  background:#333;
+  object-fit:cover;border:3px solid #00e5ff;background:#333;
 }
 .profile-name{font-size:22px;color:#00e5ff}
 .profile-email{color:#aaa;overflow-wrap:anywhere}
@@ -137,34 +130,28 @@ input[type=file]{background:#191923}
 /* BOTTOM NAV */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;
-  z-index:30;height:65px;
-  display:flex;justify-content:space-around;
-  align-items:center;background:#111119;
-  border-top:1px solid #30303a;
+  z-index:30;height:65px;display:flex;
+  justify-content:space-around;align-items:center;
+  background:#111119;border-top:1px solid #30303a;
   padding-bottom:env(safe-area-inset-bottom);
 }
 .nav-btn{
   border:0;background:none;color:#aaa;
   display:flex;flex-direction:column;
-  align-items:center;gap:3px;font-size:11px;
-  min-width:55px;
+  align-items:center;gap:3px;font-size:11px;min-width:55px;
 }
 .nav-btn .nav-icon{font-size:22px}
 .nav-btn.active{color:#00e5ff}
 .upload-nav{
   background:#00d9ee;color:#08080d;
   width:43px;height:31px;border-radius:9px;
-  font-size:25px;font-weight:bold;
-  line-height:28px;
+  font-size:25px;font-weight:bold;line-height:28px;
 }
 
-/* RESPONSIVE */
 @media(min-width:700px){
-  .video-card{height:650px;min-height:500px}
-  .feed{padding:12px}
-  .page{padding-bottom:90px}
+  .feed{max-width:480px}
+  .video-card{border-radius:12px}
 }
-footer{text-align:center;color:#777;padding:20px}
 </style>
 </head>
 
@@ -175,7 +162,7 @@ footer{text-align:center;color:#777;padding:20px}
   <button class="header-search" id="searchHeader">⌕</button>
 </header>
 
-<!-- HOME FEED -->
+<!-- HOME / FOR YOU -->
 <section id="homePage" class="page active">
   <div class="feed" id="videoFeed"></div>
 </section>
@@ -202,7 +189,7 @@ footer{text-align:center;color:#777;padding:20px}
   </div>
 </section>
 
-<!-- PROFILE / ACCOUNT -->
+<!-- PROFILE -->
 <section id="profilePage" class="page">
   <h2 class="page-title">👤 My Profile</h2>
 
@@ -222,7 +209,6 @@ footer{text-align:center;color:#777;padding:20px}
         alt="Profile">
       <h3 id="displayName" class="profile-name">TMK User</h3>
       <p id="displayEmail" class="profile-email"></p>
-
       <div class="stats">
         <div><strong id="videoCount">0</strong><span>My Videos</span></div>
       </div>
@@ -231,12 +217,10 @@ footer{text-align:center;color:#777;padding:20px}
     <h3>Change Profile</h3>
     <label>Profile ဓာတ်ပုံ</label>
     <input type="file" id="profilePhotoInput" accept="image/*">
-    <input id="usernameInput" maxlength="30"
-      placeholder="Username အသစ်">
+    <input id="usernameInput" maxlength="30" placeholder="Username အသစ်">
     <button class="primary-btn" id="saveProfileBtn">Save Profile</button>
     <p id="profileMessage"></p>
-    <button class="primary-btn danger-btn" id="logoutBtn"
-      style="width:100%">Logout</button>
+    <button class="primary-btn danger-btn" id="logoutBtn" style="width:100%">Logout</button>
   </div>
 
   <div class="card">
@@ -263,7 +247,7 @@ footer{text-align:center;color:#777;padding:20px}
 </nav>
 
 <script type="module">
-import { initializeApp }
+import {initializeApp}
 from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
 import {
@@ -276,15 +260,15 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
 /* FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
-  authDomain: "tmk-video.firebaseapp.com",
-  databaseURL: "https://tmk-video-default-rtdb.firebaseio.com",
-  projectId: "tmk-video",
-  storageBucket: "tmk-video.firebasestorage.app",
-  messagingSenderId: "763253894514",
-  appId: "1:763253894514:web:5b671edd58fe2d312381eb",
-  measurementId: "G-NZXE0Y822B"
+const firebaseConfig={
+  apiKey:"AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
+  authDomain:"tmk-video.firebaseapp.com",
+  databaseURL:"https://tmk-video-default-rtdb.firebaseio.com",
+  projectId:"tmk-video",
+  storageBucket:"tmk-video.firebasestorage.app",
+  messagingSenderId:"763253894514",
+  appId:"1:763253894514:web:5b671edd58fe2d312381eb",
+  measurementId:"G-NZXE0Y822B"
 };
 
 const app=initializeApp(firebaseConfig);
@@ -297,18 +281,27 @@ let profileData={};
 let selectedPhoto=null;
 let currentProfileRef=null;
 let currentProfileCallback=null;
+let feedObserver=null;
 
 /* PAGE NAVIGATION */
 function showPage(pageId){
   document.querySelectorAll(".page").forEach(page=>{
     page.classList.remove("active");
   });
+
   document.getElementById(pageId).classList.add("active");
 
   document.querySelectorAll(".nav-btn").forEach(btn=>{
     btn.classList.toggle("active",btn.dataset.page===pageId);
   });
+
   window.scrollTo(0,0);
+
+  if(pageId==="homePage"){
+    setTimeout(()=>observeFeedVideos(),150);
+  }else{
+    pauseAllVideos();
+  }
 }
 
 document.querySelectorAll(".nav-btn").forEach(btn=>{
@@ -332,6 +325,7 @@ document.getElementById("registerBtn").onclick=async()=>{
     message.textContent="Email နဲ့ Password ထည့်ပါ။";
     return;
   }
+
   try{
     await createUserWithEmailAndPassword(auth,email,password);
     message.textContent="Register successful!";
@@ -349,6 +343,7 @@ document.getElementById("loginBtn").onclick=async()=>{
     message.textContent="Email နဲ့ Password ထည့်ပါ။";
     return;
   }
+
   try{
     await signInWithEmailAndPassword(auth,email,password);
     message.textContent="Login successful!";
@@ -369,6 +364,7 @@ document.getElementById("logoutBtn").onclick=async()=>{
 /* PROFILE */
 function renderProfile(user){
   const photo=profileData.photoData||"";
+
   document.getElementById("profilePhoto").src=
     photo||"https://placehold.co/200x200/252535/00e5ff?text=TMK";
 
@@ -387,6 +383,7 @@ onAuthStateChanged(auth,user=>{
   if(currentProfileRef&&currentProfileCallback){
     off(currentProfileRef,"value",currentProfileCallback);
   }
+
   currentProfileRef=null;
   currentProfileCallback=null;
   profileData={};
@@ -396,10 +393,12 @@ onAuthStateChanged(auth,user=>{
     document.getElementById("profileBox").classList.remove("hidden");
 
     currentProfileRef=ref(database,"users/"+user.uid);
+
     currentProfileCallback=snapshot=>{
       profileData=snapshot.val()||{};
       renderProfile(user);
     };
+
     onValue(currentProfileRef,currentProfileCallback,error=>{
       document.getElementById("profileMessage").textContent=
         "Profile error: "+error.message;
@@ -409,6 +408,7 @@ onAuthStateChanged(auth,user=>{
     document.getElementById("profileBox").classList.add("hidden");
     document.getElementById("message").textContent="Not logged in";
   }
+
   renderVideos();
 });
 
@@ -422,6 +422,7 @@ document.getElementById("profilePhotoInput").onchange=async event=>{
     event.target.value="";
     return;
   }
+
   if(file.size>5*1024*1024){
     alert("ဓာတ်ပုံ 5MB ထက် မကြီးရပါ။");
     event.target.value="";
@@ -442,12 +443,15 @@ document.getElementById("profilePhotoInput").onchange=async event=>{
     const scale=Math.min(1,400/Math.max(image.width,image.height));
     canvas.width=Math.round(image.width*scale);
     canvas.height=Math.round(image.height*scale);
-    canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+    canvas.getContext("2d").drawImage(
+      image,0,0,canvas.width,canvas.height
+    );
 
     selectedPhoto=canvas.toDataURL("image/jpeg",0.65);
     document.getElementById("profilePhoto").src=selectedPhoto;
     document.getElementById("profileMessage").textContent=
       "ဓာတ်ပုံရွေးပြီးပါပြီ။ Save Profile နှိပ်ပါ။";
+
   }catch(error){
     alert("ဓာတ်ပုံဖတ်မရပါ။");
   }finally{
@@ -458,6 +462,7 @@ document.getElementById("profilePhotoInput").onchange=async event=>{
 /* SAVE PROFILE */
 document.getElementById("saveProfileBtn").onclick=async()=>{
   const user=auth.currentUser;
+
   if(!user){
     alert("Login အရင်ဝင်ပါ။");
     return;
@@ -470,6 +475,7 @@ document.getElementById("saveProfileBtn").onclick=async()=>{
     msg.textContent="Username ထည့်ပေးပါ။";
     return;
   }
+
   if(username.length>30){
     msg.textContent="Username အရှည်ဆုံး 30 လုံးသာ ရပါမယ်။";
     return;
@@ -485,28 +491,98 @@ document.getElementById("saveProfileBtn").onclick=async()=>{
 
   try{
     msg.textContent="Saving...";
+
     await set(ref(database,"users/"+user.uid),{
       username:username,
       photoData:photoData,
       updatedAt:Date.now()
     });
+
     selectedPhoto=null;
     document.getElementById("profilePhotoInput").value="";
     msg.textContent="Profile သိမ်းဆည်းပြီးပါပြီ။";
+
   }catch(error){
     msg.textContent="သိမ်းမရပါ: "+error.message;
   }
 };
 
-/* LIKE STORAGE - THIS DEVICE ONLY */
+/* LOCAL LIKE */
 function getLikes(){
-  try{return JSON.parse(localStorage.getItem("tmkLikes")||"{}");}
-  catch(e){return {};}
+  try{
+    return JSON.parse(localStorage.getItem("tmkLikes")||"{}");
+  }catch(e){
+    return {};
+  }
 }
+
 function saveLike(id,liked){
   const likes=getLikes();
   likes[id]=liked;
   localStorage.setItem("tmkLikes",JSON.stringify(likes));
+}
+
+/* PAUSE ALL YOUTUBE VIDEOS */
+function pauseAllVideos(){
+  document.querySelectorAll(".video-card iframe").forEach(iframe=>{
+    try{
+      iframe.contentWindow.postMessage(
+        JSON.stringify({
+          event:"command",
+          func:"pauseVideo",
+          args:[]
+        }),
+        "*"
+      );
+    }catch(error){}
+  });
+}
+
+/* FOR YOU AUTO PLAY */
+function observeFeedVideos(){
+  if(feedObserver){
+    feedObserver.disconnect();
+  }
+
+  const feed=document.getElementById("videoFeed");
+
+  feedObserver=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const iframe=entry.target.querySelector("iframe");
+      if(!iframe)return;
+
+      if(entry.isIntersecting&&entry.intersectionRatio>=0.65){
+        try{
+          iframe.contentWindow.postMessage(
+            JSON.stringify({
+              event:"command",
+              func:"playVideo",
+              args:[]
+            }),
+            "*"
+          );
+        }catch(error){}
+      }else{
+        try{
+          iframe.contentWindow.postMessage(
+            JSON.stringify({
+              event:"command",
+              func:"pauseVideo",
+              args:[]
+            }),
+            "*"
+          );
+        }catch(error){}
+      }
+    });
+  },{
+    root:feed,
+    threshold:[0,0.65,0.9]
+  });
+
+  feed.querySelectorAll(".video-card").forEach(card=>{
+    feedObserver.observe(card);
+  });
 }
 
 /* VIDEO FEED */
@@ -521,18 +597,25 @@ function renderVideos(){
         <p>ဗီဒီယို မရှိသေးပါ။</p>
         <p>Upload ကိုနှိပ်ပြီး Video တင်နိုင်ပါတယ်။</p>
       </div>`;
+    return;
   }
+
+  const likes=getLikes();
 
   savedVideos.forEach(video=>{
     const card=document.createElement("article");
     card.className="video-card";
 
     const iframe=document.createElement("iframe");
-    iframe.src="https://www.youtube.com/embed/"+
+
+    iframe.src=
+      "https://www.youtube.com/embed/"+
       encodeURIComponent(video.youtubeId)+
-      "?playsinline=1&rel=0";
+      "?playsinline=1&rel=0&enablejsapi=1&autoplay=1&mute=1";
+
     iframe.title=video.title||"TMK Video";
-    iframe.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.allow=
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
     iframe.allowFullscreen=true;
 
     const overlay=document.createElement("div");
@@ -540,7 +623,7 @@ function renderVideos(){
 
     const title=document.createElement("div");
     title.className="video-title";
-    title.textContent=video.title||"TMK Video";
+    title.textContent=video.title||"TMK VIDEO";
 
     const owner=document.createElement("div");
     owner.className="video-owner";
@@ -551,15 +634,15 @@ function renderVideos(){
     const actions=document.createElement("div");
     actions.className="video-actions";
 
-    const liked=!!getLikes()[video.id];
-
+    /* LIKE */
     const likeWrap=document.createElement("div");
     const likeBtn=document.createElement("button");
-    likeBtn.className="action-btn"+(liked?" liked":"");
-    likeBtn.textContent="♥";
     const likeLabel=document.createElement("div");
+
+    likeBtn.className="action-btn"+(likes[video.id]?" liked":"");
+    likeBtn.textContent="♥";
     likeLabel.className="action-label";
-    likeLabel.textContent=liked?"Liked":"Like";
+    likeLabel.textContent=likes[video.id]?"Liked":"Like";
 
     likeBtn.onclick=()=>{
       const next=!getLikes()[video.id];
@@ -567,32 +650,42 @@ function renderVideos(){
       likeBtn.classList.toggle("liked",next);
       likeLabel.textContent=next?"Liked":"Like";
     };
+
     likeWrap.append(likeBtn,likeLabel);
 
+    /* COMMENT */
     const commentWrap=document.createElement("div");
     const commentBtn=document.createElement("button");
+    const commentLabel=document.createElement("div");
+
     commentBtn.className="action-btn";
     commentBtn.textContent="💬";
-    const commentLabel=document.createElement("div");
     commentLabel.className="action-label";
     commentLabel.textContent="Comment";
+
     commentBtn.onclick=()=>{
       window.open(
-        "https://www.youtube.com/watch?v="+encodeURIComponent(video.youtubeId),
+        "https://www.youtube.com/watch?v="+
+        encodeURIComponent(video.youtubeId),
         "_blank"
       );
     };
+
     commentWrap.append(commentBtn,commentLabel);
 
+    /* SHARE */
     const shareWrap=document.createElement("div");
     const shareBtn=document.createElement("button");
+    const shareLabel=document.createElement("div");
+
     shareBtn.className="action-btn";
     shareBtn.textContent="↗";
-    const shareLabel=document.createElement("div");
     shareLabel.className="action-label";
     shareLabel.textContent="Share";
+
     shareBtn.onclick=async()=>{
       const url="https://www.youtube.com/watch?v="+video.youtubeId;
+
       try{
         if(navigator.share){
           await navigator.share({title:video.title,url:url});
@@ -604,43 +697,57 @@ function renderVideos(){
         }
       }catch(error){}
     };
+
     shareWrap.append(shareBtn,shareLabel);
 
     actions.append(likeWrap,commentWrap,shareWrap);
-
     card.append(iframe,overlay,actions);
 
+    /* DELETE OWN VIDEO */
     if(auth.currentUser&&auth.currentUser.uid===video.uid){
       const del=document.createElement("button");
       del.className="video-delete";
       del.textContent="Delete";
-      del.style.position="absolute";
-      del.style.top="12px";
-      del.style.left="12px";
+
       del.onclick=async()=>{
         if(!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား။"))return;
+
         try{
           await remove(ref(database,"videos/"+video.id));
         }catch(error){
           alert("ဖျက်မရပါ: "+error.message);
         }
       };
+
       card.appendChild(del);
     }
+
     feed.appendChild(card);
   });
 
-  if(auth.currentUser)renderProfile(auth.currentUser);
+  if(auth.currentUser){
+    renderProfile(auth.currentUser);
+  }
+
+  if(document.getElementById("homePage").classList.contains("active")){
+    observeFeedVideos();
+  }
 }
 
 /* LOAD VIDEOS */
 onValue(videosRef,snapshot=>{
   savedVideos=[];
+
   snapshot.forEach(child=>{
-    savedVideos.push({id:child.key,...child.val()});
+    savedVideos.push({
+      id:child.key,
+      ...child.val()
+    });
   });
+
   savedVideos.reverse();
   renderVideos();
+
 },error=>{
   document.getElementById("message").textContent=
     "Video loading error: "+error.message;
@@ -651,6 +758,7 @@ function extractYouTubeId(link){
   try{
     const url=new URL(link);
     let id="";
+
     if(url.hostname==="youtu.be"){
       id=url.pathname.split("/").filter(Boolean)[0]||"";
     }else if(
@@ -662,7 +770,9 @@ function extractYouTubeId(link){
       id=url.searchParams.get("v")||
         url.pathname.split("/").filter(Boolean).pop()||"";
     }
+
     return /^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
+
   }catch(error){
     return "";
   }
@@ -679,6 +789,7 @@ document.getElementById("addVideoBtn").onclick=async()=>{
     msg.textContent="Video တင်ရန် Login ဝင်ပါ။";
     return;
   }
+
   if(!title||!videoId){
     msg.textContent="Video အမည်နဲ့ YouTube Link မှန်မှန်ထည့်ပါ။";
     return;
@@ -686,16 +797,20 @@ document.getElementById("addVideoBtn").onclick=async()=>{
 
   try{
     msg.textContent="Video သိမ်းဆည်းနေပါတယ်...";
+
     await push(videosRef,{
       title:title,
       youtubeId:videoId,
       uid:auth.currentUser.uid,
       createdAt:Date.now()
     });
+
     document.getElementById("videoTitle").value="";
     document.getElementById("videoLink").value="";
     msg.textContent="Video တင်ပြီးပါပြီ။";
+
     showPage("homePage");
+
   }catch(error){
     msg.textContent="Video သိမ်းမရပါ: "+error.message;
   }
@@ -705,13 +820,14 @@ document.getElementById("addVideoBtn").onclick=async()=>{
 document.getElementById("searchInput").addEventListener("input",event=>{
   const term=event.target.value.trim().toLowerCase();
   const results=document.getElementById("searchResults");
+
   results.innerHTML="";
+
+  if(!term)return;
 
   const matches=savedVideos.filter(video=>
     (video.title||"").toLowerCase().includes(term)
   );
-
-  if(!term)return;
 
   if(matches.length===0){
     results.innerHTML='<div class="empty">ရှာမတွေ့ပါ။</div>';
@@ -728,11 +844,21 @@ document.getElementById("searchInput").addEventListener("input",event=>{
     const watch=document.createElement("button");
     watch.className="primary-btn";
     watch.textContent="Watch Video";
+
     watch.onclick=()=>{
       showPage("homePage");
+
       const index=savedVideos.findIndex(v=>v.id===video.id);
-      const cards=document.querySelectorAll(".video-card");
-      if(cards[index])cards[index].scrollIntoView({behavior:"smooth"});
+
+      setTimeout(()=>{
+        const cards=document.querySelectorAll(".video-card");
+        if(cards[index]){
+          cards[index].scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+        }
+      },200);
     };
 
     card.append(title,watch);
@@ -740,7 +866,7 @@ document.getElementById("searchInput").addEventListener("input",event=>{
   });
 });
 
-console.log("TMK VIDEO Ready!");
+console.log("TMK VIDEO For You Feed Ready!");
 </script>
 
 </body>
