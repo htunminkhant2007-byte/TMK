@@ -888,19 +888,20 @@ window.addEventListener("pagehide",()=>{
  clearListeners();
  if(commentUnsubscribe)commentUnsubscribe();
 });
+console.log("TMK VIDEO ready");
 
-console.log("TMK VIDEO Ready");
-</script>
-
-<script>
-if("serviceWorker" in navigator){
- window.addEventListener("load",()=>{
-  navigator.serviceWorker.register("./sw.js")
-   .then(reg=>console.log("TMK Service Worker Ready",reg.scope))
-   .catch(err=>console.error("Service Worker Error",err));
- });
+/* SERVICE WORKER */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(registration => {
+        console.log("TMK Service Worker Ready:", registration.scope);
+      })
+      .catch(error => {
+        console.error("Service Worker Error:", error);
+      });
+  });
 }
 </script>
-
 </body>
 </html>
