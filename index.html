@@ -77,6 +77,8 @@ const firebaseConfig={apiKey:"AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",authDomai
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_kqIXSOVr4uDQOHgS29oH_A_YOqnKxR4";*/
 const BUCKET_NAME="tmk-videos";
 const UPLOAD_FUNCTION_URL=SUPABASE_URL+"/functions/v1/tmk-video-upload";
+const BUCKET_NAME="tmk-videos";
+const UPLOAD_FUNCTION_URL=SUPABASE_URL+"/functions/v1/tmk-video-upload";
 
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getDatabase(app);
 const $=id=>document.getElementById(id);
