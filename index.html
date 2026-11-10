@@ -744,7 +744,12 @@ function renderFeed(videos){
    </div>
 
    <div class="video-info">
-    <strong>@${esc(v.username||"User")}</strong>
+<strong>@${esc(v.username||"User")}</strong>
+
+<div class="music-label">
+📅 တင်ခဲ့သည့်ရက်စွဲ:
+${esc(formatUploadDate(v.createdAt))}
+</div>
     <p>${esc(v.title||"TMK VIDEO")}</p>
     <p>${esc(v.caption||"")}</p>
     <div class="music-label">♫ Original sound - TMK VIDEO</div>
@@ -1836,6 +1841,25 @@ if("serviceWorker"in navigator){
 
 console.log("TMK VIDEO ready");
 
+/* VIDEO UPLOAD DATE FORMAT */
+function formatUploadDate(timestamp){
+  if(!timestamp) return "ရက်စွဲမသိပါ";
+
+  const date = new Date(Number(timestamp));
+
+  if(isNaN(date.getTime())){
+    return "ရက်စွဲမသိပါ";
+  }
+
+  return new Intl.DateTimeFormat("my-MM",{
+    year:"numeric",
+    month:"long",
+    day:"numeric",
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:true
+  }).format(date);
+}
 </script>
 </body>
 </html>
