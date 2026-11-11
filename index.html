@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="my">
 <head>
@@ -42,20 +41,19 @@ button{cursor:pointer;border:0}
  left:50%;
  transform:translate(-50%,-50%);
  z-index:9;
- width:64px;
- height:64px;
+ width:68px;
+ height:68px;
  border-radius:50%;
  background:#0009;
  color:#fff;
- font-size:32px;
+ font-size:34px;
  display:flex;
  align-items:center;
  justify-content:center;
  border:2px solid #ffffffaa;
- opacity:.9;
  cursor:pointer;
 }
-.video-play-toggle.playing{opacity:.35}
+.video-play-toggle.hidden{display:none!important}
 .video-play-toggle:active{
  transform:translate(-50%,-50%) scale(.92);
 }
@@ -628,15 +626,19 @@ async function followUser(uid,button){
  finally{button.disabled=false;}
 }
 
-/* VIDEO PLAY BUTTON */
+/* VIDEO PLAY / PAUSE BUTTON — UPDATED */
 function updateVideoPlayButton(video){
  const button=video.closest(".video-card")?.querySelector("[data-play-toggle]");
  if(!button)return;
 
  const playing=!video.paused&&!video.ended;
- button.textContent=playing?"Ⅱ":"▶";
- button.classList.toggle("playing",playing);
- button.setAttribute("aria-label",playing?"Pause video":"Play video");
+
+ if(playing){
+  button.classList.add("hidden");
+ }else{
+  button.textContent="▶";
+  button.classList.remove("hidden");
+ }
 }
 
 function setupVideoPlayButtons(){
@@ -644,7 +646,21 @@ function setupVideoPlayButtons(){
   const video=button.closest(".video-card")?.querySelector("video");
   if(!video)return;
 
-  button.onclick=()=>{
+  /* ▶ ခလုတ်နှိပ်လျှင် Video ပြန်ဖွင့်ရန် */
+  button.onclick=e=>{
+   e.stopPropagation();
+
+   if(video.paused){
+    video.dataset.userPaused="false";
+    video.play().catch(e=>{
+     console.warn("Video play error:",e);
+     updateVideoPlayButton(video);
+    });
+   }
+  };
+
+  /* Video ကိုနှိပ်လျှင် Play / Pause ပြောင်းရန် */
+  video.addEventListener("click",()=>{
    if(video.paused){
     video.dataset.userPaused="false";
     video.play().catch(e=>console.warn("Video play error:",e));
@@ -652,8 +668,7 @@ function setupVideoPlayButtons(){
     video.dataset.userPaused="true";
     video.pause();
    }
-   updateVideoPlayButton(video);
-  };
+  });
 
   video.addEventListener("play",()=>updateVideoPlayButton(video));
   video.addEventListener("pause",()=>updateVideoPlayButton(video));
@@ -682,7 +697,7 @@ function renderFeed(videos){
   const media=v.youtubeId
    ?`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtubeId)}?playsinline=1&mute=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
    :`<video data-feed-video src="${esc(v.videoUrl||"")}" playsinline loop muted preload="metadata"></video>
-     <button type="button" class="video-play-toggle" data-play-toggle="${id}" aria-label="Play video">▶</button>`;
+     <button type="button" class="video-play-toggle hidden" data-play-toggle="${id}" aria-label="Play video">▶</button>`;
 
   return `
   <article class="video-card" data-card="${id}">
