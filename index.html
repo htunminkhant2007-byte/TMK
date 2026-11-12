@@ -1313,7 +1313,23 @@ async function uploadVideoFile(file, title, caption) {
     createdAt: Date.now()
   };
 
-  await push(ref(db, "videos"), data);
+  try {
+  const videoRef = await push(ref(db, "videos"), data);
+
+  if (!videoRef.key) {
+    throw new Error("Firebase မှာ Video သိမ်းမရပါ");
+  }
+
+  console.log("Firebase Video Saved:", videoRef.key);
+
+} catch (error) {
+  console.error("Firebase Save Error:", error);
+
+  throw new Error(
+    "B2 မှာ Video တင်ပြီးပါပြီ။ Firebase သိမ်းမရပါ: " +
+    error.message
+  );
+}
 
   $("fileStatus").textContent = "Upload Complete!";
 }
