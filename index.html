@@ -1134,20 +1134,7 @@ async function uploadVideoFile(file,title,caption){
   createdAt:Date.now()  
  };  
   
- await push(ref(db,"videos"),data);  
- $("fileStatus").textContent="Upload Complete!";  
-}  
-  
-$("uploadFileBtn").onclick=async()=>{  
- $("uploadFileBtn").disabled=true;  
-  
- try{  
-  await uploadVideoFile(  
-   $("videoFile").files[0],  
-   $("videoTitle").value.trim(),  
-   $("videoCaption").value.trim()  
-  );  
-  
+ 
   alert("Video တင်ပြီးပါပြီ ❤️");  
   $("videoFile").value="";  
   $("videoTitle").value="";  
