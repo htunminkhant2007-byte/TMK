@@ -1427,13 +1427,19 @@ function setCameraStatus(message){
 }
 
 /* LOAD MEDIAPIPE FACE DETECTOR */
-async function loadFaceDetector(){
+
+
+  async function loadFaceDetector(){
  if(faceDetector)return faceDetector;
  if(faceDetectorLoading)throw Error("Face tracking စတင်နေပါသည်");
 
  faceDetectorLoading=true;
 
  try{
+  const {FaceDetector,FilesetResolver}=await import(
+   "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm"
+  );
+
   const vision=await FilesetResolver.forVisionTasks(
    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
   );
