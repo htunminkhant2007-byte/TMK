@@ -665,23 +665,516 @@ $("uploadFileBtn").onclick=async()=>{
  button.disabled=true;
  try{
   await uploadVideoFile($("videoFile").files[0],$("videoTitle").value.trim(),$("videoCaption").value.trim());
-  alert("Video တင်ပြီးပါပြီ ❤️");
-  $("videoFile").value="";
-  $("videoTitle").value="";
-  $("videoCaption").value="";
-  showPage("homePage");
- }catch(e){
-  $("fileStatus").textContent=e.message;
-  alert(e.message);
- }finally{button.disabled=false;}
+    alert("Video တင်ပြီးပါပြီ ❤️");
+    $("videoFile").value = "";
+    $("videoTitle").value = "";
+    $("videoCaption").value = "";
+    showPage("homePage");
+
+  } catch (e) {
+    $("fileStatus").textContent = e.message;
+    alert(e.message);
+
+  } finally {
+    $("uploadFileBtn").disabled = false;
+  }
 };
 
+/* CAMERA AND FACE TRACKING */
+const camera=$("tmkCamera");
+const preview=$("tmkPreview");
+const cameraScreen=$("tmkCameraScreen");
+
+let currentEffect="none";
+let torchOn=false;
+let cameraZoom=1;
+let currentSticker="";
+let faceDetector=null;
+let faceTracking=false;
+let faceLoopId=0;
+let lastFaceDetect=0;
+let trackedFace=null;
+let faceDetectorLoading=false;
+
+function setCameraStatus(message){
+ $("cameraStatus").textContent=message;
+ $("cameraLiveStatus").textContent=message;
+}
+
+/* LOAD MEDIAPIPE FACE DETECTOR */
+async function loadFaceDetector(){
+ if(faceDetector)return faceDetector;
+ if(faceDetectorLoading)throw Error("Face tracking စတင်နေပါသည်");
+
+ faceDetectorLoading=true;
+
+ try{
+  const vision=await FilesetResolver.forVisionTasks(
+   "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+  );
+
+  faceDetector=await FaceDetector.createFromOptions(vision,{
+   baseOptions:{
+    modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+    delegate:"CPU"
+   },
+   runningMode:"VIDEO",
+   minDetectionConfidence:0.55
+  });
+
+  return faceDetector;
+ }finally{faceDetectorLoading=false;}
+}
+
+/* STICKER POSITION — FACE TRACKING */
+function positionTrackedSticker(){
+ const el=$("tmkStickerOverlay");
+
+ if(!faceTracking||!trackedFace||!currentSticker||!camera.videoWidth){
+  el.style.display="none";
+  return;
+ }
+
+ const box=trackedFace;
+ const vw=camera.videoWidth;
+ const vh=camera.videoHeight;
+ const rect=camera.getBoundingClientRect();
+
+ const scale=Math.max(rect.width/vw,rect.height/vh);
+ const cropX=(vw*scale-rect.width)/2;
+ const cropY=(vh*scale-rect.height)/2;
+
+ let cx=(box.originX+box.width/2)*scale-cropX;
+ let cy=(box.originY+box.height*.12)*scale-cropY;
+
+ if(facing==="user")cx=rect.width-cx;
+
+ cx=(cx-rect.width/2)*cameraZoom+rect.width/2;
+ cy=(cy-rect.height/2)*cameraZoom+rect.height/2;
+
+ const size=Math.max(34,Math.min(112,box.width*scale*.75));
+
+ el.style.position="absolute";
+ el.style.display="block";
+ el.style.left=cx+"px";
+ el.style.top=cy+"px";
+ el.style.right="auto";
+ el.style.width="auto";
+ el.style.transform="translate(-50%,-50%)";
+ el.style.fontSize=size+"px";
+ el.textContent=currentSticker;
+}
+
+/* FACE TRACKING LOOP */
+function faceTrackingLoop(){
+ if(!faceTracking||!cameraStream)return;
+
+ const now=performance.now();
+
+ if(now-lastFaceDetect>90&&camera.readyState>=2&&faceDetector){
+  lastFaceDetect=now;
+
+  try{
+   const result=faceDetector.detectForVideo(camera,now);
+   trackedFace=result.detections?.[0]?.boundingBox||null;
+   positionTrackedSticker();
+  }catch(e){console.warn("Face detection:",e);}
+ }
+
+ faceLoopId=requestAnimationFrame(faceTrackingLoop);
+}
+
+/* FACE TRACK BUTTON */
+$("tmkFaceTrack").onclick=async()=>{
+ if(faceTracking){
+  faceTracking=false;
+  cancelAnimationFrame(faceLoopId);
+  trackedFace=null;
+
+  $("tmkFaceTrack").classList.remove("active");
+  $("tmkFaceTrack").textContent="🎯 Face Track: OFF";
+
+  const el=$("tmkStickerOverlay");
+  el.style.display=currentSticker?"block":"none";
+  el.style.left="50%";
+  el.style.top="24%";
+  el.style.right="auto";
+  el.style.transform="translate(-50%,-50%)";
+
+  setCameraStatus("Face Tracking ပိတ်ထားပါသည်");
+  return;
+ }
+
+ try{
+  setCameraStatus("Face Tracking Model ဖွင့်နေပါသည်...");
+  await loadFaceDetector();
+
+  faceTracking=true;
+  $("tmkFaceTrack").classList.add("active");
+  $("tmkFaceTrack").textContent="🎯 Face Track: ON";
+  faceLoopId=requestAnimationFrame(faceTrackingLoop);
+  setCameraStatus("မျက်နှာကို လိုက်ပြီး Sticker တပ်ပေးနေပါသည်");
+ }catch(e){
+  setCameraStatus("Face Tracking မရပါ: "+e.message);
+  alert("Face Tracking Model မဖွင့်နိုင်ပါ။ Internet ချိတ်ဆက်ပြီး HTTPS ဖြင့် ပြန်စမ်းပါ။");
+ }
+};
+
+/* CAMERA EFFECTS */
+function applyCameraEffect(effect){
+ currentEffect=effect;
+ camera.style.filter=effect;
+
+ document.querySelectorAll("#tmkEffectList button").forEach(b=>{
+  b.classList.toggle("active",b.dataset.effect===effect);
+ });
+}
+
+$("tmkEffectList").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-effect]");
+ if(b)applyCameraEffect(b.dataset.effect);
+});
+
+/* CAMERA ZOOM */
+function updateCameraZoom(value){
+ cameraZoom=Math.max(1,Math.min(3,Number(value)||1));
+ $("tmkZoom").value=cameraZoom;
+ $("tmkZoomValue").textContent=cameraZoom.toFixed(1)+"×";
+
+ camera.style.transform=
+  (facing==="user"?"scaleX(-1) ":"")+
+  `scale(${cameraZoom})`;
+
+ if(faceTracking)positionTrackedSticker();
+}
+
+$("tmkZoom").addEventListener("input",e=>{
+ updateCameraZoom(e.target.value);
+});
+
+/* STICKERS */
+$("tmkStickerList").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-sticker]");
+ if(!b)return;
+
+ currentSticker=b.dataset.sticker;
+ $("tmkStickerOverlay").textContent=currentSticker;
+
+ if(faceTracking){
+  positionTrackedSticker();
+ }else{
+  const el=$("tmkStickerOverlay");
+  el.style.display=currentSticker?"block":"none";
+  el.style.left="50%";
+  el.style.top="24%";
+  el.style.right="auto";
+  el.style.transform="translate(-50%,-50%)";
+  el.style.fontSize="76px";
+ }
+
+ document.querySelectorAll("#tmkStickerList button").forEach(x=>{
+  x.classList.toggle("active",x===b);
+ });
+});
+
+/* OPEN AND CLOSE CAMERA */
+$("tmkOpenCamera").onclick=async()=>{
+ cameraScreen.classList.add("open");
+ await startCamera();
+};
+
+$("tmkCloseCamera").onclick=()=>{
+ if(recording)stopRecording();
+ stopCamera();
+ cameraScreen.classList.remove("open");
+};
+
+function stopCamera(){
+ faceTracking=false;
+ cancelAnimationFrame(faceLoopId);
+ trackedFace=null;
+
+ $("tmkFaceTrack").classList.remove("active");
+ $("tmkFaceTrack").textContent="🎯 Face Track: OFF";
+ $("tmkStickerOverlay").style.display="none";
+
+ if(cameraStream){
+  cameraStream.getTracks().forEach(t=>t.stop());
+  cameraStream=null;
+ }
+
+ camera.srcObject=null;
+ torchOn=false;
+ $("tmkFlash").textContent="⚡ မီး";
+}
+
+/* SWITCH CAMERA */
+$("tmkSwitchCamera").onclick=async()=>{
+ facing=facing==="user"?"environment":"user";
+ torchOn=false;
+ await startCamera();
+};
+
+/* START CAMERA */
+async function startCamera(){
+ try{
+  if(!navigator.mediaDevices?.getUserMedia){
+   throw Error("HTTPS Website မှာသာ Camera ဖွင့်နိုင်ပါတယ်");
+  }
+
+  if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());
+
+  cameraStream=await navigator.mediaDevices.getUserMedia({
+   video:{
+    facingMode:{ideal:facing},
+    width:{ideal:1080},
+    height:{ideal:1920}
+   },
+   audio:true
+  });
+
+  camera.srcObject=cameraStream;
+  camera.style.filter=currentEffect;
+  updateCameraZoom(cameraZoom);
+  await camera.play();
+  setCameraStatus("Camera အသင့်ဖြစ်ပါပြီ");
+ }catch(e){
+  setCameraStatus("Camera Error: "+e.message);
+  alert("Camera ဖွင့်မရပါ။ Browser Permission ကို Allow လုပ်ပြီး HTTPS နဲ့ဖွင့်ပါ။");
+ }
+}
+
+/* FLASH */
+$("tmkFlash").onclick=async()=>{
+ if(!cameraStream)return;
+
+ const track=cameraStream.getVideoTracks()[0];
+ const caps=track.getCapabilities?.();
+
+ if(!caps?.torch){
+  setCameraStatus("ဒီကင်မရာမှာ Flash မထောက်ပံ့ပါ");
+  return;
+ }
+
+ try{
+  torchOn=!torchOn;
+  await track.applyConstraints({advanced:[{torch:torchOn}]});
+  $("tmkFlash").textContent=torchOn?"⚡ မီးပိတ်":"⚡ မီး";
+ }catch(e){
+  torchOn=false;
+  setCameraStatus("Flash မဖွင့်နိုင်ပါ");
+ }
+};
+
+/* RECORD BUTTONS */
+$("tmkRecord").onclick=startRecording;
+$("tmkStop").onclick=stopRecording;
+
+/* RECORD VIDEO WITH EFFECT AND STICKER */
+function startRecording(){
+ if(!cameraStream)return alert("Camera အရင်ဖွင့်ပါ");
+ if(recording)return;
+
+ if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){
+  return alert("ဒီ Browser မှာ Video Recording မထောက်ပံ့ပါ");
+ }
+
+ const w=camera.videoWidth||720;
+ const h=camera.videoHeight||1280;
+ const canvas=document.createElement("canvas");
+ canvas.width=w;
+ canvas.height=h;
+ const ctx=canvas.getContext("2d");
+
+ recording=true;
+ $("tmkRecord").classList.add("recording");
+
+ function draw(){
+  if(!recording)return;
+
+  ctx.save();
+  if(facing==="user"){
+   ctx.translate(w,0);
+   ctx.scale(-1,1);
+  }
+
+  ctx.filter=currentEffect;
+  const dw=w*cameraZoom;
+  const dh=h*cameraZoom;
+
+  ctx.drawImage(camera,(w-dw)/2,(h-dh)/2,dw,dh);
+  ctx.restore();
+
+  if(currentSticker){
+   ctx.save();
+   ctx.textAlign="center";
+
+   if(faceTracking&&trackedFace){
+    const b=trackedFace;
+    let x=b.originX+b.width/2;
+    let y=b.originY+b.height*.12;
+    if(facing==="user")x=w-x;
+    x=(x-w/2)*cameraZoom+w/2;
+    y=(y-h/2)*cameraZoom+h/2;
+    ctx.font=`${Math.round(Math.max(48,Math.min(180,b.width*.75)))}px sans-serif`;
+    ctx.fillText(currentSticker,x,y);
+   }else{
+    ctx.font=`${Math.round(w*.16)}px sans-serif`;
+    ctx.fillText(currentSticker,w/2,h*.28);
+   }
+
+   ctx.restore();
+  }
+
+  animationId=requestAnimationFrame(draw);
+ }
+
+ draw();
+ canvasStream=canvas.captureStream(30);
+
+ cameraStream.getAudioTracks().forEach(t=>canvasStream.addTrack(t));
+
+ let opts={};
+ if(MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")){
+  opts.mimeType="video/webm;codecs=vp8,opus";
+ }else if(MediaRecorder.isTypeSupported("video/webm")){
+  opts.mimeType="video/webm";
+ }
+
+ try{
+  recorder=new MediaRecorder(canvasStream,opts);
+ }catch(e){
+  recording=false;
+  cancelAnimationFrame(animationId);
+  canvasStream.getTracks().forEach(t=>t.stop());
+  canvasStream=null;
+  alert("Recording စတင်မရပါ: "+e.message);
+  return;
+ }
+
+ const chunks=[];
+
+ recorder.ondataavailable=e=>{
+  if(e.data&&e.data.size)chunks.push(e.data);
+ };
+
+ recorder.onerror=e=>{
+  setCameraStatus("Recording Error");
+ };
+
+ recorder.onstop=()=>{
+  recordedBlob=new Blob(chunks,{type:recorder.mimeType||"video/webm"});
+
+  if(recordedUrl)URL.revokeObjectURL(recordedUrl);
+  recordedUrl=URL.createObjectURL(recordedBlob);
+
+  preview.src=recordedUrl;
+  preview.load();
+
+  $("tmkRecord").classList.remove("recording");
+
+  canvasStream?.getTracks().forEach(t=>t.stop());
+  canvasStream=null;
+
+  setCameraStatus("Preview ကြည့်ပြီး Upload တင်နိုင်ပါပြီ");
+ };
+
+ recorder.start(500);
+ setCameraStatus("🔴 Video ရိုက်ကူးနေပါသည်...");
+}
+
+function stopRecording(){
+ if(!recording)return;
+
+ recording=false;
+ if(animationId)cancelAnimationFrame(animationId);
+
+ if(recorder&&recorder.state==="recording")recorder.stop();
+
+ $("tmkRecord").classList.remove("recording");
+ setCameraStatus("Video ပြင်ဆင်နေပါသည်...");
+}
+
+/* UPLOAD CAMERA VIDEO */
+$("tmkCameraUpload").onclick=async()=>{
+ if(!recordedBlob)return alert("Video အရင်ရိုက်ကူးပါ");
+
+ $("tmkCameraUpload").disabled=true;
+
+ try{
+  const file=new File(
+   [recordedBlob],
+   "tmk-camera-"+Date.now()+".webm",
+   {type:"video/webm"}
+  );
+
+  await uploadVideoFile(
+   file,
+   $("cameraTitle").value.trim(),
+   $("cameraCaption").value.trim()
+  );
+
+  alert("Camera Video Upload အောင်မြင်ပါသည် ❤️");
+
+  recordedBlob=null;
+
+  if(recordedUrl){
+   URL.revokeObjectURL(recordedUrl);
+   recordedUrl=null;
+  }
+
+  preview.removeAttribute("src");
+  preview.load();
+  $("cameraTitle").value="";
+  $("cameraCaption").value="";
+  showPage("homePage");
+
+ }catch(e){
+  alert("Upload Error: "+e.message);
+ }finally{
+  $("tmkCameraUpload").disabled=false;
+ }
+};
+
+/* CLEAN UP */
 window.addEventListener("pagehide",()=>{
+ if(recording)stopRecording();
+ stopCamera();
+
+ if(canvasStream)canvasStream.getTracks().forEach(t=>t.stop());
  if(videosUnsubscribe)videosUnsubscribe();
- clearEngagement();
+
+ clearListeners();
  if(commentUnsubscribe)commentUnsubscribe();
 });
+
+/* SERVICE WORKER */
+if("serviceWorker"in navigator){
+ window.addEventListener("load",()=>{
+  navigator.serviceWorker.register("./sw.js")
+   .then(r=>console.log("TMK Service Worker:",r.scope))
+   .catch(e=>console.error("Service Worker:",e));
+ });
+}
+
 console.log("TMK VIDEO ready");
+
+/* VIDEO UPLOAD DATE FORMAT */
+function formatUploadDate(timestamp){
+ if(!timestamp)return "ရက်စွဲမသိပါ";
+
+ const date=new Date(Number(timestamp));
+ if(isNaN(date.getTime()))return "ရက်စွဲမသိပါ";
+
+ return new Intl.DateTimeFormat("my-MM",{
+  year:"numeric",
+  month:"long",
+  day:"numeric",
+  hour:"2-digit",
+  minute:"2-digit",
+  hour12:true
+ }).format(date);
+}
 </script>
 </body>
 </html>
