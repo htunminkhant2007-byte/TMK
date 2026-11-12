@@ -534,6 +534,7 @@ function loadVideos(){
   }
 
   allVideos.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+alert("Firebase မှရရှိသော Video အရေအတွက်: "+allVideos.length);
   renderFeed(allVideos);
   updateVideoCount();
  },e=>{
