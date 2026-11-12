@@ -524,6 +524,7 @@ onAuthStateChanged(auth,async user=>{
 
 /* LOAD VIDEOS */
 function loadVideos(){
+alert("loadVideos အလုပ်လုပ်နေပါပြီ");
  if(videosUnsubscribe)videosUnsubscribe();
 
  videosUnsubscribe=onValue(ref(db,"videos"),snap=>{
