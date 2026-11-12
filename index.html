@@ -1264,6 +1264,7 @@ async function uploadLargeVideoToB2(file, title, caption) {
   $("fileStatus").textContent = "Upload Complete!";
 }
 
+
 async function uploadVideoFile(file, title, caption) {
   if (!currentUser) throw Error("Login အရင်ဝင်ပါ");
   if (!file) throw Error("Video ရွေးပါ");
@@ -1293,7 +1294,8 @@ async function uploadVideoFile(file, title, caption) {
   const path = p.path.split("/")
     .map(encodeURIComponent).join("/");
 
-  const url = SUPABASE_URL + "/storage/v1/object/upload/sign/" +
+  const url = SUPABASE_URL +
+    "/storage/v1/object/upload/sign/" +
     encodeURIComponent(BUCKET_NAME) + "/" + path +
     "?token=" + encodeURIComponent(p.token);
 
@@ -1316,52 +1318,29 @@ async function uploadVideoFile(file, title, caption) {
   $("fileStatus").textContent = "Upload Complete!";
 }
 
+$("uploadFileBtn").onclick = async () => {
+  $("uploadFileBtn").disabled = true;
 
- const path=p.path.split("/").map(encodeURIComponent).join("/");
- const url=
-  SUPABASE_URL+
-  "/storage/v1/object/upload/sign/"+
-  encodeURIComponent(BUCKET_NAME)+
-  "/"+path+
-  "?token="+encodeURIComponent(p.token);
+  try {
+    await uploadVideoFile(
+      $("videoFile").files[0],
+      $("videoTitle").value.trim(),
+      $("videoCaption").value.trim()
+    );
 
- await uploadWithProgress(url,file);
+    alert("Video တင်ပြီးပါပြီ ❤️");
+    $("videoFile").value = "";
+    $("videoTitle").value = "";
+    $("videoCaption").value = "";
+    showPage("homePage");
 
- const data={
-  title:(title||file.name).slice(0,100),
-  caption:(caption||"").slice(0,500),
-  videoUrl:p.publicUrl,
-  storagePath:p.path,
-  uid:currentUser.uid,
-  username:(profileData.username||(currentUser.email||"User").split("@")[0]).slice(0,30),
-  createdAt:Date.now()
- };
+  } catch (e) {
+    $("fileStatus").textContent = e.message;
+    alert(e.message);
 
- await push(ref(db,"videos"),data);
- $("fileStatus").textContent="Upload Complete!";
-}
-
-$("uploadFileBtn").onclick=async()=>{
- $("uploadFileBtn").disabled=true;
-
- try{
-  await uploadVideoFile(
-   $("videoFile").files[0],
-   $("videoTitle").value.trim(),
-   $("videoCaption").value.trim()
-  );
-
-  alert("Video တင်ပြီးပါပြီ ❤️");
-  $("videoFile").value="";
-  $("videoTitle").value="";
-  $("videoCaption").value="";
-  showPage("homePage");
- }catch(e){
-  $("fileStatus").textContent=e.message;
-  alert(e.message);
- }finally{
-  $("uploadFileBtn").disabled=false;
- }
+  } finally {
+    $("uploadFileBtn").disabled = false;
+  }
 };
 
 /* CAMERA AND FACE TRACKING */
