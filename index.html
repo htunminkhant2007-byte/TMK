@@ -990,9 +990,11 @@ function setupAutoplay(){
      }
     });
     if(video.dataset.userPaused!=="true"){
-     video.muted=true;
-     video.play().catch(()=>updatePlayButton(video));
-    }
+     video.muted=false;
+video.play().catch(error=>{
+ console.log("Audio autoplay blocked:",error);
+ updatePlayButton(video);
+});
    }else{
     video.pause();video.muted=true;
     video.dataset.userPaused="false";
