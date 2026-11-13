@@ -477,24 +477,60 @@ onAuthStateChanged(auth,async user=>{
 });
 
 /* LOAD VIDEOS */
+
+
+/* LOAD VIDEOS — FIXED */
 function loadVideos(){
- if(videosUnsubscribe)videosUnsubscribe();
-
- videosUnsubscribe=onValue(ref(db,"videos"),snap=>{
-  allVideos=[];
-
-  if(snap.exists()){
-   snap.forEach(ch=>allVideos.push({id:ch.key,...ch.val()}));
+  if(videosUnsubscribe){
+    videosUnsubscribe();
+    videosUnsubscribe=null;
   }
 
-  allVideos.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  renderFeed(allVideos);
-  updateVideoCount();
- },e=>{
-  $("feed").textContent="Video ဖတ်မရပါ: "+e.message;
- });
+  $("feed").textContent="Firebase မှ Video များကို ရယူနေပါတယ်...";
+
+  videosUnsubscribe=onValue(
+    ref(db,"videos"),
+
+    snap=>{
+      allVideos=[];
+
+      if(snap.exists()){
+        snap.forEach(ch=>{
+          allVideos.push({
+            id:ch.key,
+            ...ch.val()
+          });
+        });
+      }
+
+      allVideos.sort(
+        (a,b)=>(b.createdAt||0)-(a.createdAt||0)
+      );
+
+      console.log("TMK VIDEO Firebase:",allVideos);
+
+      renderFeed(allVideos);
+      updateVideoCount();
+
+      if(allVideos.length===0){
+        $("feed").innerHTML=
+          '<div class="video-card"><div class="video-info">Video မရှိသေးပါ။</div></div>';
+      }
+    },
+
+    error=>{
+      console.error("Firebase Video Error:",error);
+
+      $("feed").innerHTML=
+        '<div class="video-card"><div class="video-info">' +
+        '<strong>Firebase Error</strong><p>' +
+        esc(error.message) +
+        '</p><p>Firebase Realtime Database Rules ကို စစ်ဆေးပါ။</p>' +
+        '</div></div>';
+    }
+  );
 }
-loadVideos();
+
 
 /* PROFILE */
 async function loadProfile(){
