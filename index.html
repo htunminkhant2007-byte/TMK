@@ -1,28 +1,27 @@
+
 <!DOCTYPE html>
 <html lang="my">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#090910">
 <meta name="description" content="TMK VIDEO Short Video Platform">
-<title>TMK VIDEO — Short Video</title>
+<title>TMK VIDEO</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 
 <style>
 :root{--bg:#090910;--panel:#171722;--line:#292938;--pink:#ff315b;--cyan:#28e0c0;--muted:#a6a6b5}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:var(--bg);color:#fff;font-family:Arial,sans-serif}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:white;font-family:Arial,sans-serif}
 body{overflow:hidden}
-button,input,textarea,select{font:inherit}
+button,input,textarea{font:inherit}
 button{cursor:pointer;border:0}
 .hidden{display:none!important}
-
 .topbar{position:fixed;top:0;left:0;right:0;height:58px;z-index:30;display:flex;align-items:center;justify-content:center;background:linear-gradient(#090910f5,#090910a8,transparent)}
-.tabs{display:flex;align-items:center;gap:19px}
-.tabs button{background:transparent;color:#aaa;font-size:14px;padding:9px 0}
-.tabs button.active{color:#fff;font-weight:bold;border-bottom:3px solid var(--cyan)}
-
+.tabs{display:flex;gap:17px;align-items:center}
+.tabs button{background:none;color:#aaa;font-size:13px;padding:9px 0}
+.tabs button.active{color:white;font-weight:bold;border-bottom:3px solid var(--cyan)}
 .page{display:none;position:absolute;inset:0;background:var(--bg)}
 .page.active{display:block}
 #homePage{overflow:hidden}
@@ -31,91 +30,39 @@ button{cursor:pointer;border:0}
 .video-card{width:100%;height:100%;min-height:100%;position:relative;background:#000;overflow:hidden;scroll-snap-align:start}
 .video-media{position:absolute;inset:0}
 .video-media video,.video-media iframe{width:100%;height:100%;border:0;object-fit:cover;background:#000}
-.video-media iframe{position:absolute}
 .video-media:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#0008);pointer-events:none}
-
-/* VIDEO PLAY / PAUSE BUTTON */
-.video-play-toggle{
- position:absolute;
- top:50%;
- left:50%;
- transform:translate(-50%,-50%);
- z-index:9;
- width:68px;
- height:68px;
- border-radius:50%;
- background:#0009;
- color:#fff;
- font-size:34px;
- display:flex;
- align-items:center;
- justify-content:center;
- border:2px solid #ffffffaa;
- cursor:pointer;
-}
+.video-error{position:absolute;z-index:5;top:45%;left:10%;right:10%;text-align:center;color:#ffb5c1;background:#000b;padding:15px;border-radius:12px}
+.video-play-toggle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9;width:68px;height:68px;border-radius:50%;background:#0009;color:white;font-size:34px;border:2px solid #ffffffaa}
 .video-play-toggle.hidden{display:none!important}
-.video-play-toggle:active{
- transform:translate(-50%,-50%) scale(.92);
-}
-
-.actions{position:absolute;right:9px;bottom:112px;z-index:8;width:55px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.actions button{width:48px;height:48px;border-radius:50%;background:#15151dba;color:#fff;font-size:25px;padding:0;backdrop-filter:blur(8px)}
-.actions small{font-size:11px;color:#fff;margin-top:-10px;text-shadow:0 1px 3px #000}
+.actions{position:absolute;right:9px;bottom:112px;z-index:8;width:55px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.actions button{width:46px;height:46px;border-radius:50%;background:#15151dba;color:white;font-size:24px;padding:0}
+.actions small{font-size:11px;color:white;margin-top:-8px;text-shadow:0 1px 3px #000}
 .actions .liked{color:var(--pink)}
-.actions .saved{background:#fff!important;color:#111!important}
-.follow-button{width:34px!important;height:34px!important;border-radius:50%!important;background:#ff315b!important;color:#fff!important;font-size:23px!important;font-weight:bold!important;line-height:1}
-.follow-button.following{background:#20c879!important;color:#fff!important;font-size:20px!important}
-
+.actions .saved{background:white!important;color:#111!important}
+.follow-button{background:#ff315b!important;font-weight:bold}
+.follow-button.following{background:#20c879!important}
 .video-info{position:absolute;left:13px;right:76px;bottom:90px;z-index:6;text-shadow:0 1px 4px #000}
 .video-info strong{font-size:16px}
 .video-info p{font-size:14px;line-height:1.4;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.music-label{font-size:12px;margin-top:10px}
-
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:66px;background:#0b0b12f5;border-top:1px solid #242432;display:flex;align-items:center;justify-content:space-around;z-index:50;backdrop-filter:blur(16px);padding-bottom:env(safe-area-inset-bottom)}
+.music-label{font-size:12px;margin-top:8px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:66px;background:#0b0b12f5;border-top:1px solid #242432;display:flex;align-items:center;justify-content:space-around;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
 .bottom-nav button{flex:1;height:100%;background:transparent;color:#aaa;font-size:11px;padding:5px 0}
 .bottom-nav button.active{color:var(--cyan)}
 .bottom-nav button span{display:block;font-size:23px;margin-bottom:3px}
-.bottom-nav .upload-icon{background:#fff;color:#000;border-radius:9px;width:43px;height:29px;margin:0 auto;font-size:25px}
-
+.upload-icon{background:white;color:black;border-radius:9px;width:43px;height:29px;margin:auto;font-size:25px}
 .other-page{padding:76px 14px 90px;overflow-y:auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px;margin-bottom:14px}
-input,textarea,select{width:100%;padding:13px;margin:7px 0;background:#242432;color:#fff;border:1px solid #39394b;border-radius:11px}
+input,textarea{width:100%;padding:13px;margin:7px 0;background:#242432;color:white;border:1px solid #39394b;border-radius:11px}
 textarea{min-height:75px}
-.btn{background:#29293a;color:#fff;padding:12px 15px;border-radius:10px;margin:4px 2px;font-weight:bold}
+.btn{background:#29293a;color:white;padding:12px 15px;border-radius:10px;margin:4px 2px;font-weight:bold}
 .primary{background:var(--cyan);color:#06120f}
-.danger{background:#c83752;color:#fff}
-.status{color:var(--cyan);font-size:13px}
+.danger{background:#c83752;color:white}
+.status{color:var(--cyan);font-size:13px;overflow-wrap:anywhere}
 .muted{color:var(--muted);font-size:13px}
 .avatar{width:85px;height:85px;border-radius:50%;object-fit:cover;background:#333}
 .progress{height:10px;background:#333;border-radius:20px;overflow:hidden}
-.progress div{width:0;height:100%;background:var(--cyan)}
-
-/* CAMERA */
-.camera-launch{width:100%;padding:18px;border:0;border-radius:14px;background:linear-gradient(135deg,#ff315b,#8b35ff);color:#fff;font-size:17px;font-weight:bold}
-.camera-screen{position:fixed;inset:0;width:100%;height:100%;height:100dvh;background:#000;z-index:1000;display:none;overflow:hidden}
-.camera-screen.open{display:block}
-#tmkCamera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
-.camera-top{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:12px;right:12px;z-index:4;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
-.camera-top button{pointer-events:auto;width:42px;height:42px;border:0;border-radius:50%;background:#171722bb;color:white;font-size:20px}
-.camera-top strong{background:#17172299;padding:9px 13px;border-radius:20px;font-size:13px}
-.camera-effects{position:absolute;left:0;right:0;bottom:205px;z-index:4;display:flex;gap:9px;overflow-x:auto;padding:12px;scrollbar-width:none}
-.camera-effects button{flex:0 0 auto;border:1px solid #ffffff66;border-radius:22px;background:#15151dbb;color:#fff;padding:10px 14px;font-size:13px}
-.camera-effects button.active{background:#ff315b;border-color:#ff315b}
-.camera-zoom{position:absolute;left:18px;right:18px;bottom:165px;z-index:5;display:flex;align-items:center;gap:10px;color:#fff;text-shadow:0 1px 4px #000}
-.camera-zoom input{margin:0;accent-color:#ff315b}
-.camera-stickers{position:absolute;left:0;right:0;bottom:105px;z-index:5;display:flex;gap:8px;overflow-x:auto;padding:8px 12px;scrollbar-width:none}
-.camera-stickers button{flex:0 0 auto;border:1px solid #ffffff66;border-radius:20px;background:#15151dcc;color:#fff;padding:8px 12px;font-size:22px}
-.camera-stickers button.active{background:#ff315b}
-.camera-sticker-overlay{position:absolute;top:24%;left:50%;z-index:3;pointer-events:none;text-shadow:0 3px 10px #0008;transform:translate(-50%,-50%);white-space:nowrap}
-.face-track-button{position:absolute;right:14px;top:calc(env(safe-area-inset-top) + 64px);z-index:6;border:1px solid #ffffff77;border-radius:22px;background:#15151dcc;color:#fff;padding:9px 12px;font-size:12px;font-weight:bold}
-.face-track-button.active{background:#20b86b;border-color:#20b86b}
-.camera-controls{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:4;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 12px;flex-wrap:wrap}
-.camera-controls button{border:0;border-radius:25px;padding:13px 16px;background:#ffffff30;color:#fff;font-weight:bold}
-.camera-controls .record-button{width:68px;height:68px;border:5px solid #fff;border-radius:50%;background:#ff315b;font-size:0;padding:0}
-.camera-controls .record-button.recording{background:#fff;border-color:#ff315b;transform:scale(.88)}
-.camera-status{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 15px);left:0;right:0;text-align:center;color:white;font-size:12px;z-index:4;text-shadow:0 1px 4px #000}
-.camera-preview{width:100%;max-height:55vh;object-fit:contain;background:#000;border-radius:12px}
-.camera-edit-fields{padding:12px}
+.progress div{width:0;height:100%;background:var(--cyan);transition:width .2s}
+.empty{color:#aaa;text-align:center;padding:35px 10px}
 .comment-panel{position:fixed;bottom:65px;left:0;right:0;z-index:60;background:#171720;border-radius:20px 20px 0 0;padding:15px;max-height:70vh;overflow:auto;display:none;border:1px solid #303040}
 .comment-panel.open{display:block}
 .comment-item{background:#282835;padding:10px;border-radius:10px;margin:7px 0;overflow-wrap:anywhere}
@@ -124,209 +71,177 @@ textarea{min-height:75px}
 .section-title{font-size:20px;margin:5px 0 14px}
 .chip-row{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}
 .chip{white-space:nowrap;border:1px solid #353545;background:#1b1b27;color:#ddd;border-radius:22px;padding:9px 13px}
-.chip.active{background:var(--cyan);color:#06120f;border-color:var(--cyan)}
+.chip.active{background:var(--cyan);color:#06120f}
 .grid-videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .result-card{background:#191923;border-radius:13px;overflow:hidden}
 .result-card video{width:100%;aspect-ratio:9/13;object-fit:cover;background:#000}
 .result-card div{padding:9px;font-size:13px}
-.empty{color:#aaa;text-align:center;padding:35px 10px}
-
-@media(min-width:700px){
-#feed{max-width:440px;left:50%;transform:translateX(-50%)}
-.other-page{max-width:650px;margin:auto;left:0;right:0}
-}
+.camera-screen{position:fixed;inset:0;width:100%;height:100dvh;background:#000;z-index:1000;display:none;overflow:hidden}
+.camera-screen.open{display:block}
+#tmkCamera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.camera-top{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:12px;right:12px;z-index:4;display:flex;justify-content:space-between;align-items:center}
+.camera-top button{width:42px;height:42px;border-radius:50%;background:#171722bb;color:white;font-size:20px}
+.camera-top strong{background:#17172299;padding:9px 13px;border-radius:20px}
+.camera-effects,.camera-stickers{position:absolute;left:0;right:0;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px}
+.camera-effects{bottom:205px}
+.camera-stickers{bottom:105px}
+.camera-effects button,.camera-stickers button{flex:0 0 auto;border:1px solid #ffffff66;border-radius:22px;background:#15151dcc;color:white;padding:9px 13px}
+.camera-effects button.active,.camera-stickers button.active{background:var(--pink)}
+.camera-zoom{position:absolute;left:18px;right:18px;bottom:165px;z-index:5;display:flex;align-items:center;gap:10px}
+.camera-zoom input{margin:0}
+.camera-sticker-overlay{position:absolute;top:24%;left:50%;z-index:3;transform:translate(-50%,-50%);font-size:48px;pointer-events:none}
+.camera-controls{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:4;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.camera-controls button{border-radius:25px;padding:13px 16px;background:#ffffff30;color:white;font-weight:bold}
+.record-button{width:68px;height:68px;border:5px solid white!important;border-radius:50%!important;background:var(--pink)!important;padding:0!important}
+.record-button.recording{background:white!important;border-color:var(--pink)!important}
+.camera-status{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 90px);left:0;right:0;text-align:center;color:white;font-size:12px;z-index:4}
+.camera-preview{width:100%;max-height:55vh;object-fit:contain;background:#000;border-radius:12px}
+@media(min-width:700px){#feed{max-width:440px;left:50%;transform:translateX(-50%)}.other-page{max-width:650px;margin:auto}}
 </style>
 </head>
 
 <body>
-
 <header class="topbar">
-<div class="tabs">
-<button class="active" id="forYouTab">သင့်အတွက်</button>
-<button id="followingTab">လိုက်ကြည့်ထားသူများ</button>
-<button id="friendsTab">မိတ်ဆွေများ</button>
-<button id="searchTop">⌕ ရှာရန်</button>
-</div>
+ <div class="tabs">
+  <button class="active" id="forYouTab">သင့်အတွက်</button>
+  <button id="followingTab">လိုက်ကြည့်ထားသူများ</button>
+  <button id="friendsTab">မိတ်ဆွေများ</button>
+  <button id="searchTop">⌕ ရှာရန်</button>
+ </div>
 </header>
 
-<section id="homePage" class="page active">
-<div id="feed">Loading videos...</div>
-</section>
+<section id="homePage" class="page active"><div id="feed">Loading videos...</div></section>
 
 <section id="discoverPage" class="page other-page">
-<h2 class="section-title">🔎 ရှာဖွေတွေ့ရှိရန်</h2>
-<input id="searchInput" placeholder="အသုံးပြုသူ၊ ဗီဒီယို ရှာရန်...">
-<div class="chip-row">
-<button class="chip active" data-search-type="all">အားလုံး</button>
-<button class="chip" data-search-type="videos">ဗီဒီယိုများ</button>
-<button class="chip" data-search-type="users">အသုံးပြုသူများ</button>
-</div>
-<h3>ရေပန်းစားနေသည်</h3>
-<div id="searchResults"></div>
+ <h2 class="section-title">🔎 ရှာဖွေတွေ့ရှိရန်</h2>
+ <input id="searchInput" placeholder="အသုံးပြုသူ၊ ဗီဒီယို ရှာရန်...">
+ <div id="searchResults"></div>
 </section>
 
 <section id="uploadPage" class="page other-page">
-<h2>＋ ဗီဒီယို ဖန်တီးရန်</h2>
-<div class="card">
-<h3>📁 ဖုန်းဓာတ်ပုံနှင့် ဗီဒီယိုများ</h3>
-<input id="videoFile" type="file" accept="video/mp4,video/webm,video/quicktime">
-<input id="videoTitle" maxlength="100" placeholder="Video ခေါင်းစဉ်">
-<textarea id="videoCaption" maxlength="500" placeholder="Caption ရေးရန်"></textarea>
-<button class="btn primary" id="uploadFileBtn">Upload Video</button>
-<div class="progress"><div id="fileProgressBar"></div></div>
-<p id="fileStatus" class="status">Ready</p>
-</div>
-
-<div class="card">
-<h3>🎥 ကင်မရာ</h3>
-<p class="muted">မျက်နှာပြင်အပြည့် ကင်မရာဖွင့်ပြီး Effect ရွေးကာ ဗီဒီယိုရိုက်ကူးပါ။</p>
-<button class="camera-launch" id="tmkOpenCamera">📷 ကင်မရာဖွင့်ရန်</button>
-<video id="tmkPreview" class="camera-preview" controls playsinline></video>
-<div class="camera-edit-fields">
-<input id="cameraTitle" maxlength="100" placeholder="ဗီဒီယို ခေါင်းစဉ်">
-<textarea id="cameraCaption" maxlength="500" placeholder="စာတန်းရေးရန်..."></textarea>
-<button class="btn primary" id="tmkCameraUpload">⬆ ဗီဒီယို Upload တင်ရန်</button>
-<p id="cameraStatus" class="status">အသင့်ဖြစ်ပါပြီ</p>
-</div>
-</div>
-
-<div id="tmkCameraScreen" class="camera-screen" aria-label="TMK VIDEO Camera">
-<video id="tmkCamera" autoplay muted playsinline></video>
-<div id="tmkStickerOverlay" class="camera-sticker-overlay"></div>
-<button id="tmkFaceTrack" class="face-track-button" type="button">🎯 Face Track: OFF</button>
-<div class="camera-top">
-<button id="tmkCloseCamera" aria-label="Close">✕</button>
-<strong>TMK CAMERA</strong>
-<button id="tmkSwitchCamera" aria-label="Switch camera">🔄</button>
-</div>
-<div class="camera-effects" id="tmkEffectList">
-<button class="active" data-effect="none">Normal</button>
-<button data-effect="brightness(1.18) contrast(1.08) saturate(1.12)">Beauty</button>
-<button data-effect="brightness(1.25) saturate(1.25)">Bright</button>
-<button data-effect="grayscale(1)">B&amp;W</button>
-<button data-effect="sepia(.85) contrast(1.08)">Vintage</button>
-<button data-effect="saturate(1.8) contrast(1.08)">Color Pop</button>
-<button data-effect="hue-rotate(25deg) saturate(1.4)">Warm</button>
-<button data-effect="hue-rotate(190deg) saturate(1.3)">Cool</button>
-<button data-effect="contrast(1.35) brightness(1.05)">Drama</button>
-<button data-effect="blur(.6px) brightness(1.08)">Soft</button>
-</div>
-<div class="camera-zoom">
-<span>－</span>
-<input id="tmkZoom" type="range" min="1" max="3" step="0.1" value="1">
-<span>＋</span>
-<strong id="tmkZoomValue">1.0×</strong>
-</div>
-<div class="camera-stickers" id="tmkStickerList">
-<button class="active" data-sticker="">မရှိ</button>
-<button data-sticker="😂">😂</button>
-<button data-sticker="😎">😎</button>
-<button data-sticker="🥰">🥰</button>
-<button data-sticker="🐰">🐰</button>
-<button data-sticker="🐱">🐱</button>
-<button data-sticker="❤️">❤️</button>
-<button data-sticker="✨">✨</button>
-<button data-sticker="👑">👑</button>
-</div>
-<div class="camera-controls">
-<button id="tmkFlash" type="button">⚡ မီး</button>
-<button id="tmkRecord" class="record-button" type="button" aria-label="Record"></button>
-<button id="tmkStop" type="button">■ ရပ်ရန်</button>
-</div>
-<div id="cameraLiveStatus" class="camera-status">Camera ဖွင့်ရန် အသင့်ဖြစ်ပါပြီ</div>
-</div>
+ <h2>＋ ဗီဒီယို ဖန်တီးရန်</h2>
+ <div class="card">
+  <h3>📁 ဖုန်းထဲမှ ဗီဒီယိုတင်ရန်</h3>
+  <input id="videoFile" type="file" accept="video/mp4,video/webm,video/quicktime">
+  <input id="videoTitle" maxlength="100" placeholder="Video ခေါင်းစဉ်">
+  <textarea id="videoCaption" maxlength="500" placeholder="Caption ရေးရန်"></textarea>
+  <button class="btn primary" id="uploadFileBtn">Upload Video</button>
+  <div class="progress"><div id="fileProgressBar"></div></div>
+  <p id="fileStatus" class="status">Ready</p>
+ </div>
+ <div class="card">
+  <h3>🎥 ကင်မရာ</h3>
+  <button class="btn primary" id="tmkOpenCamera">📷 ကင်မရာဖွင့်ရန်</button>
+  <video id="tmkPreview" class="camera-preview" controls playsinline></video>
+  <input id="cameraTitle" maxlength="100" placeholder="ဗီဒီယို ခေါင်းစဉ်">
+  <textarea id="cameraCaption" maxlength="500" placeholder="စာတန်းရေးရန်"></textarea>
+  <button class="btn primary" id="tmkCameraUpload">⬆ ဗီဒီယို Upload တင်ရန်</button>
+  <p id="cameraStatus" class="status">အသင့်ဖြစ်ပါပြီ</p>
+ </div>
+ <div id="tmkCameraScreen" class="camera-screen">
+  <video id="tmkCamera" autoplay muted playsinline></video>
+  <div id="tmkStickerOverlay" class="camera-sticker-overlay"></div>
+  <div class="camera-top">
+   <button id="tmkCloseCamera">✕</button><strong>TMK CAMERA</strong>
+   <button id="tmkSwitchCamera">🔄</button>
+  </div>
+  <div class="camera-effects" id="tmkEffectList">
+   <button class="active" data-effect="none">Normal</button>
+   <button data-effect="brightness(1.18) contrast(1.08) saturate(1.12)">Beauty</button>
+   <button data-effect="brightness(1.25) saturate(1.25)">Bright</button>
+   <button data-effect="grayscale(1)">B&amp;W</button>
+   <button data-effect="sepia(.85)">Vintage</button>
+   <button data-effect="saturate(1.8)">Color Pop</button>
+  </div>
+  <div class="camera-zoom">
+   <span>Zoom</span><input id="tmkZoom" type="range" min="1" max="3" step=".1" value="1">
+   <strong id="tmkZoomValue">1.0×</strong>
+  </div>
+  <div class="camera-stickers" id="tmkStickerList">
+   <button class="active" data-sticker="">မရှိ</button>
+   <button data-sticker="😂">😂</button><button data-sticker="😎">😎</button>
+   <button data-sticker="🥰">🥰</button><button data-sticker="🐰">🐰</button>
+   <button data-sticker="🐱">🐱</button><button data-sticker="❤️">❤️</button>
+   <button data-sticker="✨">✨</button>
+  </div>
+  <div class="camera-controls">
+   <button id="tmkFlash">⚡ မီး</button>
+   <button id="tmkRecord" class="record-button" aria-label="Record"></button>
+   <button id="tmkStop">■ ရပ်ရန်</button>
+  </div>
+  <div id="cameraLiveStatus" class="camera-status">Camera အသင့်ဖြစ်ပါပြီ</div>
+ </div>
 </section>
 
 <section id="friendsPage" class="page other-page">
-<h2 class="section-title">👥 မိတ်ဆွေများ</h2>
-<div class="card">
-<p>မိတ်ဆွေများနှင့် ချိတ်ဆက်ရန်</p>
-<p class="muted">အသုံးပြုသူများကို ရှာဖွေပြီး လိုက်ကြည့်နိုင်ပါတယ်။</p>
-<button class="btn primary" id="friendsLogin">အကောင့်ဝင်ရန်</button>
-</div>
-<div id="friendsList"></div>
+ <h2>👥 မိတ်ဆွေများ</h2>
+ <div class="card"><p>အသုံးပြုသူများကို ရှာဖွေပြီး Follow လုပ်နိုင်ပါတယ်။</p><button class="btn primary" id="friendsLogin">အကောင့်ဝင်ရန်</button></div>
+ <div id="friendsList"></div>
 </section>
 
 <section id="inboxPage" class="page other-page">
-<h2 class="section-title">💬 စာတိုများနှင့် အသိပေးချက်များ</h2>
-<div class="card">
-<p>🔔 အသိပေးချက်များ</p>
-<p class="muted">အသိပေးချက်များ မရှိသေးပါ။</p>
-</div>
-<div class="card">
-<p>✉️ စာတိုများ</p>
-<p class="muted">Chat backend မတည်ဆောက်ရသေးပါ။</p>
-</div>
+ <h2>💬 စာတိုများနှင့် အသိပေးချက်များ</h2>
+ <div class="card">Chat backend မတည်ဆောက်ရသေးပါ။</div>
 </section>
 
 <section id="profilePage" class="page other-page">
-<div class="card" style="text-align:center">
-<img id="profilePhoto" class="avatar" alt="Profile">
-<h3 id="profileName">Guest</h3>
-<p id="profileEmail" class="muted"></p>
-<p id="profileVideoCount">Videos: 0</p>
-</div>
-<div class="card">
-<h3>👤 အကောင့်ဝင်ခြင်းနှင့် မှတ်ပုံတင်ခြင်း</h3>
-<input id="authEmail" type="email" placeholder="အီးမေးလ်လိပ်စာ">
-<input id="authPassword" type="password" placeholder="စကားဝှက်">
-<button class="btn primary" id="registerBtn">မှတ်ပုံတင်ရန်</button>
-<button class="btn" id="loginBtn">အကောင့်ဝင်ရန်</button>
-<button class="btn" id="forgotBtn">စကားဝှက် မေ့နေပါသလား။</button>
-<button class="btn danger hidden" id="logoutBtn">အကောင့်မှ ထွက်ရန်</button>
-<p id="authStatus" class="status"></p>
-</div>
-<div class="card">
-<h3>✏️ ကိုယ်ရေးအချက်အလက် ပြင်ဆင်ရန်</h3>
-<input id="editUsername" maxlength="30" placeholder="အသုံးပြုသူအမည်">
-<textarea id="editBio" maxlength="300" placeholder="ကိုယ်ရေးမိတ်ဆက်"></textarea>
-<input id="editPhoto" type="file" accept="image/*">
-<button class="btn primary" id="saveProfileBtn">ပြောင်းလဲမှုများ သိမ်းရန်</button>
-<button class="btn" id="savedVideosBtn">သိမ်းဆည်းထားသော ဗီဒီယိုများ</button>
-<div id="savedVideos"></div>
-<p id="profileStatus" class="status"></p>
-</div>
+ <div class="card" style="text-align:center">
+  <img id="profilePhoto" class="avatar" alt="Profile">
+  <h3 id="profileName">Guest</h3><p id="profileEmail" class="muted"></p>
+  <p id="profileVideoCount">Videos: 0</p>
+ </div>
+ <div class="card">
+  <h3>အကောင့်ဝင်ခြင်းနှင့် မှတ်ပုံတင်ခြင်း</h3>
+  <input id="authEmail" type="email" placeholder="အီးမေးလ်လိပ်စာ">
+  <input id="authPassword" type="password" placeholder="စကားဝှက်">
+  <button class="btn primary" id="registerBtn">မှတ်ပုံတင်ရန်</button>
+  <button class="btn" id="loginBtn">အကောင့်ဝင်ရန်</button>
+  <button class="btn" id="forgotBtn">စကားဝှက် မေ့နေပါသလား</button>
+  <button class="btn danger hidden" id="logoutBtn">အကောင့်မှ ထွက်ရန်</button>
+  <p id="authStatus" class="status"></p>
+ </div>
+ <div class="card">
+  <h3>ကိုယ်ရေးအချက်အလက် ပြင်ဆင်ရန်</h3>
+  <input id="editUsername" maxlength="30" placeholder="အသုံးပြုသူအမည်">
+  <textarea id="editBio" maxlength="300" placeholder="ကိုယ်ရေးမိတ်ဆက်"></textarea>
+  <input id="editPhoto" type="file" accept="image/*">
+  <button class="btn primary" id="saveProfileBtn">ပြောင်းလဲမှုများ သိမ်းရန်</button>
+  <button class="btn" id="savedVideosBtn">သိမ်းဆည်းထားသော ဗီဒီယိုများ</button>
+  <div id="savedVideos"></div><p id="profileStatus" class="status"></p>
+ </div>
 </section>
 
 <nav class="bottom-nav">
-<button class="active" data-page="homePage"><span>⌂</span>ပင်မ</button>
-<button data-page="discoverPage"><span>⌕</span>ရှာဖွေရန်</button>
-<button data-page="uploadPage"><span class="upload-icon">＋</span>ဖန်တီးရန်</button>
-<button data-page="inboxPage"><span>▢</span>စာတိုများ</button>
-<button data-page="profilePage"><span>♙</span>ကိုယ်ရေး</button>
+ <button class="active" data-page="homePage"><span>⌂</span>ပင်မ</button>
+ <button data-page="discoverPage"><span>⌕</span>ရှာရန်</button>
+ <button data-page="uploadPage"><span class="upload-icon">＋</span>ဖန်တီးရန်</button>
+ <button data-page="inboxPage"><span>▢</span>စာတို</button>
+ <button data-page="profilePage"><span>♙</span>ကိုယ်ရေး</button>
 </nav>
 
 <div id="commentPanel" class="comment-panel">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<strong>မှတ်ချက်များ</strong>
-<button class="btn" id="closeComments">✕</button>
-</div>
-<div id="panelComments"></div>
-<div class="comment-form">
-<textarea id="panelCommentInput" placeholder="မှတ်ချက်ရေးရန်..."></textarea>
-<button class="btn primary" id="panelCommentSend">ပို့ရန်</button>
-</div>
+ <div style="display:flex;justify-content:space-between;align-items:center">
+  <strong>မှတ်ချက်များ</strong><button class="btn" id="closeComments">✕</button>
+ </div>
+ <div id="panelComments"></div>
+ <div class="comment-form">
+  <textarea id="panelCommentInput" placeholder="မှတ်ချက်ရေးရန်..."></textarea>
+  <button class="btn primary" id="panelCommentSend">ပို့ရန်</button>
+ </div>
 </div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
 import {
  getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
  signOut,onAuthStateChanged,sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
 import {
  getDatabase,ref,push,set,get,onValue,remove
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
 
-import {
- FaceDetector,FilesetResolver
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm";
-
-/* FIREBASE CONFIG */
+/* CONFIG */
 const firebaseConfig={
  apiKey:"AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
  authDomain:"tmk-video.firebaseapp.com",
@@ -338,125 +253,99 @@ const firebaseConfig={
  measurementId:"G-NZXE0Y822B"
 };
 
-/* SUPABASE CONFIG
-   အောက်ပါနှစ်ကြောင်းမှာ မူရင်း Supabase အချက်အလက်ကို ပြန်ထည့်ပါ။
-*/
 const SUPABASE_URL="https://neatplekkujtxkajmeyg.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_kqIXSOVr4uDQOHgS29oH_A_YOqnKxR4";
-
 const BUCKET_NAME="tmk-videos";
 const UPLOAD_FUNCTION_URL=SUPABASE_URL+"/functions/v1/tmk-video-upload";
 
-/* INITIALIZE */
+const WORKER_URL="https://tmk-video-api.htunminkhant2007.workers.dev";
+const MAX_FILE_SIZE=5*1024*1024*1024;
+const SUPABASE_LIMIT=50*1024*1024;
+const MIN_B2_PART_SIZE=5*1024*1024;
+
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
-
-let supabase=null;
-
-if(
- SUPABASE_URL.startsWith("https://")&&
- SUPABASE_PUBLISHABLE_KEY&&
- !SUPABASE_URL.includes("YOUR_")&&
- !SUPABASE_PUBLISHABLE_KEY.includes("YOUR_")
-){
- supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-}
-
-/* APP VARIABLES */
+const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 const $=id=>document.getElementById(id);
 
-let followingIds=new Set();
-let savedVideoIds=new Set();
 let currentUser=null;
 let profileData={username:"",photoData:"",bio:""};
 let allVideos=[];
+let followingIds=new Set();
+let savedVideoIds=new Set();
+let feedObserver=null;
 let videosUnsubscribe=null;
 let engagementUnsubscribers=[];
-let feedObserver=null;
 let commentUnsubscribe=null;
 let selectedCommentVideo=null;
+let feedMode="all";
 
 let cameraStream=null;
 let recorder=null;
 let recordedBlob=null;
 let recordedUrl=null;
-let facing="user";
-let canvasStream=null;
-let recording=false;
-let animationId=null;
-let feedMode="all";
+let cameraFacing="user";
+let cameraChunks=[];
+let cameraFilter="none";
+let cameraSticker="";
 
-/* COMMON FUNCTIONS */
-function esc(s=""){
- return String(s).replace(/[&<>"']/g,c=>({
+/* COMMON */
+function esc(value=""){
+ return String(value).replace(/[&<>"']/g,c=>({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
+}
+
+function formatUploadDate(timestamp){
+ const date=new Date(Number(timestamp||0));
+ if(!timestamp||isNaN(date.getTime()))return "ရက်စွဲမသိပါ";
+ return new Intl.DateTimeFormat("my-MM",{
+  year:"numeric",month:"long",day:"numeric",
+  hour:"2-digit",minute:"2-digit",hour12:true
+ }).format(date);
 }
 
 function showPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  $(id).classList.add("active");
-
  document.querySelectorAll(".bottom-nav button").forEach(b=>{
   b.classList.toggle("active",b.dataset.page===id);
  });
-
- if(id!=="homePage"){
-  if(feedObserver){
-   feedObserver.disconnect();
-   feedObserver=null;
-  }
-  document.querySelectorAll("#feed video").forEach(v=>{
-   v.pause();
-   v.muted=true;
-   v.dataset.userPaused="false";
-   updateVideoPlayButton(v);
-  });
- }else{
-  setupAutoplay();
+ if(id==="homePage")setupAutoplay();
+ else{
+  if(feedObserver){feedObserver.disconnect();feedObserver=null;}
+  document.querySelectorAll("#feed video").forEach(v=>v.pause());
  }
 }
-
-document.querySelectorAll("[data-page]").forEach(b=>{
- b.onclick=()=>showPage(b.dataset.page);
-});
-
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 $("searchTop").onclick=()=>showPage("discoverPage");
 $("friendsLogin").onclick=()=>showPage("profilePage");
 
-/* AUTHENTICATION */
-$("forgotBtn").onclick=async()=>{
- const email=$("authEmail").value.trim();
- if(!email)return alert("အီးမေးလ်လိပ်စာ အရင်ထည့်ပါ");
- try{
-  await sendPasswordResetEmail(auth,email);
-  alert("စကားဝှက်ပြန်လည်သတ်မှတ်ရန် Email ပို့ပြီးပါပြီ");
- }catch(e){alert(e.message);}
-};
-
+/* AUTH */
 $("registerBtn").onclick=async()=>{
  try{
   await createUserWithEmailAndPassword(auth,$("authEmail").value.trim(),$("authPassword").value);
   $("authStatus").textContent="Register အောင်မြင်ပါပြီ";
  }catch(e){$("authStatus").textContent=e.message;}
 };
-
 $("loginBtn").onclick=async()=>{
  try{
   await signInWithEmailAndPassword(auth,$("authEmail").value.trim(),$("authPassword").value);
   $("authStatus").textContent="Login အောင်မြင်ပါပြီ";
  }catch(e){$("authStatus").textContent=e.message;}
 };
-
+$("forgotBtn").onclick=async()=>{
+ const email=$("authEmail").value.trim();
+ if(!email)return alert("Email အရင်ထည့်ပါ");
+ try{await sendPasswordResetEmail(auth,email);alert("Password reset Email ပို့ပြီးပါပြီ");}
+ catch(e){alert(e.message);}
+};
 $("logoutBtn").onclick=()=>signOut(auth);
 
 onAuthStateChanged(auth,async user=>{
  currentUser=user;
-
- $("registerBtn").classList.toggle("hidden",!!user);
- $("loginBtn").classList.toggle("hidden",!!user);
- $("forgotBtn").classList.toggle("hidden",!!user);
+ ["registerBtn","loginBtn","forgotBtn"].forEach(id=>$(id).classList.toggle("hidden",!!user));
  $("logoutBtn").classList.toggle("hidden",!user);
 
  if(user){
@@ -464,132 +353,80 @@ onAuthStateChanged(auth,async user=>{
   await loadFollowing();
   await loadSavedVideos();
  }else{
-  followingIds.clear();
-  savedVideoIds.clear();
+  followingIds.clear();savedVideoIds.clear();
   profileData={username:"",photoData:"",bio:""};
   $("profileName").textContent="Guest";
   $("profileEmail").textContent="";
   $("profilePhoto").removeAttribute("src");
  }
-
  renderFeed(allVideos);
  updateVideoCount();
 });
 
 /* LOAD VIDEOS */
-
-
-/* LOAD VIDEOS — FIXED */
 function loadVideos(){
-  if(videosUnsubscribe){
-    videosUnsubscribe();
-    videosUnsubscribe=null;
+ if(videosUnsubscribe)videosUnsubscribe();
+ videosUnsubscribe=onValue(ref(db,"videos"),snap=>{
+  allVideos=[];
+  if(snap.exists()){
+   snap.forEach(child=>{
+    allVideos.push({id:child.key,...(child.val()||{})});
+   });
   }
-
-  $("feed").textContent="Firebase မှ Video များကို ရယူနေပါတယ်...";
-
-  videosUnsubscribe=onValue(
-    ref(db,"videos"),
-
-    snap=>{
-      allVideos=[];
-
-      if(snap.exists()){
-        snap.forEach(ch=>{
-          allVideos.push({
-            id:ch.key,
-            ...ch.val()
-          });
-        });
-      }
-
-      allVideos.sort(
-        (a,b)=>(b.createdAt||0)-(a.createdAt||0)
-      );
-
-      console.log("TMK VIDEO Firebase:",allVideos);
-
-      renderFeed(allVideos);
-      updateVideoCount();
-
-      if(allVideos.length===0){
-        $("feed").innerHTML=
-          '<div class="video-card"><div class="video-info">Video မရှိသေးပါ။</div></div>';
-      }
-    },
-
-    error=>{
-      console.error("Firebase Video Error:",error);
-
-      $("feed").innerHTML=
-        '<div class="video-card"><div class="video-info">' +
-        '<strong>Firebase Error</strong><p>' +
-        esc(error.message) +
-        '</p><p>Firebase Realtime Database Rules ကို စစ်ဆေးပါ။</p>' +
-        '</div></div>';
-    }
-  );
+  allVideos.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+  renderFeed(allVideos);
+  updateVideoCount();
+ },error=>{
+  $("feed").innerHTML='<div class="empty">Firebase မှ Video ဖတ်မရပါ။<br>'+esc(error.message)+'</div>';
+ });
 }
-
+loadVideos();
 
 /* PROFILE */
 async function loadProfile(){
  if(!currentUser)return;
-
  try{
   const snap=await get(ref(db,"users/"+currentUser.uid));
-
   profileData=snap.exists()?snap.val():{
-   username:(currentUser.email||"User").split("@")[0].slice(0,30),
-   photoData:"",
-   bio:""
+   username:(currentUser.email||"User").split("@")[0],
+   photoData:"",bio:""
   };
-
   $("profileName").textContent=profileData.username||"User";
   $("profileEmail").textContent=currentUser.email||"";
   $("editUsername").value=profileData.username||"";
   $("editBio").value=profileData.bio||"";
-
   if(profileData.photoData)$("profilePhoto").src=profileData.photoData;
   else $("profilePhoto").removeAttribute("src");
- }catch(e){console.error(e);}
+ }catch(e){$("profileStatus").textContent=e.message;}
 }
 
 function compressImage(file){
  return new Promise((resolve,reject)=>{
-  const img=new Image();
-  const url=URL.createObjectURL(file);
-
+  const img=new Image(),url=URL.createObjectURL(file);
   img.onload=()=>{
    const scale=Math.min(400/img.width,400/img.height,1);
-   const c=document.createElement("canvas");
-   c.width=Math.round(img.width*scale);
-   c.height=Math.round(img.height*scale);
-   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+   const canvas=document.createElement("canvas");
+   canvas.width=Math.round(img.width*scale);
+   canvas.height=Math.round(img.height*scale);
+   canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
    URL.revokeObjectURL(url);
-   resolve(c.toDataURL("image/jpeg",.7));
+   resolve(canvas.toDataURL("image/jpeg",.7));
   };
-
-  img.onerror=reject;
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(Error("ဓာတ်ပုံဖတ်မရပါ"));};
   img.src=url;
  });
 }
 
 $("saveProfileBtn").onclick=async()=>{
  if(!currentUser)return alert("Login အရင်ဝင်ပါ");
-
  try{
   const username=$("editUsername").value.trim();
   if(!username||username.length>30)throw Error("Username မှန်ကန်စွာထည့်ပါ");
-
   let photoData=profileData.photoData||"";
-  const f=$("editPhoto").files[0];
-  if(f)photoData=await compressImage(f);
+  const file=$("editPhoto").files[0];
+  if(file)photoData=await compressImage(file);
   if(photoData.length>350000)throw Error("ဓာတ်ပုံအရွယ်အစားကြီးနေပါတယ်");
-
-  const bio=$("editBio").value.trim();
-  const data={username,photoData,bio,updatedAt:Date.now()};
-
+  const data={username,photoData,bio:$("editBio").value.trim(),updatedAt:Date.now()};
   await set(ref(db,"users/"+currentUser.uid),data);
   profileData=data;
   await loadProfile();
@@ -597,169 +434,140 @@ $("saveProfileBtn").onclick=async()=>{
  }catch(e){$("profileStatus").textContent=e.message;}
 };
 
-/* SAVED VIDEOS AND FOLLOWING */
-function clearListeners(){
- engagementUnsubscribers.forEach(fn=>{try{fn();}catch(e){}});
- engagementUnsubscribers=[];
-
- if(feedObserver){
-  feedObserver.disconnect();
-  feedObserver=null;
- }
+/* FOLLOW / SAVED */
+async function loadFollowing(){
+ followingIds.clear();
+ if(!currentUser)return;
+ try{
+  const snap=await get(ref(db,"follows"));
+  if(snap.exists()){
+   Object.entries(snap.val()||{}).forEach(([uid,followers])=>{
+    if(followers?.[currentUser.uid]===true)followingIds.add(uid);
+   });
+  }
+ }catch(e){console.warn(e);}
 }
-
 async function loadSavedVideos(){
  savedVideoIds.clear();
  if(!currentUser)return;
-
  try{
   const snap=await get(ref(db,"savedVideos/"+currentUser.uid));
   if(snap.exists())Object.keys(snap.val()||{}).forEach(id=>savedVideoIds.add(id));
  }catch(e){console.warn(e);}
 }
-
-async function loadFollowing(){
- followingIds.clear();
- if(!currentUser)return;
-
- try{
-  const s=await get(ref(db,"follows"));
-  if(s.exists()){
-   Object.entries(s.val()||{}).forEach(([target,followers])=>{
-    if(followers&&followers[currentUser.uid]===true)followingIds.add(target);
-   });
-  }
- }catch(e){console.warn(e);}
-}
-
-function updateFollowButton(button,uid){
- const following=followingIds.has(uid);
- button.textContent=following?"✓":"+";
- button.classList.toggle("following",following);
- button.setAttribute("aria-label",following?"Following":"Follow");
-}
-
 async function followUser(uid,button){
  if(!currentUser)return alert("Follow လုပ်ရန် Login ဝင်ပါ");
- if(uid===currentUser.uid)return alert("ကိုယ့်အကောင့်ကို Follow လုပ်လို့မရပါ");
-
+ if(!uid||uid===currentUser.uid)return;
  button.disabled=true;
-
  try{
   const path=ref(db,"follows/"+uid+"/"+currentUser.uid);
-
-  if(followingIds.has(uid)){
-   await remove(path);
-   followingIds.delete(uid);
-  }else{
-   await set(path,true);
-   followingIds.add(uid);
-  }
-
+  if(followingIds.has(uid)){await remove(path);followingIds.delete(uid);}
+  else{await set(path,true);followingIds.add(uid);}
   updateFollowButton(button,uid);
-  if(feedMode==="following")renderFeed(allVideos);
- }catch(e){alert("Follow Error: "+e.message);}
+ }catch(e){alert(e.message);}
  finally{button.disabled=false;}
 }
+function updateFollowButton(button,uid){
+ const yes=followingIds.has(uid);
+ button.textContent=yes?"✓":"+";
+ button.classList.toggle("following",yes);
+}
+async function saveVideo(id){
+ if(!currentUser)return alert("Login ဝင်ပါ");
+ try{
+  const path=ref(db,"savedVideos/"+currentUser.uid+"/"+id);
+  if(savedVideoIds.has(id)){await remove(path);savedVideoIds.delete(id);}
+  else{await set(path,true);savedVideoIds.add(id);}
+  const b=document.querySelector('[data-save="'+CSS.escape(id)+'"]');
+  if(b){b.textContent=savedVideoIds.has(id)?"★":"☆";b.classList.toggle("saved",savedVideoIds.has(id));}
+ }catch(e){alert(e.message);}
+}
 
-/* VIDEO PLAY / PAUSE BUTTON — UPDATED */
+/* FEED CLEANUP */
+function clearFeedListeners(){
+ engagementUnsubscribers.forEach(fn=>{try{fn();}catch(e){}});
+ engagementUnsubscribers=[];
+ if(feedObserver){feedObserver.disconnect();feedObserver=null;}
+}
+
+/* VIDEO PLAY BUTTONS */
 function updateVideoPlayButton(video){
  const button=video.closest(".video-card")?.querySelector("[data-play-toggle]");
  if(!button)return;
-
- const playing=!video.paused&&!video.ended;
-
- if(playing){
-  button.classList.add("hidden");
- }else{
-  button.textContent="▶";
-  button.classList.remove("hidden");
- }
+ button.classList.toggle("hidden",!video.paused&&!video.ended);
 }
-
 function setupVideoPlayButtons(){
  $("feed").querySelectorAll("[data-play-toggle]").forEach(button=>{
   const video=button.closest(".video-card")?.querySelector("video");
   if(!video)return;
-
-  /* ▶ ခလုတ်နှိပ်လျှင် Video ပြန်ဖွင့်ရန် */
   button.onclick=e=>{
    e.stopPropagation();
-
-   if(video.paused){
-    video.dataset.userPaused="false";
-    video.play().catch(e=>{
-     console.warn("Video play error:",e);
-     updateVideoPlayButton(video);
-    });
-   }
+   video.dataset.userPaused="false";
+   video.play().catch(()=>updateVideoPlayButton(video));
   };
-
-  /* Video ကိုနှိပ်လျှင် Play / Pause ပြောင်းရန် */
   video.addEventListener("click",()=>{
-   if(video.paused){
-    video.dataset.userPaused="false";
-    video.play().catch(e=>console.warn("Video play error:",e));
-   }else{
-    video.dataset.userPaused="true";
-    video.pause();
-   }
+   if(video.paused){video.dataset.userPaused="false";video.play().catch(()=>{});}
+   else{video.dataset.userPaused="true";video.pause();}
   });
-
-  video.addEventListener("play",()=>updateVideoPlayButton(video));
-  video.addEventListener("pause",()=>updateVideoPlayButton(video));
-  video.addEventListener("ended",()=>updateVideoPlayButton(video));
-
+  ["play","pause","ended"].forEach(event=>{
+   video.addEventListener(event,()=>updateVideoPlayButton(video));
+  });
+  video.addEventListener("error",()=>{
+   const card=video.closest(".video-card");
+   let message=card.querySelector(".video-error");
+   if(!message){
+    message=document.createElement("div");
+    message.className="video-error";
+    card.appendChild(message);
+   }
+   message.textContent="ဒီ Video ကို ဖွင့်မရပါ။ Video URL သို့မဟုတ် Storage Permission ကို စစ်ဆေးပါ။";
+   updateVideoPlayButton(video);
+   console.error("Video playback error:",video.error,video.currentSrc);
+  });
+  video.addEventListener("loadedmetadata",()=>{
+   const message=video.closest(".video-card")?.querySelector(".video-error");
+   if(message)message.remove();
+  });
   updateVideoPlayButton(video);
  });
 }
 
-/* VIDEO FEED */
-function renderFeed(videos){
- clearListeners();
-
+/* FEED */
+function renderFeed(inputVideos){
+ clearFeedListeners();
+ let videos=[...inputVideos];
  if(feedMode==="following"&&currentUser){
   videos=videos.filter(v=>v.uid===currentUser.uid||followingIds.has(v.uid));
  }
-
  if(!videos.length){
-  $("feed").innerHTML='<div class="video-card"><div class="video-info">Video မရှိသေးပါ။ Login ဝင်ပြီး Video တင်နိုင်ပါတယ်။</div></div>';
+  $("feed").innerHTML='<div class="video-card"><div class="video-info">Video မရှိသေးပါ။</div></div>';
   return;
  }
-
  $("feed").innerHTML=videos.map(v=>{
   const id=esc(v.id);
-
+  const url=String(v.videoUrl||"").trim();
   const media=v.youtubeId
-   ?`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtubeId)}?playsinline=1&mute=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
-   :`<video data-feed-video src="${esc(v.videoUrl||"")}" playsinline loop muted preload="metadata"></video>
-     <button type="button" class="video-play-toggle hidden" data-play-toggle="${id}" aria-label="Play video">▶</button>`;
-
+   ?'<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.youtubeId)+'?playsinline=1&mute=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'
+   :url
+    ?'<video data-feed-video src="'+esc(url)+'" playsinline loop muted preload="metadata"></video><button class="video-play-toggle hidden" type="button" data-play-toggle="'+id+'">▶</button>'
+    :'<div class="video-error">Video URL မရှိပါ။ Firebase videos/'+id+'/videoUrl ကို စစ်ပါ။</div>';
   return `
   <article class="video-card" data-card="${id}">
    <div class="video-media">${media}</div>
-
    <div class="actions">
-    <button type="button" data-creator="${esc(v.uid||"")}">👤</button>
-    <button type="button" class="follow-button" data-follow="${esc(v.uid||"")}">+</button>
-    <button type="button" data-like="${id}">♡</button>
-    <small data-like-count>0</small>
-    <button type="button" data-open-comment="${id}">💬</button>
-    <small data-comment-count>0</small>
-    <button type="button" data-share="${id}">↗</button>
-    <small>မျှဝေရန်</small>
-    <button type="button" class="${savedVideoIds.has(v.id)?"saved":""}" data-save="${id}">${savedVideoIds.has(v.id)?"★":"☆"}</button>
+    <button data-creator="${esc(v.uid||"")}">👤</button>
+    <button class="follow-button" data-follow="${esc(v.uid||"")}">+</button>
+    <button data-like="${id}">♡</button><small data-like-count>0</small>
+    <button data-open-comment="${id}">💬</button><small data-comment-count>0</small>
+    <button data-share="${id}">↗</button><small>မျှဝေရန်</small>
+    <button data-save="${id}" class="${savedVideoIds.has(v.id)?"saved":""}">${savedVideoIds.has(v.id)?"★":"☆"}</button>
     <small>သိမ်းရန်</small>
-    <button type="button" data-sound="${id}">🔇</button>
-    ${v.uid===currentUser?.uid?`<button type="button" data-delete="${id}">🗑</button>`:""}
+    <button data-sound="${id}">🔇</button>
+    ${v.uid===currentUser?.uid?'<button data-delete="'+id+'">🗑</button>':""}
    </div>
-
    <div class="video-info">
     <strong>@${esc(v.username||"User")}</strong>
-    <div class="music-label">
-     📅 တင်ခဲ့သည့်ရက်စွဲ:
-     ${esc(formatUploadDate(v.createdAt))}
-    </div>
+    <div class="music-label">📅 ${esc(formatUploadDate(v.createdAt))}</div>
     <p>${esc(v.title||"TMK VIDEO")}</p>
     <p>${esc(v.caption||"")}</p>
     <div class="music-label">♫ Original sound - TMK VIDEO</div>
@@ -769,164 +577,102 @@ function renderFeed(videos){
 
  setupVideoPlayButtons();
 
- $("feed").querySelectorAll("[data-creator]").forEach(b=>{
-  b.onclick=()=>{
-   if(!b.dataset.creator)return;
-   showPage("friendsPage");
-   $("friendsList").innerHTML="<div class=card>အသုံးပြုသူ UID: "+esc(b.dataset.creator)+"</div>";
-  };
- });
-
  $("feed").querySelectorAll("[data-follow]").forEach(b=>{
   updateFollowButton(b,b.dataset.follow);
   b.onclick=()=>followUser(b.dataset.follow,b);
  });
-
- $("feed").querySelectorAll("[data-save]").forEach(b=>{
-  b.onclick=()=>saveVideo(b.dataset.save);
+ $("feed").querySelectorAll("[data-save]").forEach(b=>b.onclick=()=>saveVideo(b.dataset.save));
+ $("feed").querySelectorAll("[data-like]").forEach(b=>b.onclick=()=>likeVideo(b.dataset.like));
+ $("feed").querySelectorAll("[data-open-comment]").forEach(b=>b.onclick=()=>openComments(b.dataset.openComment));
+ $("feed").querySelectorAll("[data-share]").forEach(b=>b.onclick=()=>shareVideo(b.dataset.share));
+ $("feed").querySelectorAll("[data-sound]").forEach(b=>b.onclick=()=>{
+  const video=b.closest(".video-card").querySelector("video");
+  if(!video)return;
+  if(video.muted){muteOthers(video);video.muted=false;b.textContent="🔊";}
+  else{video.muted=true;b.textContent="🔇";}
  });
-
- $("feed").querySelectorAll("[data-like]").forEach(b=>{
-  b.onclick=()=>likeVideo(b.dataset.like);
+ $("feed").querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteVideo(b.dataset.delete));
+ $("feed").querySelectorAll("[data-creator]").forEach(b=>b.onclick=()=>{
+  if(!b.dataset.creator)return;
+  showPage("friendsPage");
+  $("friendsList").textContent="အသုံးပြုသူ UID: "+b.dataset.creator;
  });
-
- $("feed").querySelectorAll("[data-open-comment]").forEach(b=>{
-  b.onclick=()=>openComments(b.dataset.openComment);
- });
-
- $("feed").querySelectorAll("[data-share]").forEach(b=>{
-  b.onclick=()=>shareVideo(b.dataset.share);
- });
-
- $("feed").querySelectorAll("[data-sound]").forEach(b=>{
-  b.onclick=()=>{
-   const v=b.closest(".video-card").querySelector("video");
-   if(!v)return;
-
-   if(v.muted){
-    muteOthers(v);
-    v.muted=false;
-    b.textContent="🔊";
-   }else{
-    v.muted=true;
-    b.textContent="🔇";
-   }
-  };
- });
-
- $("feed").querySelectorAll("[data-delete]").forEach(b=>{
-  b.onclick=()=>deleteVideo(b.dataset.delete);
- });
-
  videos.forEach(v=>watchEngagement(v.id));
  setupAutoplay();
 }
 
 function watchEngagement(id){
- const stopL=onValue(ref(db,"likes/"+id),snap=>{
-  const d=snap.val()||{};
-  const count=Object.values(d).filter(x=>x===true).length;
-  const liked=!!(currentUser&&d[currentUser.uid]===true);
-  const card=document.querySelector(`[data-card="${CSS.escape(id)}"]`);
+ const stopLikes=onValue(ref(db,"likes/"+id),snap=>{
+  const data=snap.val()||{};
+  const count=Object.values(data).filter(x=>x===true).length;
+  const card=document.querySelector('[data-card="'+CSS.escape(id)+'"]');
   if(!card)return;
-
-  const b=card.querySelector("[data-like]");
-  const n=card.querySelector("[data-like-count]");
-
-  if(b){
-   b.textContent=liked?"♥":"♡";
-   b.classList.toggle("liked",liked);
-  }
+  const button=card.querySelector("[data-like]");
+  const number=card.querySelector("[data-like-count]");
+  const liked=!!(currentUser&&data[currentUser.uid]===true);
+  if(button){button.textContent=liked?"♥":"♡";button.classList.toggle("liked",liked);}
+  if(number)number.textContent=count;
+ });
+ const stopComments=onValue(ref(db,"comments/"+id),snap=>{
+  let count=0;if(snap.exists())snap.forEach(()=>count++);
+  const n=document.querySelector('[data-card="'+CSS.escape(id)+'"] [data-comment-count]');
   if(n)n.textContent=count;
  });
-
- const stopC=onValue(ref(db,"comments/"+id),snap=>{
-  let count=0;
-  if(snap.exists())snap.forEach(()=>count++);
-  const card=document.querySelector(`[data-card="${CSS.escape(id)}"]`);
-  const n=card?.querySelector("[data-comment-count]");
-  if(n)n.textContent=count;
- });
-
- engagementUnsubscribers.push(stopL,stopC);
+ engagementUnsubscribers.push(stopLikes,stopComments);
 }
-
 async function likeVideo(id){
- if(!currentUser)return alert("ကြိုက်နှစ်သက်ရန် Login ဝင်ပါ");
-
+ if(!currentUser)return alert("Login ဝင်ပါ");
  try{
-  const r=ref(db,`likes/${id}/${currentUser.uid}`);
-  const s=await get(r);
-  if(s.exists()&&s.val()===true)await remove(r);
-  else await set(r,true);
- }catch(e){alert("Like Error: "+e.message);}
+  const path=ref(db,"likes/"+id+"/"+currentUser.uid);
+  const snap=await get(path);
+  if(snap.exists()&&snap.val()===true)await remove(path);
+  else await set(path,true);
+ }catch(e){alert(e.message);}
 }
 
 /* COMMENTS */
 function openComments(id){
  selectedCommentVideo=id;
  $("commentPanel").classList.add("open");
-
  if(commentUnsubscribe)commentUnsubscribe();
-
  commentUnsubscribe=onValue(ref(db,"comments/"+id),snap=>{
-  const a=[];
-  if(snap.exists())snap.forEach(c=>a.push(c.val()));
-  a.sort((x,y)=>(x.createdAt||0)-(y.createdAt||0));
-
-  $("panelComments").innerHTML=a.map(c=>`
-   <div class="comment-item">
-    <small>@${esc((c.uid||"User").slice(0,8))}</small>
-    <div>${esc(c.text||"")}</div>
-   </div>
-  `).join("")||"Comment မရှိသေးပါ။";
+  const items=[];
+  if(snap.exists())snap.forEach(c=>items.push(c.val()));
+  items.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  $("panelComments").innerHTML=items.map(c=>
+   '<div class="comment-item"><small>@'+esc((c.uid||"User").slice(0,8))+'</small><div>'+esc(c.text||"")+'</div></div>'
+  ).join("")||"Comment မရှိသေးပါ။";
  });
 }
-
 $("closeComments").onclick=()=>{
  $("commentPanel").classList.remove("open");
- if(commentUnsubscribe){
-  commentUnsubscribe();
-  commentUnsubscribe=null;
- }
+ if(commentUnsubscribe){commentUnsubscribe();commentUnsubscribe=null;}
 };
-
 $("panelCommentSend").onclick=async()=>{
- if(!currentUser)return alert("မှတ်ချက်ရေးရန် Login ဝင်ပါ");
- if(!selectedCommentVideo)return;
-
+ if(!currentUser)return alert("Login ဝင်ပါ");
  const text=$("panelCommentInput").value.trim();
- if(!text)return;
-
+ if(!text||!selectedCommentVideo)return;
  try{
   await set(push(ref(db,"comments/"+selectedCommentVideo)),{
    uid:currentUser.uid,text,createdAt:Date.now()
   });
   $("panelCommentInput").value="";
- }catch(e){alert("Comment Error: "+e.message);}
+ }catch(e){alert(e.message);}
 };
 
-/* SHARE AND DELETE */
+/* SHARE / DELETE */
 async function shareVideo(id){
  const url=location.href.split("#")[0]+"#video-"+id;
-
  try{
   if(navigator.share)await navigator.share({title:"TMK VIDEO",url});
-  else if(navigator.clipboard){
-   await navigator.clipboard.writeText(url);
-   alert("Link Copy ပြီးပါပြီ");
-  }else alert(url);
+  else{await navigator.clipboard.writeText(url);alert("Link Copy ပြီးပါပြီ");}
  }catch(e){console.log(e);}
 }
-
 async function deleteVideo(id){
  if(!currentUser||!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား"))return;
-
  try{
-  const s=await get(ref(db,"videos/"+id));
-  if(!s.exists()||s.val().uid!==currentUser.uid){
-   throw Error("ကိုယ့် Video ကိုသာ ဖျက်နိုင်ပါတယ်");
-  }
+  const snap=await get(ref(db,"videos/"+id));
+  if(!snap.exists()||snap.val().uid!==currentUser.uid)throw Error("ကိုယ့် Video ကိုသာ ဖျက်နိုင်ပါတယ်");
   await remove(ref(db,"videos/"+id));
   alert("Video ဖျက်ပြီးပါပြီ");
  }catch(e){alert(e.message);}
@@ -935,142 +681,60 @@ async function deleteVideo(id){
 /* AUTOPLAY */
 function muteOthers(active){
  document.querySelectorAll("#feed video").forEach(v=>{
-  if(v!==active){
-   v.pause();
-   v.muted=true;
-   const soundButton=v.closest(".video-card")?.querySelector("[data-sound]");
-   if(soundButton)soundButton.textContent="🔇";
-   updateVideoPlayButton(v);
-  }
+  if(v!==active){v.pause();v.muted=true;updateVideoPlayButton(v);}
  });
 }
-
 function setupAutoplay(){
  if(feedObserver)feedObserver.disconnect();
- if(!("IntersectionObserver"in window))return;
-
+ if(!("IntersectionObserver" in window))return;
  feedObserver=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-   const v=e.target;
-   const card=v.closest(".video-card");
-   const soundButton=card?.querySelector("[data-sound]");
-
-   if(e.isIntersecting&&e.intersectionRatio>=.65){
-
+  entries.forEach(entry=>{
+   const video=entry.target;
+   if(entry.isIntersecting&&entry.intersectionRatio>=.65){
     document.querySelectorAll("#feed video").forEach(other=>{
-     if(other!==v){
-      other.pause();
-      other.muted=true;
-      other.dataset.userPaused="false";
-
-      const otherSound=other.closest(".video-card")?.querySelector("[data-sound]");
-      if(otherSound)otherSound.textContent="🔇";
-
-      updateVideoPlayButton(other);
-     }
+     if(other!==video){other.pause();other.muted=true;other.dataset.userPaused="false";updateVideoPlayButton(other);}
     });
-
-    /* ကိုယ်တိုင် Pause လုပ်ထားရင် အလိုအလျောက် မဖွင့်ပါ */
-    if(v.dataset.userPaused!=="true"){
-     v.muted=true;
-     if(soundButton)soundButton.textContent="🔇";
-
-     v.play().catch(()=>{
-      updateVideoPlayButton(v);
-     });
+    if(video.dataset.userPaused!=="true"){
+     video.muted=true;
+     video.play().catch(()=>updateVideoPlayButton(video));
     }
-
    }else{
-    v.pause();
-    v.muted=true;
-
-    /* နောက်တစ်ခါ ပြန်ရောက်လာရင် Auto Play ပြန်လုပ်နိုင်ရန် */
-    v.dataset.userPaused="false";
-
-    if(soundButton)soundButton.textContent="🔇";
-    updateVideoPlayButton(v);
+    video.pause();video.muted=true;video.dataset.userPaused="false";
+    updateVideoPlayButton(video);
    }
   });
  },{threshold:[0,.65,.9]});
-
- document.querySelectorAll("#feed video[data-feed-video]").forEach(v=>{
-  feedObserver.observe(v);
- });
+ document.querySelectorAll("#feed video[data-feed-video]").forEach(v=>feedObserver.observe(v));
 }
 
 /* FEED TABS */
 async function switchFeed(mode){
  feedMode=mode;
-
- ["forYouTab","followingTab"].forEach(id=>{
-  $(id).classList.toggle(
-   "active",
-   (id==="forYouTab"&&mode==="all")||
-   (id==="followingTab"&&mode==="following")
-  );
- });
-
+ $("forYouTab").classList.toggle("active",mode==="all");
+ $("followingTab").classList.toggle("active",mode==="following");
  if(mode==="following")await loadFollowing();
  renderFeed(allVideos);
 }
-
 $("forYouTab").onclick=()=>switchFeed("all");
-
 $("followingTab").onclick=()=>{
- if(!currentUser){
-  alert("လိုက်ကြည့်ထားသူများကို ကြည့်ရန် Login ဝင်ပါ");
-  showPage("profilePage");
-  return;
- }
+ if(!currentUser){alert("Login ဝင်ပါ");showPage("profilePage");return;}
  switchFeed("following");
 };
-
 $("friendsTab").onclick=()=>showPage("friendsPage");
 
-/* SAVE VIDEO */
-async function saveVideo(id){
- if(!currentUser)return alert("သိမ်းဆည်းရန် Login ဝင်ပါ");
-
- try{
-  const r=ref(db,`savedVideos/${currentUser.uid}/${id}`);
-
-  if(savedVideoIds.has(id)){
-   await remove(r);
-   savedVideoIds.delete(id);
-  }else{
-   await set(r,true);
-   savedVideoIds.add(id);
-  }
-
-  const b=document.querySelector(`[data-save="${CSS.escape(id)}"]`);
-  if(b){
-   b.classList.toggle("saved",savedVideoIds.has(id));
-   b.textContent=savedVideoIds.has(id)?"★":"☆";
-  }
- }catch(e){alert(e.message);}
-}
-
+/* SAVED VIDEOS */
 $("savedVideosBtn").onclick=async()=>{
  if(!currentUser)return alert("Login ဝင်ပါ");
-
  try{
-  const s=await get(ref(db,"savedVideos/"+currentUser.uid));
-  const ids=s.val()||{};
+  const snap=await get(ref(db,"savedVideos/"+currentUser.uid));
+  const ids=snap.val()||{};
   const list=allVideos.filter(v=>ids[v.id]);
-
-  $("savedVideos").innerHTML=list.map(v=>`
-   <div class="card">
-    <b>${esc(v.title||"ဗီဒီယို")}</b>
-    <p>${esc(v.caption||"")}</p>
-    <button class="btn" data-saved-play="${esc(v.id)}">ကြည့်ရန်</button>
-   </div>
-  `).join("")||"သိမ်းထားသော ဗီဒီယို မရှိသေးပါ";
-
-  document.querySelectorAll("[data-saved-play]").forEach(b=>{
-   b.onclick=()=>{
-    showPage("homePage");
-    document.querySelector(`[data-card="${CSS.escape(b.dataset.savedPlay)}"]`)?.scrollIntoView({behavior:"smooth"});
-   };
+  $("savedVideos").innerHTML=list.map(v=>
+   '<div class="card"><b>'+esc(v.title||"Video")+'</b><p>'+esc(v.caption||"")+'</p><button class="btn" data-saved-play="'+esc(v.id)+'">ကြည့်ရန်</button></div>'
+  ).join("")||"သိမ်းထားသော Video မရှိသေးပါ";
+  $("savedVideos").querySelectorAll("[data-saved-play]").forEach(b=>b.onclick=()=>{
+   showPage("homePage");
+   document.querySelector('[data-card="'+CSS.escape(b.dataset.savedPlay)+'"]')?.scrollIntoView({behavior:"smooth"});
   });
  }catch(e){alert(e.message);}
 };
@@ -1078,44 +742,27 @@ $("savedVideosBtn").onclick=async()=>{
 /* SEARCH */
 $("searchInput").oninput=()=>{
  const q=$("searchInput").value.toLowerCase().trim();
-
  const results=allVideos.filter(v=>
   (v.title||"").toLowerCase().includes(q)||
   (v.caption||"").toLowerCase().includes(q)||
   (v.username||"").toLowerCase().includes(q)
  );
-
- $("searchResults").innerHTML=results.map(v=>`
-  <div class="card">
-   <strong>${esc(v.title||"Video")}</strong>
-   <p>${esc(v.caption||"")}</p>
-   <button class="btn primary" data-play-search="${esc(v.id)}">ကြည့်ရန်</button>
-  </div>
- `).join("")||"ရှာဖွေမှုရလဒ် မရှိပါ";
-
- $("searchResults").querySelectorAll("[data-play-search]").forEach(b=>{
-  b.onclick=()=>{
-   showPage("homePage");
-   document.querySelector(`[data-card="${CSS.escape(b.dataset.playSearch)}"]`)?.scrollIntoView({behavior:"smooth"});
-  };
+ $("searchResults").innerHTML=results.map(v=>
+  '<div class="card"><strong>'+esc(v.title||"Video")+'</strong><p>'+esc(v.caption||"")+'</p><button class="btn primary" data-search-play="'+esc(v.id)+'">ကြည့်ရန်</button></div>'
+ ).join("")||"ရှာဖွေမှုရလဒ် မရှိပါ";
+ $("searchResults").querySelectorAll("[data-search-play]").forEach(b=>b.onclick=()=>{
+  showPage("homePage");
+  document.querySelector('[data-card="'+CSS.escape(b.dataset.searchPlay)+'"]')?.scrollIntoView({behavior:"smooth"});
  });
 };
-
 function updateVideoCount(){
- if($("profileVideoCount")){
-  $("profileVideoCount").textContent="Videos: "+(
-   currentUser?allVideos.filter(v=>v.uid===currentUser.uid).length:0
-  );
- }
+ $("profileVideoCount").textContent="Videos: "+(currentUser?allVideos.filter(v=>v.uid===currentUser.uid).length:0);
 }
 
-/* SUPABASE SIGNED UPLOAD */
+/* SUPABASE SMALL FILE UPLOAD */
 async function getUploadPermission(file){
  if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
- if(!supabase)throw Error("Supabase URL နဲ့ Publishable Key ကို အရင်ထည့်ပါ");
-
  const token=await currentUser.getIdToken();
-
  const response=await fetch(UPLOAD_FUNCTION_URL,{
   method:"POST",
   headers:{
@@ -1128,22 +775,17 @@ async function getUploadPermission(file){
    contentType:file.type
   })
  });
-
- let result={};
- try{result=await response.json();}catch(e){}
-
- if(!response.ok||!result.success){
-  throw Error(result.error||("Upload permission failed ("+response.status+")"));
- }
+ const text=await response.text();
+ let result;
+ try{result=JSON.parse(text);}catch{throw Error("Supabase က JSON မပြန်ပါ။ HTTP "+response.status);}
+ if(!response.ok||!result.success)throw Error(result.error||"Upload permission failed: "+response.status);
  return result;
 }
-
 function uploadWithProgress(url,file){
  return new Promise((resolve,reject)=>{
   const xhr=new XMLHttpRequest();
   xhr.open("PUT",url);
   xhr.setRequestHeader("Content-Type",file.type||"application/octet-stream");
-
   xhr.upload.onprogress=e=>{
    if(e.lengthComputable){
     const pct=Math.round(e.loaded/e.total*100);
@@ -1151,459 +793,289 @@ function uploadWithProgress(url,file){
     $("fileStatus").textContent="Uploading "+pct+"%";
    }
   };
-
-  xhr.onload=()=>{
-   xhr.status>=200&&xhr.status<300
-    ?resolve()
-    :reject(Error("Storage Error "+xhr.status+": "+xhr.responseText));
-  };
-
+  xhr.onload=()=>xhr.status>=200&&xhr.status<300?resolve():reject(Error("Storage Error "+xhr.status+": "+xhr.responseText));
   xhr.onerror=()=>reject(Error("Network Error"));
   xhr.send(file);
  });
 }
 
-async function sha1Hex(blob) {
-  const buffer = await blob.arrayBuffer();
-  const hash = await crypto.subtle.digest("SHA-1", buffer);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
+/* B2 MULTIPART */
+async function sha1Hex(blob){
+ const buffer=await blob.arrayBuffer();
+ const hash=await crypto.subtle.digest("SHA-1",buffer);
+ return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+async function workerPost(path,body){
+ if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
+ const token=await currentUser.getIdToken();
+ const response=await fetch(WORKER_URL+path,{
+  method:"POST",
+  headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},
+  body:JSON.stringify(body)
+ });
+ const text=await response.text();
+ let result;
+ try{result=JSON.parse(text);}
+ catch{throw Error("Worker က JSON မပြန်ပါ။ HTTP "+response.status);}
+ if(!response.ok||result.success!==true){
+  throw Error(result.message||result.error||"Worker API Error: "+response.status);
+ }
+ return result;
+}
+function uploadB2Part(url,token,partNumber,sha1,blob,onProgress){
+ return new Promise((resolve,reject)=>{
+  const xhr=new XMLHttpRequest();
+  xhr.open("POST",url);
+  xhr.setRequestHeader("Authorization",token);
+  xhr.setRequestHeader("X-Bz-Part-Number",String(partNumber));
+  xhr.setRequestHeader("X-Bz-Content-Sha1",sha1);
+  xhr.setRequestHeader("Content-Type","application/octet-stream");
+  xhr.upload.onprogress=e=>{if(e.lengthComputable)onProgress(e.loaded);};
+  xhr.onload=()=>xhr.status>=200&&xhr.status<300?resolve():reject(Error("B2 Part Error "+xhr.status+": "+xhr.responseText));
+  xhr.onerror=()=>reject(Error("B2 Network Error"));
+  xhr.send(blob);
+ }
+);}
+
+async function uploadLargeVideoToB2(file,title,caption){
+ $("fileStatus").textContent="B2 Upload စတင်နေပါတယ်...";
+ const init=await workerPost("/upload/init",{size:file.size,contentType:file.type});
+ const partSize=Number(init.partSize);
+ const partCount=Number(init.partCount);
+ if(!init.fileId||!Number.isSafeInteger(partSize)||!Number.isSafeInteger(partCount)||partSize<MIN_B2_PART_SIZE||partCount<1||partCount>10000){
+  throw Error("Worker Upload Init အချက်အလက် မမှန်ပါ");
+ }
+ if(Math.ceil(file.size/partSize)!==partCount)throw Error("Worker Part Count မကိုက်ညီပါ");
+ const partSha1Array=[];
+ let uploadedBytes=0;
+
+ for(let i=0;i<partCount;i++){
+  const partNumber=i+1;
+  const chunk=file.slice(i*partSize,Math.min((i+1)*partSize,file.size));
+  if(!chunk.size)throw Error("Upload Part အလွတ်ဖြစ်နေပါတယ်");
+  $("fileStatus").textContent="B2 Upload Part "+partNumber+"/"+partCount;
+  const sha1=await sha1Hex(chunk);
+  const info=await workerPost("/upload/part-url",{fileId:init.fileId,partNumber});
+  if(!info.uploadUrl||!info.authorizationToken)throw Error("Worker Part URL မပြည့်စုံပါ");
+  await uploadB2Part(info.uploadUrl,info.authorizationToken,partNumber,sha1,chunk,loaded=>{
+   const pct=Math.round(Math.min(uploadedBytes+loaded,file.size)/file.size*100);
+   $("fileProgressBar").style.width=pct+"%";
+   $("fileStatus").textContent="Uploading "+pct+"%";
+  });
+  uploadedBytes+=chunk.size;
+  partSha1Array.push(sha1);
+ }
+
+ $("fileStatus").textContent="Video သိမ်းဆည်းနေပါတယ်...";
+ const finished=await workerPost("/upload/finish",{fileId:init.fileId,partSha1Array});
+ if(!finished.videoUrl||!/^https:\/\//i.test(finished.videoUrl))throw Error("Worker က မှန်ကန်သော HTTPS Video URL မပေးပါ");
+ await saveVideoRecord(file,title,caption,finished.videoUrl,finished.fileName||"Backblaze B2");
+ $("fileProgressBar").style.width="100%";
+ $("fileStatus").textContent="Upload Complete!";
 }
 
-async function workerPost(path, body) {
-  const token = await currentUser.getIdToken();
-
-  const response = await fetch(
-    "https://tmk-video-api.htunminkhant2007.workers.dev" + path,
-    {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    }
-  );
-
-  const result = await response.json();
-
-  if (!response.ok || !result.success) {
-    throw Error(result.message || "Worker API Error");
-  }
-
-  return result;
-}
-
-function uploadB2Part(url, token, partNumber, sha1, blob, onProgress) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.open("POST", url);
-    xhr.setRequestHeader("Authorization", token);
-    xhr.setRequestHeader("X-Bz-Part-Number", String(partNumber));
-    xhr.setRequestHeader("X-Bz-Content-Sha1", sha1);
-    xhr.setRequestHeader("Content-Type", "application/octet-stream");
-
-    xhr.upload.onprogress = e => {
-      if (e.lengthComputable) onProgress(e.loaded);
-    };
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve();
-      } else {
-        reject(Error("B2 Part Error " + xhr.status + ": " + xhr.responseText));
-      }
-    };
-
-    xhr.onerror = () => reject(Error("B2 Network Error"));
-    xhr.send(blob);
-  });
-}
-
-async function uploadLargeVideoToB2(file, title, caption) {
-  $("fileStatus").textContent = "B2 Upload စတင်နေပါတယ်...";
-
-  const init = await workerPost("/upload/init", {
-    size: file.size,
-    contentType: file.type
-  });
-
-  const partSize = init.partSize;
-  const partCount = init.partCount;
-  const partSha1Array = [];
-
-  let uploadedBytes = 0;
-
-  for (let i = 0; i < partCount; i++) {
-    const partNumber = i + 1;
-    const start = i * partSize;
-    const end = Math.min(start + partSize, file.size);
-    const chunk = file.slice(start, end);
-
-    $("fileStatus").textContent =
-      "B2 Upload Part " + partNumber + "/" + partCount;
-
-    const partSha1 = await sha1Hex(chunk);
-
-    const partInfo = await workerPost("/upload/part-url", {
-      fileId: init.fileId,
-      partNumber
-    });
-
-    await uploadB2Part(
-      partInfo.uploadUrl,
-      partInfo.authorizationToken,
-      partNumber,
-      partSha1,
-      chunk,
-      loaded => {
-        const total = Math.min(
-          uploadedBytes + loaded,
-          file.size
-        );
-
-        const pct = Math.round(total / file.size * 100);
-
-        $("fileProgressBar").style.width = pct + "%";
-        $("fileStatus").textContent = "Uploading " + pct + "%";
-      }
-    );
-
-    uploadedBytes += chunk.size;
-    partSha1Array.push(partSha1);
-  }
-
-  $("fileStatus").textContent = "Video ပြီးစီးအောင် သိမ်းနေပါတယ်...";
-
-  const finished = await workerPost("/upload/finish", {
-    fileId: init.fileId,
-    partSha1Array
-  });
-
-  const data = {
-    title: (title || file.name).slice(0, 100),
-    caption: (caption || "").slice(0, 500),
-    videoUrl: finished.videoUrl,
-    storagePath: finished.fileName,
-    storageProvider: "Backblaze B2",
-    uid: currentUser.uid,
-    username: (profileData.username ||
-      (currentUser.email || "User").split("@")[0]).slice(0, 30),
-    createdAt: Date.now()
-  };
-
-  await push(ref(db, "videos"), data);
-
-  $("fileProgressBar").style.width = "100%";
-  $("fileStatus").textContent = "Upload Complete!";
-}
-/* UPLOAD CONFIG */
-const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024;
-const SUPABASE_LIMIT = 50 * 1024 * 1024;
-const MIN_B2_PART_SIZE = 5 * 1024 * 1024;
-
-const WORKER_URL =
-  "https://tmk-video-api.htunminkhant2007.workers.dev";
-
-/* WORKER API */
-async function workerPost(path, body) {
-  if (!currentUser) throw Error("Login အရင်ဝင်ပါ");
-
-  const token = await currentUser.getIdToken();
-
-  const response = await fetch(WORKER_URL + path, {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-
-  const text = await response.text();
-  let result;
-
-  try {
-    result = JSON.parse(text);
-  } catch {
-    throw Error("Worker က JSON ပြန်မပေးပါ။ HTTP " + response.status);
-  }
-
-  if (!response.ok || result.success !== true) {
-    throw Error(
-      result.message ||
-      result.error ||
-      ("Worker API Error: " + response.status)
-    );
-  }
-
-  return result;
-}
-
-/* B2 PART UPLOAD */
-function uploadB2Part(
-  url,
-  token,
-  partNumber,
-  sha1,
-  blob,
-  onProgress
-) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.open("POST", url);
-    xhr.setRequestHeader("Authorization", token);
-    xhr.setRequestHeader("X-Bz-Part-Number", String(partNumber));
-    xhr.setRequestHeader("X-Bz-Content-Sha1", sha1);
-    xhr.setRequestHeader("Content-Type", "application/octet-stream");
-
-    xhr.upload.onprogress = e => {
-      if (e.lengthComputable) onProgress(e.loaded);
-    };
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve();
-      } else {
-        reject(Error(
-          "B2 Part Error " + xhr.status + ": " + xhr.responseText
-        ));
-      }
-    };
-
-    xhr.onerror = () => reject(Error("B2 Network Error"));
-    xhr.send(blob);
-  });
-}
-
-/* LARGE VIDEO UPLOAD */
-async function uploadLargeVideoToB2(file, title, caption) {
-  $("fileStatus").textContent = "B2 Upload စတင်နေပါတယ်...";
-
-  const init = await workerPost("/upload/init", {
-    size: file.size,
-    contentType: file.type
-  });
-
-  const partSize = Number(init.partSize);
-  const partCount = Number(init.partCount);
-
-  if (!init.fileId || !partSize || !partCount) {
-    throw Error("Worker Upload Init အချက်အလက် မပြည့်စုံပါ");
-  }
-
-  if (partSize < MIN_B2_PART_SIZE) {
-    throw Error("B2 Part Size သည် 5MB အနည်းဆုံးရှိရပါမယ်");
-  }
-
-  if (partCount > 10000) {
-    throw Error("Upload Part အရေအတွက် များလွန်းနေပါတယ်");
-  }
-
-  const partSha1Array = [];
-  let uploadedBytes = 0;
-
-  for (let i = 0; i < partCount; i++) {
-    const partNumber = i + 1;
-    const start = i * partSize;
-    const end = Math.min(start + partSize, file.size);
-    const chunk = file.slice(start, end);
-
-    $("fileStatus").textContent =
-      "B2 Upload Part " + partNumber + "/" + partCount;
-
-    const partSha1 = await sha1Hex(chunk);
-
-    const partInfo = await workerPost("/upload/part-url", {
-      fileId: init.fileId,
-      partNumber
-    });
-
-    if (!partInfo.uploadUrl || !partInfo.authorizationToken) {
-      throw Error("Worker Part Upload URL မပြည့်စုံပါ");
-    }
-
-    await uploadB2Part(
-      partInfo.uploadUrl,
-      partInfo.authorizationToken,
-      partNumber,
-      partSha1,
-      chunk,
-      loaded => {
-        const total = Math.min(uploadedBytes + loaded, file.size);
-        const pct = Math.round(total / file.size * 100);
-
-        $("fileProgressBar").style.width = pct + "%";
-        $("fileStatus").textContent = "Uploading " + pct + "%";
-      }
-    );
-
-    uploadedBytes += chunk.size;
-    partSha1Array.push(partSha1);
-  }
-
-  $("fileStatus").textContent = "Video သိမ်းဆည်းနေပါတယ်...";
-
-  const finished = await workerPost("/upload/finish", {
-    fileId: init.fileId,
-    partSha1Array
-  });
-
-  if (!finished.videoUrl) {
-    throw Error("Worker က Video URL ပြန်မပေးပါ");
-  }
-
-  const data = {
-    title: (title || file.name).slice(0, 100),
-    caption: (caption || "").slice(0, 500),
-    videoUrl: finished.videoUrl,
-    storagePath: finished.fileName || "",
-    storageProvider: "Backblaze B2",
-    uid: currentUser.uid,
-    username: (
-      profileData.username ||
-      (currentUser.email || "User").split("@")[0]
-    ).slice(0, 30),
-    createdAt: Date.now()
-  };
-
-  await push(ref(db, "videos"), data);
-
-  $("fileProgressBar").style.width = "100%";
-  $("fileStatus").textContent = "Upload Complete!";
+/* SAVE VIDEO RECORD */
+async function saveVideoRecord(file,title,caption,videoUrl,storagePath,provider){
+ if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
+ if(!videoUrl)throw Error("Video URL မရှိပါ");
+ const data={
+  title:(title||file.name).slice(0,100),
+  caption:(caption||"").slice(0,500),
+  videoUrl,
+  storagePath:storagePath||"",
+  storageProvider:provider||"Backblaze B2",
+  uid:currentUser.uid,
+  username:(profileData.username||(currentUser.email||"User").split("@")[0]).slice(0,30),
+  createdAt:Date.now()
+ };
+ await push(ref(db,"videos"),data);
 }
 
 /* MAIN UPLOAD */
-async function uploadVideoFile(file, title, caption) {
-  if (!currentUser) throw Error("Login အရင်ဝင်ပါ");
-  if (!file) throw Error("Video ရွေးပါ");
+async function uploadVideoFile(file,title,caption){
+ if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
+ if(!file)throw Error("Video ရွေးပါ");
+ if(file.size>MAX_FILE_SIZE)throw Error("Video သည် 5GB ထက် မကျော်ရပါ");
+ if(!["video/mp4","video/webm","video/quicktime"].includes(file.type)){
+  throw Error("MP4, WebM, MOV Video များသာ တင်နိုင်ပါတယ်");
+ }
+ $("fileProgressBar").style.width="0%";
 
-  if (file.size > MAX_FILE_SIZE) {
-    throw Error("Video သည် 5GB ထက် မကျော်ရပါ");
-  }
+ if(file.size>SUPABASE_LIMIT){
+  return uploadLargeVideoToB2(file,title,caption);
+ }
 
-  if (![
-    "video/mp4",
-    "video/webm",
-    "video/quicktime"
-  ].includes(file.type)) {
-    throw Error("MP4, WebM, MOV Video များသာ တင်နိုင်ပါတယ်");
-  }
+ $("fileStatus").textContent="Supabase Permission တောင်းနေပါတယ်...";
+ const permission=await getUploadPermission(file);
+ if(!permission.path||!permission.token||!permission.publicUrl)throw Error("Supabase Upload Permission မပြည့်စုံပါ");
 
-  $("fileProgressBar").style.width = "0%";
+ const path=permission.path.split("/").map(encodeURIComponent).join("/");
+ const url=SUPABASE_URL+"/storage/v1/object/upload/sign/"+
+  encodeURIComponent(BUCKET_NAME)+"/"+path+
+  "?token="+encodeURIComponent(permission.token);
 
-  if (file.size > SUPABASE_LIMIT) {
-    return await uploadLargeVideoToB2(file, title, caption);
-  }
-
-  $("fileStatus").textContent = "Supabase Permission တောင်းနေပါတယ်...";
-
-  const p = await getUploadPermission(file);
-
-  if (!p.path || !p.token || !p.publicUrl) {
-    throw Error("Supabase Upload Permission မပြည့်စုံပါ");
-  }
-
-  const path = p.path.split("/")
-    .map(encodeURIComponent)
-    .join("/");
-
-  const url = SUPABASE_URL +
-    "/storage/v1/object/upload/sign/" +
-    encodeURIComponent(BUCKET_NAME) + "/" + path +
-    "?token=" + encodeURIComponent(p.token);
-
-  await uploadWithProgress(url, file);
-
-  const data = {
-    title: (title || file.name).slice(0, 100),
-    caption: (caption || "").slice(0, 500),
-    videoUrl: p.publicUrl,
-    storagePath: p.path,
-    storageProvider: "Supabase",
-    uid: currentUser.uid,
-    username: (
-      profileData.username ||
-      (currentUser.email || "User").split("@")[0]
-    ).slice(0, 30),
-    createdAt: Date.now()
-  };
-
-  await push(ref(db, "videos"), data);
-
-  $("fileProgressBar").style.width = "100%";
-  $("fileStatus").textContent = "Upload Complete!";
+ await uploadWithProgress(url,file);
+ await saveVideoRecord(file,title,caption,permission.publicUrl,permission.path,"Supabase");
+ $("fileProgressBar").style.width="100%";
+ $("fileStatus").textContent="Upload Complete!";
 }
 
-/* UPLOAD BUTTON */
-$("uploadFileBtn").onclick = async () => {
-  $("uploadFileBtn").disabled = true;
-
-  try {
-    await uploadVideoFile(
-      $("videoFile").files[0],
-      $("videoTitle").value.trim(),
-      $("videoCaption").value.trim()
-    );
-
-    alert("Video တင်ပြီးပါပြီ ❤️");
-
-    $("videoFile").value = "";
-    $("videoTitle").value = "";
-    $("videoCaption").value = "";
-
-    showPage("homePage");
-
-  } catch (e) {
-    $("fileStatus").textContent = e.message;
-    alert(e.message);
-
-  } finally {
-    $("uploadFileBtn").disabled = false;
-  }
+$("uploadFileBtn").onclick=async()=>{
+ const button=$("uploadFileBtn");
+ button.disabled=true;
+ try{
+  await uploadVideoFile($("videoFile").files[0],$("videoTitle").value.trim(),$("videoCaption").value.trim());
+  alert("Video တင်ပြီးပါပြီ ❤️");
+  $("videoFile").value="";$("videoTitle").value="";$("videoCaption").value="";
+  showPage("homePage");
+ }catch(e){
+  $("fileStatus").textContent=e.message;
+  alert(e.message);
+ }finally{button.disabled=false;}
 };
-/* CLEAN UP */
-window.addEventListener("pagehide",()=>{
- if(recording)stopRecording();
+
+/* CAMERA */
+async function startCamera(){
  stopCamera();
+ try{
+  cameraStream=await navigator.mediaDevices.getUserMedia({
+   audio:true,
+   video:{facingMode:cameraFacing,width:{ideal:1280},height:{ideal:720}}
+  });
+  $("tmkCamera").srcObject=cameraStream;
+  await $("tmkCamera").play();
+  $("tmkCameraScreen").classList.add("open");
+  $("cameraLiveStatus").textContent="Camera ဖွင့်ထားပါပြီ";
+ }catch(e){
+  $("cameraStatus").textContent="Camera Error: "+e.message;
+  alert("Camera ဖွင့်မရပါ။ Permission ပေးထားခြင်းရှိမရှိ စစ်ပါ။ "+e.message);
+ }
+}
+function stopCamera(){
+ if(cameraStream){
+  cameraStream.getTracks().forEach(track=>track.stop());
+  cameraStream=null;
+ }
+ $("tmkCamera").srcObject=null;
+ $("tmkCameraScreen").classList.remove("open");
+}
+function stopRecording(){
+ if(recorder&&recorder.state!=="inactive"){
+  recorder.stop();
+ }
+}
+$("tmkOpenCamera").onclick=startCamera;
+$("tmkCloseCamera").onclick=()=>{
+ if(recorder&&recorder.state!=="inactive")stopRecording();
+ stopCamera();
+};
+$("tmkSwitchCamera").onclick=async()=>{
+ cameraFacing=cameraFacing==="user"?"environment":"user";
+ await startCamera();
+};
+$("tmkRecord").onclick=()=>{
+ if(!cameraStream)return alert("Camera အရင်ဖွင့်ပါ");
+ if(!window.MediaRecorder)return alert("ဒီ Browser မှာ Video Recording မထောက်ပံ့ပါ");
+ if(recorder&&recorder.state==="recording"){
+  stopRecording();return;
+ }
+ cameraChunks=[];
+ let options={};
+ if(MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus"))options.mimeType="video/webm;codecs=vp9,opus";
+ else if(MediaRecorder.isTypeSupported("video/webm"))options.mimeType="video/webm";
+ try{
+  recorder=new MediaRecorder(cameraStream,options);
+  recorder.ondataavailable=e=>{if(e.data&&e.data.size)cameraChunks.push(e.data);};
+  recorder.onstop=()=>{
+   recordedBlob=new Blob(cameraChunks,{type:recorder.mimeType||"video/webm"});
+   if(recordedUrl)URL.revokeObjectURL(recordedUrl);
+   recordedUrl=URL.createObjectURL(recordedBlob);
+   $("tmkPreview").src=recordedUrl;
+   $("tmkPreview").load();
+   $("cameraStatus").textContent="ရိုက်ကူးပြီးပါပြီ။ Upload တင်နိုင်ပါပြီ။";
+   $("cameraLiveStatus").textContent="Recording ပြီးပါပြီ";
+   $("tmkRecord").classList.remove("recording");
+   stopCamera();
+  };
+  recorder.start(1000);
+  $("tmkRecord").classList.add("recording");
+  $("cameraLiveStatus").textContent="Recording လုပ်နေပါတယ်...";
+ }catch(e){alert("Recording Error: "+e.message);}
+};
+$("tmkStop").onclick=()=>{
+ if(recorder&&recorder.state==="recording")stopRecording();
+ else stopCamera();
+};
+$("tmkCameraUpload").onclick=async()=>{
+ if(!recordedBlob)return alert("Video အရင်ရိုက်ပါ");
+ const type=recordedBlob.type||"video/webm";
+ const ext=type.includes("mp4")?"mp4":"webm";
+ const file=new File([recordedBlob],"tmk-camera-"+Date.now()+"."+ext,{type});
+ const button=$("tmkCameraUpload");
+ button.disabled=true;
+ try{
+  await uploadVideoFile(file,$("cameraTitle").value.trim(),$("cameraCaption").value.trim());
+  $("cameraStatus").textContent="Camera Video Upload ပြီးပါပြီ ❤️";
+  alert("Camera Video Upload ပြီးပါပြီ");
+  recordedBlob=null;
+  if(recordedUrl){URL.revokeObjectURL(recordedUrl);recordedUrl=null;}
+  $("tmkPreview").removeAttribute("src");
+  showPage("homePage");
+ }catch(e){$("cameraStatus").textContent=e.message;alert(e.message);}
+ finally{button.disabled=false;}
+};
 
- if(canvasStream)canvasStream.getTracks().forEach(t=>t.stop());
+/* CAMERA EFFECTS / STICKERS / ZOOM */
+$("tmkEffectList").querySelectorAll("[data-effect]").forEach(button=>{
+ button.onclick=()=>{
+  cameraFilter=button.dataset.effect;
+  $("tmkCamera").style.filter=cameraFilter==="none"?"none":cameraFilter;
+  $("tmkEffectList").querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===button));
+ };
+});
+$("tmkStickerList").querySelectorAll("[data-sticker]").forEach(button=>{
+ button.onclick=()=>{
+  cameraSticker=button.dataset.sticker;
+  $("tmkStickerOverlay").textContent=cameraSticker;
+  $("tmkStickerList").querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===button));
+ };
+});
+$("tmkZoom").oninput=()=>{
+ const value=Number($("tmkZoom").value);
+ $("tmkZoomValue").textContent=value.toFixed(1)+"×";
+ $("tmkCamera").style.transform="scale("+value+")";
+};
+$("tmkFlash").onclick=async()=>{
+ const track=cameraStream?.getVideoTracks()[0];
+ if(!track)return alert("Camera မဖွင့်ရသေးပါ");
+ try{
+  const caps=track.getCapabilities();
+  if(!caps.torch)return alert("ဒီဖုန်း Camera မှာ Flash Control မရနိုင်ပါ");
+  const settings=track.getSettings();
+  await track.applyConstraints({advanced:[{torch:!settings.torch}]});
+  $("tmkFlash").textContent=settings.torch?"⚡ မီး":"⚡ မီးပိတ်";
+ }catch(e){alert("Flash မရပါ: "+e.message);}
+};
+
+/* CLEANUP */
+window.addEventListener("pagehide",()=>{
+ if(recorder&&recorder.state!=="inactive")stopRecording();
+ stopCamera();
  if(videosUnsubscribe)videosUnsubscribe();
-
- clearListeners();
+ clearFeedListeners();
  if(commentUnsubscribe)commentUnsubscribe();
+ if(recordedUrl)URL.revokeObjectURL(recordedUrl);
 });
 
 /* SERVICE WORKER */
-if("serviceWorker"in navigator){
+if("serviceWorker" in navigator){
  window.addEventListener("load",()=>{
   navigator.serviceWorker.register("./sw.js")
    .then(r=>console.log("TMK Service Worker:",r.scope))
-   .catch(e=>console.error("Service Worker:",e));
+   .catch(e=>console.warn("Service Worker:",e));
  });
 }
-
 console.log("TMK VIDEO ready");
-
-/* VIDEO UPLOAD DATE FORMAT */
-function formatUploadDate(timestamp){
- if(!timestamp)return "ရက်စွဲမသိပါ";
-
- const date=new Date(Number(timestamp));
- if(isNaN(date.getTime()))return "ရက်စွဲမသိပါ";
-
- return new Intl.DateTimeFormat("my-MM",{
-  year:"numeric",
-  month:"long",
-  day:"numeric",
-  hour:"2-digit",
-  minute:"2-digit",
-  hour12:true
- }).format(date);
-}
 </script>
 </body>
 </html>
