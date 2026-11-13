@@ -989,13 +989,14 @@ function muteOthers(active){
 
 function setupAutoplay(){
  if(feedObserver)feedObserver.disconnect();
- if(!("IntersectionObserver"in window))return;
+ if(!("IntersectionObserver" in window))return;
 
  feedObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
    const video=entry.target;
 
-   if(entry.isIntersecting&&entry.intersectionRatio>=.65){
+   if(entry.isIntersecting && entry.intersectionRatio>=.65){
+
     document.querySelectorAll("#feed video").forEach(other=>{
      if(other!==video){
       other.pause();
@@ -1006,13 +1007,15 @@ function setupAutoplay(){
     });
 
     if(video.dataset.userPaused!=="true"){
-     /* Browser policy: sound may require the user to tap once. */
-     video.muted=!audioUnlocked;
+     video.muted=false;
+     video.volume=1;
+
      video.play().catch(error=>{
-      console.log("Autoplay blocked:",error);
+      console.log("Autoplay with sound blocked:",error);
       updatePlayButton(video);
      });
     }
+
    }else{
     video.pause();
     video.muted=true;
