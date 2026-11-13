@@ -33,12 +33,8 @@ button:disabled{opacity:.55;cursor:not-allowed}
  pointer-events:none
 }
 .tabs{display:flex;align-items:center;gap:16px;pointer-events:auto}
-.tabs button{
- background:transparent;color:#aaa;font-size:13px;padding:9px 0
-}
-.tabs button.active{
- color:white;font-weight:bold;border-bottom:3px solid var(--cyan)
-}
+.tabs button{background:transparent;color:#aaa;font-size:13px;padding:9px 0}
+.tabs button.active{color:white;font-weight:bold;border-bottom:3px solid var(--cyan)}
 
 .page{display:none;position:absolute;inset:0;background:var(--bg)}
 .page.active{display:block}
@@ -77,9 +73,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
  background:#15151dba;color:white;font-size:24px;
  padding:0;backdrop-filter:blur(8px)
 }
-.actions small{
- font-size:11px;margin-top:-10px;text-shadow:0 1px 3px #000
-}
+.actions small{font-size:11px;margin-top:-10px;text-shadow:0 1px 3px #000}
 .actions .liked{color:var(--pink)}
 .actions .saved{background:white;color:#111}
 .follow-button{background:#ff315b!important;font-weight:bold}
@@ -89,9 +83,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
  z-index:6;text-shadow:0 1px 4px #000;pointer-events:none
 }
 .video-info strong{font-size:16px}
-.video-info p{
- font-size:14px;line-height:1.4;margin:7px 0;overflow-wrap:anywhere
-}
+.video-info p{font-size:14px;line-height:1.4;margin:7px 0;overflow-wrap:anywhere}
 .music-label{font-size:12px;margin-top:10px}
 
 .bottom-nav{
@@ -126,18 +118,10 @@ textarea{min-height:75px}
 }
 .primary{background:var(--cyan);color:#06120f}
 .danger{background:#c83752;color:white}
-.status{
- color:var(--cyan);font-size:13px;overflow-wrap:anywhere;
- white-space:pre-wrap
-}
+.status{color:var(--cyan);font-size:13px;overflow-wrap:anywhere}
 .muted{color:var(--muted);font-size:13px}
-.avatar{
- width:85px;height:85px;border-radius:50%;
- object-fit:cover;background:#333
-}
-.progress{
- height:10px;background:#333;border-radius:20px;overflow:hidden
-}
+.avatar{width:85px;height:85px;border-radius:50%;object-fit:cover;background:#333}
+.progress{height:10px;background:#333;border-radius:20px;overflow:hidden}
 .progress div{width:0;height:100%;background:var(--cyan)}
 .section-title{font-size:20px}
 .comment-panel{
@@ -146,9 +130,7 @@ textarea{min-height:75px}
  max-height:70vh;overflow:auto;display:none;border:1px solid #303040
 }
 .comment-panel.open{display:block}
-.comment-item{
- background:#282835;padding:10px;border-radius:10px;margin:7px 0
-}
+.comment-item{background:#282835;padding:10px;border-radius:10px;margin:7px 0}
 .comment-form{display:flex;gap:5px}
 .comment-form textarea{flex:1;min-width:0}
 
@@ -170,9 +152,7 @@ textarea{min-height:75px}
  width:42px;height:42px;border-radius:50%;
  background:#171722bb;color:white;font-size:20px
 }
-.camera-top strong{
- background:#17172299;padding:9px 13px;border-radius:20px
-}
+.camera-top strong{background:#17172299;padding:9px 13px;border-radius:20px}
 .camera-effects,.camera-stickers{
  position:absolute;left:0;right:0;z-index:4;
  display:flex;gap:9px;overflow-x:auto;padding:12px
@@ -183,9 +163,7 @@ textarea{min-height:75px}
  flex:0 0 auto;border:1px solid #ffffff66;
  border-radius:22px;background:#15151dcc;color:white;padding:9px 13px
 }
-.camera-effects button.active,.camera-stickers button.active{
- background:#ff315b
-}
+.camera-effects button.active,.camera-stickers button.active{background:#ff315b}
 .camera-zoom{
  position:absolute;left:18px;right:18px;bottom:165px;
  z-index:5;display:flex;align-items:center;gap:10px;color:white
@@ -238,7 +216,7 @@ textarea{min-height:75px}
 </header>
 
 <section id="homePage" class="page active">
- <div id="feed">Firebase ချိတ်ဆက်ရန် ပြင်ဆင်နေပါသည်...</div>
+ <div id="feed">ဗီဒီယိုများ ဖတ်နေသည်...</div>
 </section>
 
 <section id="discoverPage" class="page other-page">
@@ -249,7 +227,6 @@ textarea{min-height:75px}
 
 <section id="uploadPage" class="page other-page">
  <h2>＋ ဗီဒီယို ဖန်တီးရန်</h2>
-
  <div class="card">
   <h3>📁 ဗီဒီယို Upload</h3>
   <input id="videoFile" type="file" accept="video/mp4,video/webm,video/quicktime">
@@ -278,7 +255,6 @@ textarea{min-height:75px}
    <strong>TMK CAMERA</strong>
    <button id="tmkSwitchCamera">🔄</button>
   </div>
-
   <div class="camera-effects" id="tmkEffectList">
    <button class="active" data-effect="none">Normal</button>
    <button data-effect="brightness(1.18) contrast(1.08) saturate(1.12)">Beauty</button>
@@ -287,14 +263,12 @@ textarea{min-height:75px}
    <button data-effect="sepia(.85)">Vintage</button>
    <button data-effect="saturate(1.8)">Color Pop</button>
   </div>
-
   <div class="camera-zoom">
    <span>－</span>
    <input id="tmkZoom" type="range" min="1" max="3" step=".1" value="1">
    <span>＋</span>
    <strong id="tmkZoomValue">1.0×</strong>
   </div>
-
   <div class="camera-stickers" id="tmkStickerList">
    <button class="active" data-sticker="">မရှိ</button>
    <button data-sticker="😂">😂</button>
@@ -304,7 +278,6 @@ textarea{min-height:75px}
    <button data-sticker="❤️">❤️</button>
    <button data-sticker="✨">✨</button>
   </div>
-
   <div class="camera-controls">
    <button id="tmkFlash">⚡ မီး</button>
    <button id="tmkRecord" class="record-button"></button>
@@ -336,7 +309,6 @@ textarea{min-height:75px}
   <p id="profileEmail" class="muted"></p>
   <p id="profileVideoCount">Videos: 0</p>
  </div>
-
  <div class="card">
   <h3>👤 အကောင့်ဝင်ခြင်းနှင့် မှတ်ပုံတင်ခြင်း</h3>
   <input id="authEmail" type="email" placeholder="အီးမေးလ်">
@@ -347,7 +319,6 @@ textarea{min-height:75px}
   <button class="btn danger hidden" id="logoutBtn">အကောင့်မှ ထွက်ရန်</button>
   <p id="authStatus" class="status"></p>
  </div>
-
  <div class="card">
   <h3>✏️ ကိုယ်ရေးအချက်အလက်</h3>
   <input id="editUsername" maxlength="30" placeholder="အသုံးပြုသူအမည်">
@@ -380,35 +351,14 @@ textarea{min-height:75px}
  </div>
 </div>
 
-<!-- Firebase module မတက်လာလျှင်လည်း အမှားပြရန် -->
-<script>
-window.addEventListener("error",function(e){
- const feed=document.getElementById("feed");
- if(feed && feed.textContent.includes("ချိတ်ဆက်")){
-  feed.textContent="JavaScript / Firebase ဖွင့်မရပါ။ Internet ချိတ်ဆက်မှုကို စစ်ပါ။ "+(e.message||"");
- }
-});
-window.addEventListener("unhandledrejection",function(e){
- console.error("TMK Promise Error:",e.reason);
-});
-setTimeout(function(){
- const feed=document.getElementById("feed");
- if(feed && feed.textContent.includes("ချိတ်ဆက်")){
-  feed.textContent="ချိတ်ဆက်မှုကြာနေပါသည်။ Internet နှင့် Firebase Database ကို စစ်ဆေးပါ။";
- }
-},15000);
-</script>
-
 <script type="module">
 import {initializeApp}
  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
 import {
  getAuth,createUserWithEmailAndPassword,
  signInWithEmailAndPassword,signOut,
  onAuthStateChanged,sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
 import {
  getDatabase,ref,push,set,get,onValue,remove
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
@@ -433,8 +383,29 @@ const UPLOAD_FUNCTION_URL=SUPABASE_URL+"/functions/v1/tmk-video-upload";
 const WORKER_URL="https://tmk-video-api.htunminkhant2007.workers.dev";
 
 const $=id=>document.getElementById(id);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getDatabase(app);
 
-let app,auth,db;
+let supabase=null;
+let supabaseLoadPromise=null;
+
+async function getSupabase(){
+ if(supabase)return supabase;
+ if(!supabaseLoadPromise){
+  supabaseLoadPromise=import("https://esm.sh/@supabase/supabase-js@2")
+   .then(m=>{
+    supabase=m.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+    return supabase;
+   })
+   .catch(e=>{
+    supabaseLoadPromise=null;
+    throw new Error("Supabase ချိတ်ဆက်မရပါ: "+e.message);
+   });
+ }
+ return supabaseLoadPromise;
+}
+
 let currentUser=null;
 let allVideos=[];
 let followingIds=new Set();
@@ -448,15 +419,13 @@ let selectedCommentVideo=null;
 let feedObserver=null;
 let audioUnlocked=false;
 
-let supabase=null;
-let supabaseLoadPromise=null;
-
 let cameraStream=null;
 let recorder=null;
 let recordedBlob=null;
 let recordedUrl=null;
 let recording=false;
 let facing="user";
+let cameraZoom=1;
 let currentEffect="none";
 let currentSticker="";
 let torchOn=false;
@@ -479,41 +448,13 @@ function formatUploadDate(timestamp){
  }).format(date);
 }
 
-function showFeedError(message){
- $("feed").innerHTML=
-  '<div class="video-card"><div class="video-info">'+
-  '<strong>TMK VIDEO</strong><p>'+esc(message)+'</p>'+
-  '<p>Internet နှင့် Firebase Database Rules ကို စစ်ဆေးပါ။</p>'+
-  '</div></div>';
-}
-
-async function getSupabase(){
- if(supabase)return supabase;
- if(!supabaseLoadPromise){
-  supabaseLoadPromise=import("https://esm.sh/@supabase/supabase-js@2")
-   .then(m=>{
-    supabase=m.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-    return supabase;
-   })
-   .catch(e=>{
-    supabaseLoadPromise=null;
-    throw new Error("Supabase ချိတ်ဆက်မရပါ: "+e.message);
-   });
- }
- return supabaseLoadPromise;
-}
-
-/* FIREBASE STARTUP */
-try{
- app=initializeApp(firebaseConfig);
- auth=getAuth(app);
- db=getDatabase(app);
- $("feed").textContent="Firebase ချိတ်ဆက်နေပါသည်...";
-}catch(error){
- console.error("Firebase initialize error:",error);
- showFeedError("Firebase စတင်ဖွင့်မရပါ: "+error.message);
- throw error;
-}
+/* GLOBAL ERROR DISPLAY */
+window.addEventListener("error",event=>{
+ console.error("TMK JavaScript Error:",event.error||event.message);
+});
+window.addEventListener("unhandledrejection",event=>{
+ console.error("TMK Promise Error:",event.reason);
+});
 
 /* PAGE NAVIGATION */
 function showPage(id){
@@ -533,7 +474,6 @@ function showPage(id){
   document.querySelectorAll("#feed video").forEach(v=>v.pause());
  }
 }
-
 document.querySelectorAll(".bottom-nav [data-page]").forEach(b=>{
  b.addEventListener("click",()=>showPage(b.dataset.page));
 });
@@ -547,12 +487,9 @@ $("registerBtn").addEventListener("click",async()=>{
   const email=$("authEmail").value.trim();
   const password=$("authPassword").value;
   if(!email||!password)throw Error("Email နှင့် Password ထည့်ပါ");
-  if(password.length<6)throw Error("Password အနည်းဆုံး 6 လုံးထည့်ပါ");
   await createUserWithEmailAndPassword(auth,email,password);
   $("authStatus").textContent="မှတ်ပုံတင်ခြင်း အောင်မြင်ပါသည်";
- }catch(e){
-  $("authStatus").textContent=e.message;
- }
+ }catch(e){$("authStatus").textContent=e.message;}
 });
 
 $("loginBtn").addEventListener("click",async()=>{
@@ -562,9 +499,7 @@ $("loginBtn").addEventListener("click",async()=>{
   if(!email||!password)throw Error("Email နှင့် Password ထည့်ပါ");
   await signInWithEmailAndPassword(auth,email,password);
   $("authStatus").textContent="အကောင့်ဝင်ပြီးပါပြီ";
- }catch(e){
-  $("authStatus").textContent=e.message;
- }
+ }catch(e){$("authStatus").textContent=e.message;}
 });
 
 $("logoutBtn").addEventListener("click",async()=>{
@@ -583,7 +518,6 @@ $("forgotBtn").addEventListener("click",async()=>{
 
 onAuthStateChanged(auth,async user=>{
  currentUser=user;
-
  $("registerBtn").classList.toggle("hidden",!!user);
  $("loginBtn").classList.toggle("hidden",!!user);
  $("forgotBtn").classList.toggle("hidden",!!user);
@@ -591,8 +525,9 @@ onAuthStateChanged(auth,async user=>{
 
  if(user){
   $("profileEmail").textContent=user.email||"";
-  loadProfile().catch(e=>console.warn("Profile:",e));
-  await Promise.all([loadFollowing(),loadSavedVideos()]);
+  loadProfile().catch(console.warn);
+  loadFollowing().then(()=>renderFeed(allVideos)).catch(console.warn);
+  loadSavedVideos().then(()=>renderFeed(allVideos)).catch(console.warn);
  }else{
   followingIds.clear();
   savedVideoIds.clear();
@@ -600,9 +535,8 @@ onAuthStateChanged(auth,async user=>{
   $("profileName").textContent="Guest";
   $("profileEmail").textContent="";
   $("profilePhoto").removeAttribute("src");
+  renderFeed(allVideos);
  }
-
- renderFeed(allVideos);
  updateVideoCount();
 });
 
@@ -613,33 +547,26 @@ function loadVideos(){
  $("feed").textContent="ဗီဒီယိုများ ဖတ်နေသည်...";
 
  try{
-  videosUnsubscribe=onValue(
-   ref(db,"videos"),
-   snap=>{
-    allVideos=[];
-
-    if(snap.exists()){
-     snap.forEach(child=>{
-      const value=child.val()||{};
-      allVideos.push({id:child.key,...value});
-     });
-    }
-
-    allVideos.sort((a,b)=>
-     (Number(b.createdAt)||0)-(Number(a.createdAt)||0)
-    );
-
-    renderFeed(allVideos);
-    updateVideoCount();
-   },
-   error=>{
-    console.error("Firebase videos error:",error);
-    showFeedError("Firebase ဖတ်မရပါ: "+error.message);
+  videosUnsubscribe=onValue(ref(db,"videos"),snap=>{
+   allVideos=[];
+   if(snap.exists()){
+    snap.forEach(child=>{
+     const value=child.val()||{};
+     allVideos.push({id:child.key,...value});
+    });
    }
-  );
+   allVideos.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+   renderFeed(allVideos);
+   updateVideoCount();
+  },error=>{
+   console.error("Firebase videos error:",error);
+   $("feed").innerHTML=
+    '<div class="video-card"><div class="video-info">Video ဖတ်မရပါ။<br>'+
+    esc(error.message)+'</div></div>';
+  });
  }catch(error){
   console.error(error);
-  showFeedError("Firebase Error: "+error.message);
+  $("feed").textContent="Firebase Error: "+error.message;
  }
 }
 loadVideos();
@@ -647,126 +574,92 @@ loadVideos();
 /* PROFILE */
 async function loadProfile(){
  if(!currentUser)return;
-
  try{
   const snap=await get(ref(db,"users/"+currentUser.uid));
   profileData=snap.exists()?snap.val():{
    username:(currentUser.email||"User").split("@")[0],
-   photoData:"",
-   bio:""
+   photoData:"",bio:""
   };
-
   $("profileName").textContent=profileData.username||"User";
   $("profileEmail").textContent=currentUser.email||"";
   $("editUsername").value=profileData.username||"";
   $("editBio").value=profileData.bio||"";
-
-  if(profileData.photoData){
-   $("profilePhoto").src=profileData.photoData;
-  }else{
-   $("profilePhoto").removeAttribute("src");
-  }
- }catch(e){
-  $("profileStatus").textContent=e.message;
- }
+  if(profileData.photoData)$("profilePhoto").src=profileData.photoData;
+  else $("profilePhoto").removeAttribute("src");
+ }catch(e){$("profileStatus").textContent=e.message;}
 }
 
 function compressImage(file){
  return new Promise((resolve,reject)=>{
   const img=new Image();
   const url=URL.createObjectURL(file);
-
   img.onload=()=>{
    const scale=Math.min(400/img.width,400/img.height,1);
    const canvas=document.createElement("canvas");
    canvas.width=Math.round(img.width*scale);
    canvas.height=Math.round(img.height*scale);
-   canvas.getContext("2d").drawImage(
-    img,0,0,canvas.width,canvas.height
-   );
+   canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
    URL.revokeObjectURL(url);
    resolve(canvas.toDataURL("image/jpeg",.7));
   };
-
   img.onerror=()=>{
    URL.revokeObjectURL(url);
    reject(new Error("ဓာတ်ပုံဖတ်မရပါ"));
   };
-
   img.src=url;
  });
 }
 
 $("saveProfileBtn").addEventListener("click",async()=>{
  if(!currentUser)return alert("Login အရင်ဝင်ပါ");
-
  try{
   const username=$("editUsername").value.trim();
   if(!username||username.length>30)throw Error("Username ထည့်ပါ");
-
   let photoData=profileData.photoData||"";
   const file=$("editPhoto").files[0];
   if(file)photoData=await compressImage(file);
   if(photoData.length>350000)throw Error("ဓာတ်ပုံအရွယ်အစားကြီးနေပါတယ်");
-
   const data={
-   username,
-   photoData,
+   username,photoData,
    bio:$("editBio").value.trim(),
    updatedAt:Date.now()
   };
-
   await set(ref(db,"users/"+currentUser.uid),data);
   profileData=data;
   await loadProfile();
   $("profileStatus").textContent="Profile သိမ်းပြီးပါပြီ";
- }catch(e){
-  $("profileStatus").textContent=e.message;
- }
+ }catch(e){$("profileStatus").textContent=e.message;}
 });
 
 /* FOLLOWING AND SAVED */
 async function loadFollowing(){
  followingIds.clear();
  if(!currentUser)return;
-
  try{
   const snap=await get(ref(db,"follows"));
   if(snap.exists()){
    Object.entries(snap.val()||{}).forEach(([uid,followers])=>{
-    if(followers&&followers[currentUser.uid]===true){
-     followingIds.add(uid);
-    }
+    if(followers&&followers[currentUser.uid]===true)followingIds.add(uid);
    });
   }
- }catch(e){
-  console.warn("Following:",e);
- }
+ }catch(e){console.warn(e);}
 }
 
 async function loadSavedVideos(){
  savedVideoIds.clear();
  if(!currentUser)return;
-
  try{
   const snap=await get(ref(db,"savedVideos/"+currentUser.uid));
-  if(snap.exists()){
-   Object.keys(snap.val()||{}).forEach(id=>savedVideoIds.add(id));
-  }
- }catch(e){
-  console.warn("Saved videos:",e);
- }
+  if(snap.exists())Object.keys(snap.val()||{}).forEach(id=>savedVideoIds.add(id));
+ }catch(e){console.warn(e);}
 }
 
 async function followUser(uid,button){
  if(!currentUser)return alert("Login ဝင်ပါ");
  if(!uid||uid===currentUser.uid)return;
-
  button.disabled=true;
-
  try{
   const path=ref(db,"follows/"+uid+"/"+currentUser.uid);
-
   if(followingIds.has(uid)){
    await remove(path);
    followingIds.delete(uid);
@@ -774,14 +667,10 @@ async function followUser(uid,button){
    await set(path,true);
    followingIds.add(uid);
   }
-
   updateFollowButton(button,uid);
   if(feedMode==="following")renderFeed(allVideos);
- }catch(e){
-  alert(e.message);
- }finally{
-  button.disabled=false;
- }
+ }catch(e){alert(e.message);}
+ finally{button.disabled=false;}
 }
 
 function updateFollowButton(button,uid){
@@ -796,14 +685,12 @@ function clearEngagement(){
   try{fn();}catch(e){}
  });
  engagementUnsubscribers=[];
-
  if(feedObserver)feedObserver.disconnect();
 }
 
 /* VIDEO FEED */
 function renderFeed(inputVideos){
  clearEngagement();
-
  let videos=[...inputVideos];
 
  if(feedMode==="following"&&currentUser){
@@ -814,9 +701,7 @@ function renderFeed(inputVideos){
 
  if(!videos.length){
   $("feed").innerHTML=
-   '<div class="video-card"><div class="video-info">'+
-   'Video မရှိသေးပါ။<br>Login ဝင်ပြီး Video တင်နိုင်ပါတယ်။'+
-   '</div></div>';
+   '<div class="video-card"><div class="video-info">Video မရှိသေးပါ။<br>Login ဝင်ပြီး Video တင်နိုင်ပါတယ်။</div></div>';
   return;
  }
 
@@ -824,7 +709,6 @@ function renderFeed(inputVideos){
   const id=esc(v.id);
   const videoUrl=esc(v.videoUrl||"");
   const creator=esc(v.uid||"");
-
   const media=v.youtubeId
    ?'<iframe src="https://www.youtube-nocookie.com/embed/'+
     encodeURIComponent(v.youtubeId)+
@@ -833,12 +717,9 @@ function renderFeed(inputVideos){
     '" playsinline loop preload="metadata" muted></video>'+
     '<button class="video-play-toggle hidden" data-play-toggle="'+id+'">▶</button>';
 
-  const isOwner=currentUser&&v.uid===currentUser.uid;
-
   return `
    <article class="video-card" data-card="${id}">
     <div class="video-media">${media}</div>
-
     <div class="actions">
      <button data-creator="${creator}">👤</button>
      <button class="follow-button" data-follow="${creator}">+</button>
@@ -851,9 +732,8 @@ function renderFeed(inputVideos){
      <button class="${savedVideoIds.has(v.id)?"saved":""}" data-save="${id}">${savedVideoIds.has(v.id)?"★":"☆"}</button>
      <small>သိမ်းရန်</small>
      <button data-sound="${id}">🔇</button>
-     ${isOwner?'<button data-delete="'+id+'">🗑</button>':""}
+     ${v.uid===currentUser?.uid?'<button data-delete="'+id+'">🗑</button>':""}
     </div>
-
     <div class="video-info">
      <strong>@${esc(v.username||"User")}</strong>
      <div class="music-label">📅 ${esc(formatUploadDate(v.createdAt))}</div>
@@ -872,28 +752,22 @@ function renderFeed(inputVideos){
    showPage("friendsPage");
   });
  });
-
  $("feed").querySelectorAll("[data-follow]").forEach(b=>{
   updateFollowButton(b,b.dataset.follow);
   b.addEventListener("click",()=>followUser(b.dataset.follow,b));
  });
-
  $("feed").querySelectorAll("[data-like]").forEach(b=>{
   b.addEventListener("click",()=>likeVideo(b.dataset.like));
  });
-
  $("feed").querySelectorAll("[data-save]").forEach(b=>{
   b.addEventListener("click",()=>saveVideo(b.dataset.save));
  });
-
  $("feed").querySelectorAll("[data-open-comment]").forEach(b=>{
   b.addEventListener("click",()=>openComments(b.dataset.openComment));
  });
-
  $("feed").querySelectorAll("[data-share]").forEach(b=>{
   b.addEventListener("click",()=>shareVideo(b.dataset.share));
  });
-
  $("feed").querySelectorAll("[data-delete]").forEach(b=>{
   b.addEventListener("click",()=>deleteVideo(b.dataset.delete));
  });
@@ -902,16 +776,13 @@ function renderFeed(inputVideos){
   b.addEventListener("click",()=>{
    const video=b.closest(".video-card")?.querySelector("video");
    if(!video)return;
-
    audioUnlocked=true;
    video.muted=!video.muted;
-
    if(!video.muted){
     muteOthers(video);
     video.dataset.userPaused="false";
     video.play().catch(()=>updatePlayButton(video));
    }
-
    b.textContent=video.muted?"🔇":"🔊";
   });
  });
@@ -949,7 +820,6 @@ function setupVideoButtons(){
   ["play","pause","ended"].forEach(event=>{
    video.addEventListener(event,()=>updatePlayButton(video));
   });
-
   updatePlayButton(video);
  });
 }
@@ -965,16 +835,11 @@ function watchEngagement(id){
   const data=snap.val()||{};
   const count=Object.values(data).filter(x=>x===true).length;
   const liked=!!(currentUser&&data[currentUser.uid]===true);
-
-  const card=Array.from(
-   document.querySelectorAll("#feed [data-card]")
-  ).find(el=>el.dataset.card===id);
-
+  const card=[...document.querySelectorAll("#feed [data-card]")]
+   .find(el=>el.dataset.card===id);
   if(!card)return;
-
   const button=card.querySelector("[data-like]");
   const number=card.querySelector("[data-like-count]");
-
   if(button){
    button.textContent=liked?"♥":"♡";
    button.classList.toggle("liked",liked);
@@ -985,11 +850,8 @@ function watchEngagement(id){
  const stopComments=onValue(ref(db,"comments/"+id),snap=>{
   let count=0;
   if(snap.exists())snap.forEach(()=>count++);
-
-  const card=Array.from(
-   document.querySelectorAll("#feed [data-card]")
-  ).find(el=>el.dataset.card===id);
-
+  const card=[...document.querySelectorAll("#feed [data-card]")]
+   .find(el=>el.dataset.card===id);
   const number=card?.querySelector("[data-comment-count]");
   if(number)number.textContent=count;
  },e=>console.warn("Comment listener:",e));
@@ -999,39 +861,24 @@ function watchEngagement(id){
 
 async function likeVideo(id){
  if(!currentUser)return alert("Login ဝင်ပါ");
-
  try{
   const path=ref(db,"likes/"+id+"/"+currentUser.uid);
   const snap=await get(path);
-
-  if(snap.exists()&&snap.val()===true){
-   await remove(path);
-  }else{
-   await set(path,true);
-  }
- }catch(e){
-  alert("Like Error: "+e.message);
- }
+  if(snap.exists()&&snap.val()===true)await remove(path);
+  else await set(path,true);
+ }catch(e){alert("Like Error: "+e.message);}
 }
 
 /* COMMENTS */
 function openComments(id){
  selectedCommentVideo=id;
  $("commentPanel").classList.add("open");
-
  if(commentUnsubscribe)commentUnsubscribe();
 
  commentUnsubscribe=onValue(ref(db,"comments/"+id),snap=>{
   const comments=[];
-
-  if(snap.exists()){
-   snap.forEach(c=>comments.push(c.val()));
-  }
-
-  comments.sort((a,b)=>
-   (a.createdAt||0)-(b.createdAt||0)
-  );
-
+  if(snap.exists())snap.forEach(c=>comments.push(c.val()));
+  comments.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
   $("panelComments").innerHTML=comments.map(c=>`
    <div class="comment-item">
     <small>@${esc((c.uid||"User").slice(0,8))}</small>
@@ -1051,62 +898,43 @@ $("closeComments").addEventListener("click",()=>{
 
 $("panelCommentSend").addEventListener("click",async()=>{
  if(!currentUser)return alert("Login ဝင်ပါ");
-
  const text=$("panelCommentInput").value.trim();
  if(!text||!selectedCommentVideo)return;
-
  try{
   await set(push(ref(db,"comments/"+selectedCommentVideo)),{
-   uid:currentUser.uid,
-   text,
-   createdAt:Date.now()
+   uid:currentUser.uid,text,createdAt:Date.now()
   });
   $("panelCommentInput").value="";
- }catch(e){
-  alert(e.message);
- }
+ }catch(e){alert(e.message);}
 });
 
 /* SHARE / DELETE / SAVE */
 async function shareVideo(id){
  const url=location.href.split("#")[0]+"#video-"+id;
-
  try{
-  if(navigator.share){
-   await navigator.share({title:"TMK VIDEO",url});
-  }else if(navigator.clipboard){
+  if(navigator.share)await navigator.share({title:"TMK VIDEO",url});
+  else if(navigator.clipboard){
    await navigator.clipboard.writeText(url);
    alert("Link Copy ပြီးပါပြီ");
-  }else{
-   alert(url);
-  }
- }catch(e){
-  console.log(e);
- }
+  }else alert(url);
+ }catch(e){console.log(e);}
 }
 
 async function deleteVideo(id){
  if(!currentUser||!confirm("ဒီ Video ကို ဖျက်မှာ သေချာပါသလား"))return;
-
  try{
   const snap=await get(ref(db,"videos/"+id));
-
   if(!snap.exists()||snap.val().uid!==currentUser.uid){
    throw Error("ကိုယ့် Video ကိုသာ ဖျက်နိုင်ပါတယ်");
   }
-
   await remove(ref(db,"videos/"+id));
- }catch(e){
-  alert(e.message);
- }
+ }catch(e){alert(e.message);}
 }
 
 async function saveVideo(id){
  if(!currentUser)return alert("Login ဝင်ပါ");
-
  try{
   const path=ref(db,"savedVideos/"+currentUser.uid+"/"+id);
-
   if(savedVideoIds.has(id)){
    await remove(path);
    savedVideoIds.delete(id);
@@ -1114,28 +942,20 @@ async function saveVideo(id){
    await set(path,true);
    savedVideoIds.add(id);
   }
-
-  const b=Array.from(
-   document.querySelectorAll("[data-save]")
-  ).find(el=>el.dataset.save===id);
-
+  const b=[...document.querySelectorAll("[data-save]")]
+   .find(el=>el.dataset.save===id);
   if(b){
    b.textContent=savedVideoIds.has(id)?"★":"☆";
    b.classList.toggle("saved",savedVideoIds.has(id));
   }
- }catch(e){
-  alert(e.message);
- }
+ }catch(e){alert(e.message);}
 }
 
 $("savedVideosBtn").addEventListener("click",async()=>{
  if(!currentUser)return alert("Login ဝင်ပါ");
-
  try{
   await loadSavedVideos();
-
   const list=allVideos.filter(v=>savedVideoIds.has(v.id));
-
   $("savedVideos").innerHTML=list.map(v=>`
    <div class="card">
     <b>${esc(v.title||"Video")}</b>
@@ -1143,19 +963,15 @@ $("savedVideosBtn").addEventListener("click",async()=>{
     <button class="btn" data-saved-play="${esc(v.id)}">ကြည့်ရန်</button>
    </div>
   `).join("")||"သိမ်းထားသော Video မရှိသေးပါ";
-
   $("savedVideos").querySelectorAll("[data-saved-play]").forEach(b=>{
    b.addEventListener("click",()=>{
     showPage("homePage");
-    const target=Array.from(
-     document.querySelectorAll("#feed [data-card]")
-    ).find(el=>el.dataset.card===b.dataset.savedPlay);
+    const target=[...document.querySelectorAll("#feed [data-card]")]
+     .find(el=>el.dataset.card===b.dataset.savedPlay);
     target?.scrollIntoView({behavior:"smooth"});
    });
   });
- }catch(e){
-  alert(e.message);
- }
+ }catch(e){alert(e.message);}
 });
 
 /* AUTOPLAY */
@@ -1164,10 +980,8 @@ function muteOthers(active){
   if(v!==active){
    v.pause();
    v.muted=true;
-
    const b=v.closest(".video-card")?.querySelector("[data-sound]");
    if(b)b.textContent="🔇";
-
    updatePlayButton(v);
   }
  });
@@ -1192,6 +1006,7 @@ function setupAutoplay(){
     });
 
     if(video.dataset.userPaused!=="true"){
+     /* Browser policy: sound may require the user to tap once. */
      video.muted=!audioUnlocked;
      video.play().catch(error=>{
       console.log("Autoplay blocked:",error);
@@ -1214,17 +1029,12 @@ function setupAutoplay(){
 /* FEED TABS */
 async function switchFeed(mode){
  feedMode=mode;
-
  $("forYouTab").classList.toggle("active",mode==="all");
  $("followingTab").classList.toggle("active",mode==="following");
-
  if(mode==="following")await loadFollowing();
-
  renderFeed(allVideos);
 }
-
 $("forYouTab").addEventListener("click",()=>switchFeed("all"));
-
 $("followingTab").addEventListener("click",()=>{
  if(!currentUser){
   alert("Login အရင်ဝင်ပါ");
@@ -1237,13 +1047,11 @@ $("followingTab").addEventListener("click",()=>{
 /* SEARCH */
 $("searchInput").addEventListener("input",()=>{
  const q=$("searchInput").value.toLowerCase().trim();
-
  const results=allVideos.filter(v=>
   (v.title||"").toLowerCase().includes(q)||
   (v.caption||"").toLowerCase().includes(q)||
   (v.username||"").toLowerCase().includes(q)
  );
-
  $("searchResults").innerHTML=results.map(v=>`
   <div class="card">
    <b>${esc(v.title||"Video")}</b>
@@ -1251,15 +1059,11 @@ $("searchInput").addEventListener("input",()=>{
    <button class="btn primary" data-search-play="${esc(v.id)}">ကြည့်ရန်</button>
   </div>
  `).join("")||"ရှာဖွေမှုရလဒ် မရှိပါ";
-
  $("searchResults").querySelectorAll("[data-search-play]").forEach(b=>{
   b.addEventListener("click",()=>{
    showPage("homePage");
-
-   const target=Array.from(
-    document.querySelectorAll("#feed [data-card]")
-   ).find(el=>el.dataset.card===b.dataset.searchPlay);
-
+   const target=[...document.querySelectorAll("#feed [data-card]")]
+    .find(el=>el.dataset.card===b.dataset.searchPlay);
    target?.scrollIntoView({behavior:"smooth"});
   });
  });
@@ -1280,7 +1084,6 @@ function setUploadStatus(message){
 
 async function getUploadPermission(file){
  if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
-
  const token=await currentUser.getIdToken();
 
  const response=await fetch(UPLOAD_FUNCTION_URL,{
@@ -1297,26 +1100,17 @@ async function getUploadPermission(file){
  });
 
  const result=await response.json().catch(()=>({}));
-
  if(!response.ok||!result.success){
-  throw Error(
-   result.error||result.message||
-   "Supabase Permission Error: "+response.status
-  );
+  throw Error(result.error||result.message||"Supabase Permission Error: "+response.status);
  }
-
  return result;
 }
 
 function uploadWithProgress(url,file){
  return new Promise((resolve,reject)=>{
   const xhr=new XMLHttpRequest();
-
   xhr.open("PUT",url);
-  xhr.setRequestHeader(
-   "Content-Type",file.type||"application/octet-stream"
-  );
-
+  xhr.setRequestHeader("Content-Type",file.type||"application/octet-stream");
   xhr.upload.onprogress=e=>{
    if(e.lengthComputable){
     const pct=Math.round(e.loaded/e.total*100);
@@ -1324,15 +1118,10 @@ function uploadWithProgress(url,file){
     setUploadStatus("Uploading "+pct+"%");
    }
   };
-
   xhr.onload=()=>{
-   if(xhr.status>=200&&xhr.status<300){
-    resolve();
-   }else{
-    reject(Error("Storage Error "+xhr.status+": "+xhr.responseText));
-   }
+   if(xhr.status>=200&&xhr.status<300)resolve();
+   else reject(Error("Storage Error "+xhr.status+": "+xhr.responseText));
   };
-
   xhr.onerror=()=>reject(Error("Network Error"));
   xhr.send(file);
  });
@@ -1341,16 +1130,13 @@ function uploadWithProgress(url,file){
 async function sha1Hex(blob){
  const buffer=await blob.arrayBuffer();
  const hash=await crypto.subtle.digest("SHA-1",buffer);
-
  return Array.from(new Uint8Array(hash))
   .map(b=>b.toString(16).padStart(2,"0")).join("");
 }
 
 async function workerPost(path,body){
  if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
-
  const token=await currentUser.getIdToken();
-
  const response=await fetch(WORKER_URL+path,{
   method:"POST",
   headers:{
@@ -1359,53 +1145,37 @@ async function workerPost(path,body){
   },
   body:JSON.stringify(body)
  });
-
  const result=await response.json().catch(()=>({}));
-
  if(!response.ok||!result.success){
-  throw Error(
-   result.message||result.error||
-   "Worker API Error "+response.status
-  );
+  throw Error(result.message||result.error||"Worker API Error "+response.status);
  }
-
  return result;
 }
 
 function uploadB2Part(url,token,partNumber,sha1,blob,onProgress){
  return new Promise((resolve,reject)=>{
   const xhr=new XMLHttpRequest();
-
   xhr.open("POST",url);
   xhr.setRequestHeader("Authorization",token);
   xhr.setRequestHeader("X-Bz-Part-Number",String(partNumber));
   xhr.setRequestHeader("X-Bz-Content-Sha1",sha1);
   xhr.setRequestHeader("Content-Type","application/octet-stream");
-
   xhr.upload.onprogress=e=>{
    if(e.lengthComputable)onProgress(e.loaded);
   };
-
   xhr.onload=()=>{
-   if(xhr.status>=200&&xhr.status<300){
-    resolve();
-   }else{
-    reject(Error("B2 Part Error "+xhr.status+": "+xhr.responseText));
-   }
+   if(xhr.status>=200&&xhr.status<300)resolve();
+   else reject(Error("B2 Part Error "+xhr.status+": "+xhr.responseText));
   };
-
   xhr.onerror=()=>reject(Error("B2 Network Error"));
   xhr.send(blob);
  });
-
 }
 
 async function uploadLargeVideoToB2(file,title,caption){
  setUploadStatus("B2 Upload စတင်နေပါတယ်...");
-
  const init=await workerPost("/upload/init",{
-  size:file.size,
-  contentType:file.type
+  size:file.size,contentType:file.type
  });
 
  if(!init.fileId||!init.partSize||!init.partCount){
@@ -1418,17 +1188,12 @@ async function uploadLargeVideoToB2(file,title,caption){
  for(let i=0;i<init.partCount;i++){
   const partNumber=i+1;
   const start=i*init.partSize;
-  const chunk=file.slice(
-   start,Math.min(start+init.partSize,file.size)
-  );
-
+  const chunk=file.slice(start,Math.min(start+init.partSize,file.size));
   setUploadStatus("B2 Part "+partNumber+"/"+init.partCount);
 
   const sha1=await sha1Hex(chunk);
-
   const info=await workerPost("/upload/part-url",{
-   fileId:init.fileId,
-   partNumber
+   fileId:init.fileId,partNumber
   });
 
   if(!info.uploadUrl||!info.authorizationToken){
@@ -1436,12 +1201,8 @@ async function uploadLargeVideoToB2(file,title,caption){
   }
 
   await uploadB2Part(
-   info.uploadUrl,
-   info.authorizationToken,
-   partNumber,
-   sha1,
-   chunk,
-   loaded=>{
+   info.uploadUrl,info.authorizationToken,
+   partNumber,sha1,chunk,loaded=>{
     const pct=Math.round((uploaded+loaded)/file.size*100);
     $("fileProgressBar").style.width=pct+"%";
     setUploadStatus("B2 Upload "+pct+"%");
@@ -1453,19 +1214,14 @@ async function uploadLargeVideoToB2(file,title,caption){
  }
 
  setUploadStatus("Video သိမ်းဆည်းနေပါတယ်...");
-
  const finished=await workerPost("/upload/finish",{
-  fileId:init.fileId,
-  partSha1Array:hashes
+  fileId:init.fileId,partSha1Array:hashes
  });
 
- if(!finished.videoUrl){
-  throw Error("Worker Video URL မရပါ");
- }
+ if(!finished.videoUrl)throw Error("Worker Video URL မရပါ");
 
  await saveVideoRecord({
-  title,
-  caption,
+  title,caption,
   videoUrl:finished.videoUrl,
   storagePath:finished.fileName||"",
   storageProvider:"Backblaze B2"
@@ -1477,18 +1233,14 @@ async function uploadLargeVideoToB2(file,title,caption){
 
 async function uploadSmallVideo(file,title,caption){
  setUploadStatus("Supabase Permission တောင်းနေပါတယ်...");
-
  await getSupabase();
-
  const permission=await getUploadPermission(file);
 
  if(!permission.path||!permission.token||!permission.publicUrl){
   throw Error("Supabase Permission Response မပြည့်စုံပါ");
  }
 
- const path=permission.path.split("/")
-  .map(encodeURIComponent).join("/");
-
+ const path=permission.path.split("/").map(encodeURIComponent).join("/");
  const url=SUPABASE_URL+"/storage/v1/object/upload/sign/"+
   encodeURIComponent(BUCKET_NAME)+"/"+path+
   "?token="+encodeURIComponent(permission.token);
@@ -1496,8 +1248,7 @@ async function uploadSmallVideo(file,title,caption){
  await uploadWithProgress(url,file);
 
  await saveVideoRecord({
-  title,
-  caption,
+  title,caption,
   videoUrl:permission.publicUrl,
   storagePath:permission.path,
   storageProvider:"Supabase"
@@ -1506,11 +1257,8 @@ async function uploadSmallVideo(file,title,caption){
 
 async function saveVideoRecord(data){
  if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
-
- const username=(
-  profileData.username||
-  (currentUser.email||"User").split("@")[0]
- ).slice(0,30);
+ const username=(profileData.username||
+  (currentUser.email||"User").split("@")[0]).slice(0,30);
 
  await push(ref(db,"videos"),{
   ...data,
@@ -1528,7 +1276,6 @@ async function uploadVideoFile(file,title,caption){
  if(file.size>MAX_FILE_SIZE)throw Error("အများဆုံး 5GB သာတင်နိုင်ပါတယ်");
 
  const allowed=["video/mp4","video/webm","video/quicktime"];
-
  if(!allowed.includes(file.type)){
   throw Error("MP4, WebM, MOV ဖိုင်သာတင်ပါ");
  }
@@ -1545,20 +1292,16 @@ async function uploadVideoFile(file,title,caption){
 $("uploadFileBtn").addEventListener("click",async()=>{
  const button=$("uploadFileBtn");
  button.disabled=true;
-
  try{
   await uploadVideoFile(
    $("videoFile").files[0],
    $("videoTitle").value.trim(),
    $("videoCaption").value.trim()
   );
-
   alert("Video တင်ပြီးပါပြီ ❤️");
-
   $("videoFile").value="";
   $("videoTitle").value="";
   $("videoCaption").value="";
-
   showPage("homePage");
  }catch(e){
   setUploadStatus(e.message);
@@ -1583,7 +1326,6 @@ function stopCamera(){
   cameraStream.getTracks().forEach(track=>track.stop());
   cameraStream=null;
  }
-
  camera.srcObject=null;
  torchOn=false;
  $("tmkFlash").textContent="⚡ မီး";
@@ -1594,24 +1336,18 @@ async function startCamera(){
   if(!navigator.mediaDevices?.getUserMedia){
    throw Error("HTTPS Website မှာသာ Camera ဖွင့်နိုင်ပါတယ်");
   }
-
   stopCamera();
-
   cameraStream=await navigator.mediaDevices.getUserMedia({
    video:{
     facingMode:{ideal:facing},
-    width:{ideal:1080},
-    height:{ideal:1920}
+    width:{ideal:1080},height:{ideal:1920}
    },
    audio:true
   });
-
   camera.srcObject=cameraStream;
   camera.style.filter=currentEffect;
   updateCameraZoom();
-
   await camera.play();
-
   cameraStatus("Camera အသင့်ဖြစ်ပါပြီ");
  }catch(e){
   cameraStatus("Camera Error: "+e.message);
@@ -1638,34 +1374,27 @@ $("tmkSwitchCamera").addEventListener("click",async()=>{
 $("tmkEffectList").addEventListener("click",e=>{
  const button=e.target.closest("[data-effect]");
  if(!button)return;
-
  currentEffect=button.dataset.effect;
  camera.style.filter=currentEffect;
-
  $("tmkEffectList").querySelectorAll("button").forEach(b=>{
   b.classList.toggle("active",b===button);
  });
 });
 
 function updateCameraZoom(){
- const zoom=Number($("tmkZoom").value)||1;
-
- $("tmkZoomValue").textContent=zoom.toFixed(1)+"×";
-
+ cameraZoom=Number($("tmkZoom").value)||1;
+ $("tmkZoomValue").textContent=cameraZoom.toFixed(1)+"×";
  camera.style.transform=
-  (facing==="user"?"scaleX(-1) ":"")+"scale("+zoom+")";
+  (facing==="user"?"scaleX(-1) ":"")+"scale("+cameraZoom+")";
 }
-
 $("tmkZoom").addEventListener("input",updateCameraZoom);
 
 $("tmkStickerList").addEventListener("click",e=>{
  const button=e.target.closest("[data-sticker]");
  if(!button)return;
-
  currentSticker=button.dataset.sticker;
  $("tmkStickerOverlay").textContent=currentSticker;
  $("tmkStickerOverlay").style.display=currentSticker?"block":"none";
-
  $("tmkStickerList").querySelectorAll("button").forEach(b=>{
   b.classList.toggle("active",b===button);
  });
@@ -1673,24 +1402,17 @@ $("tmkStickerList").addEventListener("click",e=>{
 
 $("tmkFlash").addEventListener("click",async()=>{
  if(!cameraStream)return;
-
  const track=cameraStream.getVideoTracks()[0];
  const capabilities=track.getCapabilities?.();
-
  if(!capabilities?.torch){
   cameraStatus("ဒီကင်မရာတွင် Flash မထောက်ပံ့ပါ");
   return;
  }
-
  try{
   torchOn=!torchOn;
   await track.applyConstraints({advanced:[{torch:torchOn}]});
-
-  $("tmkFlash").textContent=
-   torchOn?"⚡ မီးပိတ်":"⚡ မီး";
- }catch(e){
-  cameraStatus("Flash မရပါ");
- }
+  $("tmkFlash").textContent=torchOn?"⚡ မီးပိတ်":"⚡ မီး";
+ }catch(e){cameraStatus("Flash မရပါ");}
 });
 
 /* RECORDING */
@@ -1700,19 +1422,14 @@ $("tmkStop").addEventListener("click",stopRecording);
 function startRecording(){
  if(!cameraStream)return alert("Camera အရင်ဖွင့်ပါ");
  if(recording)return;
-
- if(!window.MediaRecorder||
-    !HTMLCanvasElement.prototype.captureStream){
+ if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){
   return alert("ဒီ Browser မှာ Recording မထောက်ပံ့ပါ");
  }
 
  const width=camera.videoWidth||720;
  const height=camera.videoHeight||1280;
-
  const canvas=document.createElement("canvas");
- canvas.width=width;
- canvas.height=height;
-
+ canvas.width=width;canvas.height=height;
  const ctx=canvas.getContext("2d");
 
  recording=true;
@@ -1720,24 +1437,15 @@ function startRecording(){
 
  function draw(){
   if(!recording)return;
-
   ctx.save();
-
   if(facing==="user"){
    ctx.translate(width,0);
    ctx.scale(-1,1);
   }
-
   ctx.filter=currentEffect;
-
-  const zoom=Number($("tmkZoom").value)||1;
-  const dw=width*zoom;
-  const dh=height*zoom;
-
-  ctx.drawImage(
-   camera,(width-dw)/2,(height-dh)/2,dw,dh
-  );
-
+  const dw=width*cameraZoom;
+  const dh=height*cameraZoom;
+  ctx.drawImage(camera,(width-dw)/2,(height-dh)/2,dw,dh);
   ctx.restore();
 
   if(currentSticker){
@@ -1747,20 +1455,16 @@ function startRecording(){
    ctx.fillText(currentSticker,width/2,height*.28);
    ctx.restore();
   }
-
   animationId=requestAnimationFrame(draw);
  }
 
  draw();
-
  canvasStream=canvas.captureStream(30);
-
  cameraStream.getAudioTracks().forEach(track=>{
   canvasStream.addTrack(track);
  });
 
  let options={};
-
  if(MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")){
   options.mimeType="video/webm;codecs=vp8,opus";
  }else if(MediaRecorder.isTypeSupported("video/webm")){
@@ -1779,51 +1483,34 @@ function startRecording(){
  }
 
  const chunks=[];
-
  recorder.ondataavailable=e=>{
   if(e.data&&e.data.size)chunks.push(e.data);
  };
-
  recorder.onerror=()=>{
   cameraStatus("Recording Error");
  };
-
  recorder.onstop=()=>{
-  recordedBlob=new Blob(chunks,{
-   type:recorder.mimeType||"video/webm"
-  });
-
+  recordedBlob=new Blob(chunks,{type:recorder.mimeType||"video/webm"});
   if(recordedUrl)URL.revokeObjectURL(recordedUrl);
-
   recordedUrl=URL.createObjectURL(recordedBlob);
   preview.src=recordedUrl;
   preview.load();
-
   $("tmkRecord").classList.remove("recording");
-
   if(canvasStream){
    canvasStream.getTracks().forEach(t=>t.stop());
    canvasStream=null;
   }
-
   cameraStatus("Video ရိုက်ပြီးပါပြီ။ Preview ကြည့်ပါ။");
  };
-
  recorder.start(500);
  cameraStatus("🔴 Video ရိုက်ကူးနေပါသည်...");
 }
 
 function stopRecording(){
  if(!recording)return;
-
  recording=false;
-
  if(animationId)cancelAnimationFrame(animationId);
-
- if(recorder&&recorder.state==="recording"){
-  recorder.stop();
- }
-
+ if(recorder&&recorder.state==="recording")recorder.stop();
  $("tmkRecord").classList.remove("recording");
  cameraStatus("Video ပြင်ဆင်နေပါသည်...");
 }
@@ -1832,52 +1519,38 @@ function stopRecording(){
 $("tmkCameraUpload").addEventListener("click",async()=>{
  if(!recordedBlob)return alert("Video အရင်ရိုက်ပါ");
  if(!currentUser)return alert("Login အရင်ဝင်ပါ");
-
  const button=$("tmkCameraUpload");
  button.disabled=true;
-
  try{
   const file=new File(
    [recordedBlob],
    "tmk-camera-"+Date.now()+".webm",
    {type:"video/webm"}
   );
-
   await uploadVideoFile(
-   file,
-   $("cameraTitle").value.trim(),
+   file,$("cameraTitle").value.trim(),
    $("cameraCaption").value.trim()
   );
-
   alert("Camera Video Upload အောင်မြင်ပါပြီ ❤️");
-
   recordedBlob=null;
-
   if(recordedUrl)URL.revokeObjectURL(recordedUrl);
   recordedUrl=null;
-
   preview.removeAttribute("src");
   preview.load();
-
   $("cameraTitle").value="";
   $("cameraCaption").value="";
-
   showPage("homePage");
  }catch(e){
   alert("Upload Error: "+e.message);
- }finally{
-  button.disabled=false;
- }
+ }finally{button.disabled=false;}
 });
 
 /* CLEANUP */
 window.addEventListener("pagehide",()=>{
  if(recording)stopRecording();
  stopCamera();
-
  if(videosUnsubscribe)videosUnsubscribe();
  if(commentUnsubscribe)commentUnsubscribe();
-
  clearEngagement();
 });
 
@@ -1892,5 +1565,71 @@ if("serviceWorker"in navigator){
 
 console.log("TMK VIDEO initialized successfully");
 </script>
+
+/* TMK VIDEO FULL SCREEN FIX */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#homePage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+}
+
+#feed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  left: 0;
+  transform: none;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.video-card {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100%;
+  max-width: none;
+  scroll-snap-align: start;
+}
+
+.video-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-media video,
+.video-media iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+
+.topbar {
+  padding-top: env(safe-area-inset-top);
+}
+
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom);
+}
 </body>
 </html>
