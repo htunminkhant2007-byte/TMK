@@ -987,15 +987,19 @@ function muteOthers(active){
  });
 }
 
+
+     
 function setupAutoplay(){
  if(feedObserver)feedObserver.disconnect();
- if(!("IntersectionObserver"in window))return;
+
+ if(!("IntersectionObserver" in window))return;
 
  feedObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
    const video=entry.target;
 
-   if(entry.isIntersecting&&entry.intersectionRatio>=.65){
+   if(entry.isIntersecting && entry.intersectionRatio>=0.65){
+
     document.querySelectorAll("#feed video").forEach(other=>{
      if(other!==video){
       other.pause();
@@ -1006,23 +1010,23 @@ function setupAutoplay(){
     });
 
     if(video.dataset.userPaused!=="true"){
-     /* Browser policy: sound may require the user to tap once. */
-     video.muted=!audioUnlocked;
+     video.muted=true;
      video.play().catch(error=>{
       console.log("Autoplay blocked:",error);
       updatePlayButton(video);
      });
     }
+
    }else{
     video.pause();
     video.muted=true;
     updatePlayButton(video);
    }
   });
- },{threshold:[0,.65,.9]});
+ },{threshold:[0,0.65,0.9]});
 
- document.querySelectorAll("#feed video[data-feed-video]").forEach(v=>{
-  feedObserver.observe(v);
+ document.querySelectorAll("#feed video[data-feed-video]").forEach(video=>{
+  feedObserver.observe(video);
  });
 }
 
