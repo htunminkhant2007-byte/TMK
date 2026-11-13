@@ -770,24 +770,40 @@ function setupVideoButtons(){
  $("feed").querySelectorAll("[data-play-toggle]").forEach(button=>{
   const video=button.closest(".video-card")?.querySelector("video");
   if(!video)return;
+
   button.onclick=()=>{
-   if(video.paused){
+   audioUnlocked=true;
+   video.muted=false;
+   muteOthers(video);
+   video.dataset.userPaused="false";
+   video.play().catch(()=>updatePlayButton(video));
+  };
+
+  video.onclick=()=>{
+   if(!audioUnlocked){
+    audioUnlocked=true;
+    video.muted=false;
+    muteOthers(video);
     video.dataset.userPaused="false";
     video.play().catch(()=>updatePlayButton(video));
+    return;
    }
-  };
-  video.onclick=()=>{
+
    if(video.paused){
     video.dataset.userPaused="false";
+    video.muted=false;
+    muteOthers(video);
     video.play().catch(()=>{});
    }else{
     video.dataset.userPaused="true";
     video.pause();
    }
   };
+
   ["play","pause","ended"].forEach(event=>{
    video.addEventListener(event,()=>updatePlayButton(video));
   });
+
   updatePlayButton(video);
  });
 }
