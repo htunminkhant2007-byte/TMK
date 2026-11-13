@@ -695,7 +695,7 @@ function renderFeed(inputVideos){
     encodeURIComponent(v.youtubeId)+
     '?playsinline=1&mute=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'
    :'<video data-feed-video src="'+videoUrl+
-    '" playsinline loop muted preload="metadata"></video>'+
+    '" playsinline loop preload="metadata"></video>'+
     '<button class="video-play-toggle hidden" data-play-toggle="'+id+'">▶</button>';
 
   return `
