@@ -752,13 +752,22 @@ function renderFeed(inputVideos){
  $("feed").querySelectorAll("[data-delete]").forEach(b=>{
   b.onclick=()=>deleteVideo(b.dataset.delete);
  });
+ 
  $("feed").querySelectorAll("[data-sound]").forEach(b=>{
   b.onclick=()=>{
    const video=b.closest(".video-card")?.querySelector("video");
    if(!video)return;
+
+   audioUnlocked=true;
    video.muted=!video.muted;
+
+   if(!video.muted){
+    muteOthers(video);
+    video.dataset.userPaused="false";
+    video.play().catch(()=>{});
+   }
+
    b.textContent=video.muted?"🔇":"🔊";
-   if(!video.muted)muteOthers(video);
   };
  });
 
