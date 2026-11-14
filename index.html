@@ -1211,6 +1211,12 @@ function uploadB2Part(url, token, partNumber, sha1, blob, onProgress) {
   });
 }
 
+
+
+
+
+
+
 async function uploadLargeVideoToB2(file,title,caption){
  setUploadStatus("B2 Upload စတင်နေပါတယ်...");
  const init=await workerPost("/upload/init",{
