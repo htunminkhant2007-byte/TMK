@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -34,24 +39,40 @@ jobs:
           log-accepted-android-sdk-licenses: false
           packages: platform-tools
 
-
       - name: Install Android SDK Platform
         run: |
           yes | sdkmanager --licenses
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          python -m pip install Pillow
+
+      - name: Check required files
+        run: |
+          test -f index.html
+          test -f manifest.json
+          test -f sw.js
+          test -f icon.svg
+          test -f launchericon-192x192.png
+          test -f launchericon-512x512.png
+          test -f assets/tmk-video-icon-512.png
+          echo "All required files found."
 
       - name: Prepare web files
         run: |
           mkdir -p www
+
           cp index.html www/
           cp manifest.json www/
           cp sw.js www/
           cp icon.svg www/
+
           cp launchericon-192x192.png www/
           cp launchericon-512x512.png www/
+
+          cp assets/tmk-video-icon-512.png www/
 
       - name: Create Android project
         run: npx cap add android
@@ -59,11 +80,132 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      - name: Generate TMK Android App Icons
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+
+          source = Path("assets/tmk-video-icon-512.png")
+
+          if not source.exists():
+              raise SystemExit("TMK logo PNG file is missing!")
+
+          original = Image.open(source).convert("RGBA")
+
+          if original.size != (512, 512):
+              original = original.resize(
+                  (512, 512),
+                  Image.Resampling.LANCZOS
+              )
+
+          res = Path("android/app/src/main/res")
+
+          # Standard Android launcher icon sizes
+          sizes = {
+              "mipmap-mdpi": 48,
+              "mipmap-hdpi": 72,
+              "mipmap-xhdpi": 96,
+              "mipmap-xxhdpi": 144,
+              "mipmap-xxxhdpi": 192,
+          }
+
+          for folder, size in sizes.items():
+              target = res / folder
+              target.mkdir(parents=True, exist_ok=True)
+
+              icon = original.resize(
+                  (size, size),
+                  Image.Resampling.LANCZOS
+              )
+
+              icon.save(target / "ic_launcher.png")
+              icon.save(target / "ic_launcher_round.png")
+
+          # Adaptive icon foreground
+          foreground_dir = res / "drawable-nodpi"
+          foreground_dir.mkdir(parents=True, exist_ok=True)
+
+          foreground = Image.new(
+              "RGBA",
+              (432, 432),
+              (0, 0, 0, 0)
+          )
+
+          logo = original.resize(
+              (346, 346),
+              Image.Resampling.LANCZOS
+          )
+
+          foreground.alpha_composite(
+              logo,
+              ((432 - 346) // 2, (432 - 346) // 2)
+          )
+
+          foreground.save(
+              foreground_dir / "ic_launcher_foreground.png"
+          )
+
+          # Adaptive icon background color
+          values = res / "values"
+          values.mkdir(parents=True, exist_ok=True)
+
+          (values / "ic_launcher_background.xml").write_text(
+              """<?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="ic_launcher_background">#07070A</color>
+          </resources>
+          """,
+              encoding="utf-8"
+          )
+
+          # Android 8.0+ adaptive icon
+          adaptive_dir = res / "mipmap-anydpi-v26"
+          adaptive_dir.mkdir(parents=True, exist_ok=True)
+
+          adaptive_xml = """<?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/ic_launcher_background"/>
+              <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+          </adaptive-icon>
+          """
+
+          (adaptive_dir / "ic_launcher.xml").write_text(
+              adaptive_xml,
+              encoding="utf-8"
+          )
+
+          (adaptive_dir / "ic_launcher_round.xml").write_text(
+              adaptive_xml,
+              encoding="utf-8"
+          )
+
+          # Also update PWA icons
+          original.resize(
+              (192, 192),
+              Image.Resampling.LANCZOS
+          ).save("www/launchericon-192x192.png")
+
+          original.resize(
+              (512, 512),
+              Image.Resampling.LANCZOS
+          ).save("www/launchericon-512x512.png")
+
+          print("TMK VIDEO Android icons generated successfully.")
+          PY
+
+      - name: Verify Android icons
+        run: |
+          test -f android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test -f android/app/src/main/res/drawable-nodpi/ic_launcher_foreground.png
+          echo "TMK VIDEO App icons verified."
+
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -71,3 +213,4 @@ jobs:
           name: TMK-VIDEO-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          retention-days: 14
