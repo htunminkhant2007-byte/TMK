@@ -27,7 +27,15 @@ jobs:
           java-version: "21"
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+          accept-android-sdk-licenses: true
+
+      - name: Install Android SDK Platform
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
       - name: Install dependencies
         run: npm install
