@@ -12,25 +12,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Download repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Install Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
+      # 3. Install Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      # 4. Install Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
 
+      # 5. Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
@@ -39,65 +44,136 @@ jobs:
           log-accepted-android-sdk-licenses: false
           packages: platform-tools
 
+      # 6. Install Android platform
       - name: Install Android SDK Platform
         run: |
           yes | sdkmanager --licenses
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
+      # 7. Install project dependencies
       - name: Install dependencies
         run: |
-          npm install
-          python -m pip install Pillow
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
-            - name: Check required files
+          python -m pip install --upgrade Pillow
+
+      # 8. Find website and logo files
+      - name: Find TMK project files
+        shell: bash
         run: |
-          echo "=== CURRENT DIRECTORY ==="
-          pwd
+          echo "Searching for index.html..."
 
-          echo "=== ROOT FILES ==="
-          ls -la
+          INDEX_FILE=$(find . -maxdepth 6 -type f \
+            -name "index.html" \
+            -not -path "./.git/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./android/*" \
+            -not -path "./www/*" \
+            | head -n 1)
 
-          echo "=== ALL PROJECT FILES ==="
-          find . -maxdepth 4 -type f | sort
-
-          echo "=== CHECK INDEX ==="
-          test -f index.html || {
+          if [ -z "$INDEX_FILE" ]; then
             echo "ERROR: index.html not found!"
+            echo "Repository files:"
+            find . -maxdepth 5 -type f | sort
+            exit 1
+          fi
+
+          WEB_SOURCE="${INDEX_FILE%/index.html}"
+
+          echo "Website folder: $WEB_SOURCE"
+          echo "WEB_SOURCE=$WEB_SOURCE" >> "$GITHUB_ENV"
+
+          LOGO_FILE=$(find . -maxdepth 6 -type f \
+            -name "tmk-video-icon-512.png" \
+            -not -path "./.git/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./android/*" \
+            | head -n 1)
+
+          if [ -z "$LOGO_FILE" ]; then
+            echo "ERROR: TMK logo PNG not found!"
+            echo "Please check tmk-video-icon-512.png"
+            exit 1
+          fi
+
+          echo "Logo found: $LOGO_FILE"
+          echo "LOGO_FILE=$LOGO_FILE" >> "$GITHUB_ENV"
+
+          test -f "$WEB_SOURCE/manifest.json" || {
+            echo "ERROR: manifest.json missing!"
             exit 1
           }
 
-          echo "index.html found!"
+          test -f "$WEB_SOURCE/sw.js" || {
+            echo "ERROR: sw.js missing!"
+            exit 1
+          }
 
+          test -f package.json || {
+            echo "ERROR: package.json missing!"
+            exit 1
+          }
+
+          test -f capacitor.config.json || {
+            echo "ERROR: capacitor.config.json missing!"
+            exit 1
+          }
+
+          echo "All required project files found!"
+
+      # 9. Prepare website files
       - name: Prepare web files
+        shell: bash
         run: |
           mkdir -p www
 
-          cp index.html www/
-          cp manifest.json www/
-          cp sw.js www/
-          cp icon.svg www/
+          cp "$WEB_SOURCE/index.html" www/
+          cp "$WEB_SOURCE/manifest.json" www/
+          cp "$WEB_SOURCE/sw.js" www/
 
-          cp launchericon-192x192.png www/
-          cp launchericon-512x512.png www/
+          if [ -f "$WEB_SOURCE/icon.svg" ]; then
+            cp "$WEB_SOURCE/icon.svg" www/
+          fi
 
-          cp assets/tmk-video-icon-512.png www/
+          if [ -f "$WEB_SOURCE/launchericon-192x192.png" ]; then
+            cp "$WEB_SOURCE/launchericon-192x192.png" www/
+          fi
 
+          if [ -f "$WEB_SOURCE/launchericon-512x512.png" ]; then
+            cp "$WEB_SOURCE/launchericon-512x512.png" www/
+          fi
+
+          echo "Website files prepared!"
+
+      # 10. Create Android project
       - name: Create Android project
-        run: npx cap add android
+        run: |
+          if [ ! -d android ]; then
+            npx cap add android
+          else
+            echo "Android project already exists."
+          fi
 
+      # 11. Sync Capacitor
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: |
+          npx cap sync android
 
+      # 12. Generate TMK application icons
       - name: Generate TMK Android App Icons
         run: |
           python - <<'PY'
           from PIL import Image
           from pathlib import Path
 
-          source = Path("assets/tmk-video-icon-512.png")
+          source = Path("LOGO_PLACEHOLDER")
 
           if not source.exists():
-              raise SystemExit("TMK logo PNG file is missing!")
+              raise SystemExit("ERROR: TMK logo file missing!")
 
           original = Image.open(source).convert("RGBA")
 
@@ -109,7 +185,6 @@ jobs:
 
           res = Path("android/app/src/main/res")
 
-          # Standard Android launcher icon sizes
           sizes = {
               "mipmap-mdpi": 48,
               "mipmap-hdpi": 72,
@@ -130,7 +205,6 @@ jobs:
               icon.save(target / "ic_launcher.png")
               icon.save(target / "ic_launcher_round.png")
 
-          # Adaptive icon foreground
           foreground_dir = res / "drawable-nodpi"
           foreground_dir.mkdir(parents=True, exist_ok=True)
 
@@ -154,7 +228,6 @@ jobs:
               foreground_dir / "ic_launcher_foreground.png"
           )
 
-          # Adaptive icon background color
           values = res / "values"
           values.mkdir(parents=True, exist_ok=True)
 
@@ -167,7 +240,6 @@ jobs:
               encoding="utf-8"
           )
 
-          # Android 8.0+ adaptive icon
           adaptive_dir = res / "mipmap-anydpi-v26"
           adaptive_dir.mkdir(parents=True, exist_ok=True)
 
@@ -188,7 +260,6 @@ jobs:
               encoding="utf-8"
           )
 
-          # Also update PWA icons
           original.resize(
               (192, 192),
               Image.Resampling.LANCZOS
@@ -199,22 +270,37 @@ jobs:
               Image.Resampling.LANCZOS
           ).save("www/launchericon-512x512.png")
 
-          print("TMK VIDEO Android icons generated successfully.")
+          print("TMK VIDEO icons generated successfully!")
           PY
 
+      # 13. Verify application icons
       - name: Verify Android icons
         run: |
           test -f android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
           test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           test -f android/app/src/main/res/drawable-nodpi/ic_launcher_foreground.png
-          echo "TMK VIDEO App icons verified."
 
+          echo "All TMK icons verified!"
+
+      # 14. Build APK
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
 
+      # 15. Verify APK
+      - name: Verify APK
+        run: |
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+          echo "TMK VIDEO APK successfully built!"
+
+      # 16. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
