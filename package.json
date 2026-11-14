@@ -1,0 +1,14 @@
+
+{
+  "name": "tmk-video-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TMK VIDEO Android Application",
+  "dependencies": {
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/android": "^8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0"
+  }
+}
