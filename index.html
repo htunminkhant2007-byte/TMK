@@ -1211,69 +1211,108 @@ function uploadB2Part(url, token, partNumber, sha1, blob, onProgress) {
   });
 }
 
+async function uploadLargeVideoToB2(file, title, caption) {
+  let fileId = null;
+  let uploadCompleted = false;
 
+  try {
+    setUploadStatus("B2 Upload စတင်နေပါတယ်...");
 
+    // Start multipart upload
+    const init = await workerPost("/upload/init", {
+      fileName: file.name,
+      fileSize: file.size,
+      contentType: file.type || "application/octet-stream"
+    });
 
+    if (!init.fileId || !init.partSize || !init.partCount) {
+      throw Error("Worker Init Response မပြည့်စုံပါ");
+    }
 
+    fileId = init.fileId;
 
+    const hashes = [];
+    let uploaded = 0;
 
-async function uploadLargeVideoToB2(file,title,caption){
- setUploadStatus("B2 Upload စတင်နေပါတယ်...");
- const init=await workerPost("/upload/init",{
-  size:file.size,contentType:file.type
- });
+    for (let i = 0; i < init.partCount; i++) {
+      const partNumber = i + 1;
+      const start = i * init.partSize;
+      const end = Math.min(start + init.partSize, file.size);
+      const chunk = file.slice(start, end);
 
- if(!init.fileId||!init.partSize||!init.partCount){
-  throw Error("Worker Init Response မပြည့်စုံပါ");
- }
+      setUploadStatus(
+        "B2 Part " + partNumber + "/" + init.partCount
+      );
 
- const hashes=[];
- let uploaded=0;
+      const sha1 = await sha1Hex(chunk);
 
- for(let i=0;i<init.partCount;i++){
-  const partNumber=i+1;
-  const start=i*init.partSize;
-  const chunk=file.slice(start,Math.min(start+init.partSize,file.size));
-  setUploadStatus("B2 Part "+partNumber+"/"+init.partCount);
+      const info = await workerPost("/upload/part-url", {
+        fileId,
+        partNumber
+      });
 
-  const sha1=await sha1Hex(chunk);
-  const info=await workerPost("/upload/part-url",{
-   fileId:init.fileId,partNumber
-  });
+      if (!info.uploadUrl || !info.authorizationToken) {
+        throw Error("B2 Upload URL မရပါ");
+      }
 
-  if(!info.uploadUrl||!info.authorizationToken){
-   throw Error("Worker Part URL မပြည့်စုံပါ");
+      await uploadB2Part(
+        info.uploadUrl,
+        info.authorizationToken,
+        partNumber,
+        sha1,
+        chunk,
+        loaded => {
+          const pct = Math.min(
+            99,
+            Math.round((uploaded + loaded) / file.size * 100)
+          );
+
+          $("fileProgressBar").style.width = pct + "%";
+          setUploadStatus("B2 Upload " + pct + "%");
+        }
+      );
+
+      uploaded += chunk.size;
+      hashes.push(sha1);
+    }
+
+    setUploadStatus("Video သိမ်းဆည်းနေပါတယ်...");
+
+    const finished = await workerPost("/upload/finish", {
+      fileId,
+      partSha1Array: hashes
+    });
+
+    if (!finished.videoUrl) {
+      throw Error("B2 Video URL မရပါ");
+    }
+
+    // Save video information to Firebase
+    await saveVideoRecord({
+      title: title || file.name,
+      caption: caption || "",
+      videoUrl: finished.videoUrl,
+      storagePath: finished.fileName || init.fileName || "",
+      storageProvider: "Backblaze B2"
+    });
+
+    uploadCompleted = true;
+
+    $("fileProgressBar").style.width = "100%";
+    setUploadStatus("Upload Complete!");
+
+  } catch (error) {
+    // Cancel unfinished B2 upload when possible
+    if (fileId && !uploadCompleted) {
+      try {
+        await workerPost("/upload/cancel", { fileId });
+      } catch (cancelError) {
+        console.warn("B2 Cancel Error:", cancelError);
+      }
+    }
+
+    throw error;
   }
-
-  await uploadB2Part(
-   info.uploadUrl,info.authorizationToken,
-   partNumber,sha1,chunk,loaded=>{
-    const pct=Math.round((uploaded+loaded)/file.size*100);
-    $("fileProgressBar").style.width=pct+"%";
-    setUploadStatus("B2 Upload "+pct+"%");
-   }
-  );
-
-  uploaded+=chunk.size;
-  hashes.push(sha1);
- }
-
- setUploadStatus("Video သိမ်းဆည်းနေပါတယ်...");
- const finished=await workerPost("/upload/finish",{
-  fileId:init.fileId,partSha1Array:hashes
- });
-
- if(!finished.videoUrl)throw Error("Worker Video URL မရပါ");
-
- await saveVideoRecord({
-  title,caption,
-  videoUrl:finished.videoUrl,
-  storagePath:finished.fileName||"",
-  storageProvider:"Backblaze B2"
- });
-
- $("fileProgressBar").style.width="100%";
- setUploadStatus("Upload Complete!");
 }
 
 async function uploadSmallVideo(file,title,caption){
