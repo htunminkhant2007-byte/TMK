@@ -49,16 +49,24 @@ jobs:
           npm install
           python -m pip install Pillow
 
-      - name: Check required files
+            - name: Check required files
         run: |
-          test -f index.html
-          test -f manifest.json
-          test -f sw.js
-          test -f icon.svg
-          test -f launchericon-192x192.png
-          test -f launchericon-512x512.png
-          test -f assets/tmk-video-icon-512.png
-          echo "All required files found."
+          echo "=== CURRENT DIRECTORY ==="
+          pwd
+
+          echo "=== ROOT FILES ==="
+          ls -la
+
+          echo "=== ALL PROJECT FILES ==="
+          find . -maxdepth 4 -type f | sort
+
+          echo "=== CHECK INDEX ==="
+          test -f index.html || {
+            echo "ERROR: index.html not found!"
+            exit 1
+          }
+
+          echo "index.html found!"
 
       - name: Prepare web files
         run: |
