@@ -1159,24 +1159,56 @@ async function workerPost(path,body){
  return result;
 }
 
-function uploadB2Part(url,token,partNumber,sha1,blob,onProgress){
- return new Promise((resolve,reject)=>{
-  const xhr=new XMLHttpRequest();
-  xhr.open("POST",url);
-  xhr.setRequestHeader("Authorization",token);
-  xhr.setRequestHeader("X-Bz-Part-Number",String(partNumber));
-  xhr.setRequestHeader("X-Bz-Content-Sha1",sha1);
-  xhr.setRequestHeader("Content-Type","application/octet-stream");
-  xhr.upload.onprogress=e=>{
-   if(e.lengthComputable)onProgress(e.loaded);
-  };
-  xhr.onload=()=>{
-   if(xhr.status>=200&&xhr.status<300)resolve();
-   else reject(Error("B2 Part Error "+xhr.status+": "+xhr.responseText));
-  };
-  xhr.onerror=()=>reject(Error("B2 Network Error"));
-  xhr.send(blob);
- });
+function uploadB2Part(url, token, partNumber, sha1, blob, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    let host = "Unknown";
+    try {
+      host = new URL(url).host;
+    } catch (e) {}
+
+    xhr.open("POST", url);
+    xhr.timeout = 20 * 60 * 1000;
+
+    xhr.setRequestHeader("Authorization", token);
+    xhr.setRequestHeader("X-Bz-Part-Number", String(partNumber));
+    xhr.setRequestHeader("X-Bz-Content-Sha1", sha1);
+    xhr.setRequestHeader("Content-Type", "application/octet-stream");
+
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable) onProgress(e.loaded);
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+      } else {
+        reject(new Error(
+          "B2 HTTP " + xhr.status + ": " +
+          (xhr.responseText || "No response")
+        ));
+      }
+    };
+
+    xhr.onerror = () => {
+      reject(new Error(
+        "B2 Network/CORS Error | HTTP: " +
+        xhr.status + " | Host: " + host +
+        " | Online: " + navigator.onLine
+      ));
+    };
+
+    xhr.ontimeout = () => {
+      reject(new Error("B2 Upload Timeout | Host: " + host));
+    };
+
+    xhr.onabort = () => {
+      reject(new Error("B2 Upload Aborted"));
+    };
+
+    xhr.send(blob);
+  });
 }
 
 async function uploadLargeVideoToB2(file,title,caption){
