@@ -354,6 +354,55 @@ textarea{min-height:75px}
   <button class="btn primary" id="panelCommentSend">ပို့ရန်</button>
  </div>
 </div>
+<script>
+(async function () {
+  const box = document.createElement("div");
+
+  box.style.cssText =
+    "position:fixed;top:10px;left:10px;right:10px;" +
+    "z-index:999999;background:#111;color:white;" +
+    "padding:15px;border:2px solid #00cc88;" +
+    "border-radius:10px;font-size:14px;";
+
+  box.innerHTML = "<b>TMK NETWORK TEST</b><br>စစ်ဆေးနေသည်...";
+  document.body.appendChild(box);
+
+  const hosts = [
+    ["Firebase SDK", "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"],
+    ["Firebase Database", "https://tmk-video-default-rtdb.firebaseio.com/.json"],
+    ["Cloudflare Worker", "https://tmk-video-api.htunminkhant2007.workers.dev"],
+    ["Supabase", "https://neatplekkujtxkajmeyg.supabase.co"]
+  ];
+
+  for (const [name, url] of hosts) {
+    const line = document.createElement("div");
+    line.textContent = name + " : စစ်ဆေးနေသည်...";
+    box.appendChild(line);
+
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+
+      await fetch(url, {
+        mode: "no-cors",
+        cache: "no-store",
+        signal: controller.signal
+      });
+
+      clearTimeout(timer);
+      line.textContent = name + " : ချိတ်ဆက်နိုင်";
+    } catch (error) {
+      line.textContent = name + " : မရောက်နိုင် (" + error.name + ")";
+    }
+  }
+
+  const note = document.createElement("div");
+  note.textContent =
+    "မှတ်ချက် - ချိတ်ဆက်နိုင်ဆိုတာ Server အလုပ်လုပ်ကြောင်း အပြည့်အဝ အတည်ပြုတာ မဟုတ်ပါ။";
+  note.style.marginTop = "10px";
+  box.appendChild(note);
+})();
+</script>
 
 <script type="module">
 import {initializeApp}
