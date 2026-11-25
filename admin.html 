@@ -17,7 +17,7 @@ header{
  padding:18px;background:#151520;
  border-bottom:1px solid #303040;
  display:flex;justify-content:space-between;
- align-items:center;
+ align-items:center;position:sticky;top:0;z-index:5;
 }
 h1{font-size:21px;margin:0;color:#ff315b}
 main{max-width:850px;margin:auto;padding:18px}
@@ -25,31 +25,45 @@ main{max-width:850px;margin:auto;padding:18px}
  background:#171722;border:1px solid #303040;
  border-radius:14px;padding:18px;margin-bottom:18px;
 }
-input{
+input,textarea{
  width:100%;padding:14px;margin:8px 0;
  background:#090910;color:white;
  border:1px solid #454556;border-radius:9px;
  font-size:16px;
 }
+textarea{min-height:90px;resize:vertical}
 button{
  border:0;border-radius:9px;padding:12px 17px;
  background:#ff315b;color:white;
- font-weight:bold;font-size:14px;
+ font-weight:bold;font-size:14px;cursor:pointer;
 }
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:not-allowed}
 .secondary{background:#343444}
 .delete{background:#d62845}
 .video{
  background:#222230;border-radius:10px;
- padding:14px;margin-top:12px;
- overflow-wrap:anywhere;
+ padding:14px;margin-top:12px;overflow-wrap:anywhere;
 }
 .video h3{margin:0 0 8px;font-size:16px}
-.small{color:#aaa;font-size:13px;line-height:1.6}
+.small{color:#aaa;font-size:13px;line-height:1.7}
 #dashboard{display:none}
-#status{white-space:pre-wrap;color:#28e0c0}
+#status{white-space:pre-wrap;color:#28e0c0;line-height:1.7}
 #login{max-width:450px;margin:50px auto}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
+.progress{
+ width:100%;height:15px;background:#303040;
+ border-radius:20px;overflow:hidden;margin:15px 0;
+}
+#progressBar{
+ width:0%;height:100%;background:#28e0c0;
+ transition:width .2s;
+}
+#progressText{color:#28e0c0;font-weight:bold}
+.uploadBox{
+ border:1px dashed #55556b;border-radius:12px;
+ padding:15px;margin-top:12px;
+}
+.fileInfo{color:#28e0c0;overflow-wrap:anywhere}
 </style>
 </head>
 
@@ -68,11 +82,8 @@ button:disabled{opacity:.5}
  <h2>Super Admin Login</h2>
  <p class="small">Admin အကောင့်ဖြင့်သာ ဝင်ရောက်နိုင်သည်။</p>
 
- <input id="email" type="email"
- placeholder="Admin Email">
-
- <input id="password" type="password"
- placeholder="Password">
+ <input id="email" type="email" placeholder="Admin Email">
+ <input id="password" type="password" placeholder="Password">
 
  <button id="loginBtn">Login</button>
  <p id="loginStatus" class="small"></p>
@@ -83,10 +94,56 @@ button:disabled{opacity:.5}
  <div class="panel">
   <h2>ဗဟိုထိန်းချုပ်ရေး</h2>
   <p class="small">TMK VIDEO Super Admin</p>
+
   <div class="actions">
    <button id="refreshBtn">Video စာရင်းပြန်စစ်မယ်</button>
   </div>
+
   <p id="status">စောင့်ဆိုင်းနေသည်...</p>
+ </div>
+
+ <!-- ADMIN VIDEO UPLOAD -->
+ <div class="panel">
+  <h2>📤 Admin Video Upload</h2>
+
+  <p class="small">
+   Backblaze B2 သို့ တိုက်ရိုက် Upload လုပ်မည်။
+   1GB ကျော် Video များလည်း တင်နိုင်သည်။
+  </p>
+
+  <div class="uploadBox">
+
+   <label class="small">Video ဖိုင်ရွေးရန်</label>
+   <input id="adminVideoFile" type="file"
+    accept="video/mp4,video/webm,video/quicktime,video/*">
+
+   <p id="fileInfo" class="fileInfo small">
+    Video ဖိုင် မရွေးရသေးပါ။
+   </p>
+
+   <label class="small">Video Title</label>
+   <input id="adminVideoTitle"
+    type="text" maxlength="100"
+    placeholder="Video Title">
+
+   <label class="small">Video Caption</label>
+   <textarea id="adminVideoCaption"
+    maxlength="500"
+    placeholder="Video အကြောင်းအရာ ရေးပါ"></textarea>
+
+   <div class="progress">
+    <div id="progressBar"></div>
+   </div>
+
+   <p id="progressText">0%</p>
+
+   <button id="adminUploadBtn">
+    🚀 Video Upload လုပ်မယ်
+   </button>
+
+   <p id="uploadStatus" class="small"></p>
+
+  </div>
  </div>
 
  <div class="panel">
@@ -112,6 +169,13 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
+import {
+ getDatabase,
+ ref,
+ push
+}
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
 const firebaseConfig = {
  apiKey: "AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
  authDomain: "tmk-video.firebaseapp.com",
@@ -123,8 +187,14 @@ const firebaseConfig = {
 const ADMIN_WORKER =
  "https://tmk-admin-api.htunminkhant2007.workers.dev";
 
+const VIDEO_WORKER =
+ "https://tmk-video-api.htunminkhant2007.workers.dev";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024;
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
 const loginBox = document.getElementById("login");
 const dashboard = document.getElementById("dashboard");
@@ -133,13 +203,64 @@ const statusBox = document.getElementById("status");
 const videoList = document.getElementById("videoList");
 const logoutBtn = document.getElementById("logout");
 
+const fileInput = document.getElementById("adminVideoFile");
+const fileInfo = document.getElementById("fileInfo");
+const titleInput = document.getElementById("adminVideoTitle");
+const captionInput = document.getElementById("adminVideoCaption");
+const uploadBtn = document.getElementById("adminUploadBtn");
+const uploadStatus = document.getElementById("uploadStatus");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
 let currentAdmin = null;
+let uploading = false;
 
 function showStatus(message){
  statusBox.textContent = message;
 }
 
-async function adminRequest(path, method="GET"){
+function setProgress(percent){
+ const value = Math.max(0,Math.min(100,percent));
+ progressBar.style.width = value + "%";
+ progressText.textContent = value.toFixed(1) + "%";
+}
+
+function formatBytes(bytes){
+ if(bytes < 1024*1024){
+  return (bytes/1024).toFixed(1) + " KB";
+ }
+ if(bytes < 1024*1024*1024){
+  return (bytes/1024/1024).toFixed(2) + " MB";
+ }
+ return (bytes/1024/1024/1024).toFixed(2) + " GB";
+}
+
+async function workerRequest(path,data){
+ if(!currentAdmin){
+  throw new Error("Admin Login မဝင်ရသေးပါ။");
+ }
+
+ const token = await currentAdmin.getIdToken(true);
+
+ const response = await fetch(VIDEO_WORKER + path,{
+  method:"POST",
+  headers:{
+   "Authorization":"Bearer " + token,
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify(data)
+ });
+
+ const result = await response.json();
+
+ if(!response.ok || result.success === false){
+  throw new Error(result.message || "Worker Request Failed");
+ }
+
+ return result;
+}
+
+async function adminRequest(path,method="GET"){
  if(!currentAdmin){
   throw new Error("Admin Login မဝင်ရသေးပါ။");
  }
@@ -222,7 +343,6 @@ async function loadVideos(){
 
  try{
   const result = await adminRequest("/admin/videos");
-
   const videos = result.videos || result.data || {};
 
   videoList.replaceChildren();
@@ -287,6 +407,231 @@ async function loadVideos(){
   showStatus("အမှား: " + error.message);
  }
 }
+
+// File selection
+fileInput.onchange = ()=>{
+ const file = fileInput.files[0];
+
+ if(!file){
+  fileInfo.textContent = "Video ဖိုင် မရွေးရသေးပါ။";
+  return;
+ }
+
+ fileInfo.textContent =
+  file.name + " | " + formatBytes(file.size);
+
+ titleInput.value = file.name;
+
+ if(file.size > MAX_FILE_SIZE){
+  uploadStatus.textContent =
+   "ဖိုင်အရွယ်အစား 5GB ထက်ကျော်နေပါသည်။";
+  uploadBtn.disabled = true;
+ }else{
+  uploadStatus.textContent = "";
+  uploadBtn.disabled = false;
+ }
+};
+
+// SHA-1 for B2 multipart
+async function sha1Hex(blob){
+ const buffer = await blob.arrayBuffer();
+ const hash = await crypto.subtle.digest("SHA-1",buffer);
+
+ return Array.from(new Uint8Array(hash))
+  .map(b=>b.toString(16).padStart(2,"0"))
+  .join("");
+}
+
+// Admin upload
+uploadBtn.onclick = async ()=>{
+ if(uploading) return;
+
+ const file = fileInput.files[0];
+
+ if(!file){
+  alert("Video ဖိုင် အရင်ရွေးပါ။");
+  return;
+ }
+
+ if(file.size > MAX_FILE_SIZE){
+  alert("5GB ထက်ကျော်သောဖိုင်ကို တင်၍မရပါ။");
+  return;
+ }
+
+ if(!currentAdmin){
+  alert("Admin Login ဝင်ပါ။");
+  return;
+ }
+
+ const title = titleInput.value.trim() || file.name;
+ const caption = captionInput.value.trim();
+
+ uploading = true;
+ uploadBtn.disabled = true;
+ fileInput.disabled = true;
+
+ setProgress(0);
+ uploadStatus.textContent = "Upload စတင်နေသည်...";
+
+ let fileId = null;
+ let completed = false;
+
+ try{
+
+  // 1. Initialize multipart upload
+  uploadStatus.textContent =
+   "Backblaze B2 Upload စတင်နေသည်...";
+
+  const init = await workerRequest("/upload/init",{
+   fileName:file.name,
+   fileSize:file.size,
+   contentType:file.type || "video/mp4"
+  });
+
+  fileId = init.fileId;
+
+  if(!fileId){
+   throw new Error("Worker မှ fileId မရရှိပါ။");
+  }
+
+  const partSize = Number(init.partSize || 16*1024*1024);
+  const partCount = Number(
+   init.partCount || Math.ceil(file.size / partSize)
+  );
+
+  if(!partSize || !partCount){
+   throw new Error("Upload အပိုင်းအချက်အလက် မမှန်ပါ။");
+  }
+
+  const hashes = [];
+  let uploadedBytes = 0;
+
+  // 2. Upload each part
+  for(let partNumber=1;partNumber<=partCount;partNumber++){
+
+   const start = (partNumber-1)*partSize;
+   const end = Math.min(start+partSize,file.size);
+   const chunk = file.slice(start,end);
+
+   uploadStatus.textContent =
+    "Upload လုပ်နေသည်... အပိုင်း " +
+    partNumber + " / " + partCount;
+
+   // Get B2 part upload URL
+   const partInfo = await workerRequest("/upload/part-url",{
+    fileId:fileId,
+    partNumber:partNumber
+   });
+
+   if(!partInfo.uploadUrl || !partInfo.authorizationToken){
+    throw new Error("B2 Part URL မရရှိပါ။");
+   }
+
+   // Calculate SHA-1
+   const hash = await sha1Hex(chunk);
+
+   // Upload directly to B2
+   const response = await fetch(partInfo.uploadUrl,{
+    method:"POST",
+    headers:{
+     "Authorization":partInfo.authorizationToken,
+     "X-Bz-Part-Number":String(partNumber),
+     "X-Bz-Content-Sha1":hash,
+     "Content-Type":"application/octet-stream"
+    },
+    body:chunk
+   });
+
+   if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(
+     "B2 Upload Error (Part " + partNumber + "): " +
+     response.status + " " + errorText
+    );
+   }
+
+   hashes.push(hash);
+   uploadedBytes += chunk.size;
+
+   setProgress(uploadedBytes/file.size*100);
+  }
+
+  // 3. Finish multipart upload
+  uploadStatus.textContent =
+   "B2 Upload ပြီးဆုံးရန် စောင့်နေသည်...";
+
+  const finished = await workerRequest("/upload/finish",{
+   fileId:fileId,
+   partSha1Array:hashes
+  });
+
+  completed = true;
+
+  const videoUrl = finished.videoUrl || init.videoUrl;
+
+  if(!videoUrl){
+   throw new Error(
+    "Upload ပြီးသော်လည်း Video URL မရရှိပါ။"
+   );
+  }
+
+  // 4. Save video metadata to Firebase
+  uploadStatus.textContent =
+   "Firebase ထဲ Video အချက်အလက် သိမ်းနေသည်...";
+
+  const videoData = {
+   title:title.slice(0,100),
+   caption:caption.slice(0,500),
+   videoUrl:videoUrl,
+   storagePath:finished.fileName || file.name,
+   storageProvider:"Backblaze B2",
+   uid:currentAdmin.uid,
+   username:
+    currentAdmin.displayName ||
+    (currentAdmin.email ? currentAdmin.email.split("@")[0] : "TMK Admin"),
+   createdAt:Date.now()
+  };
+
+  await push(ref(db,"videos"),videoData);
+
+  setProgress(100);
+
+  uploadStatus.textContent =
+   "✅ Video Upload အောင်မြင်ပါသည်။\n" +
+   "Firebase ထဲသို့လည်း သိမ်းပြီးပါပြီ။\n" +
+   "ဖိုင်အရွယ်အစား: " + formatBytes(file.size);
+
+  fileInput.value = "";
+  fileInfo.textContent = "Video ဖိုင် မရွေးရသေးပါ။";
+  titleInput.value = "";
+  captionInput.value = "";
+
+  await loadVideos();
+
+ }catch(error){
+
+  console.error("TMK Admin Upload:",error);
+
+  uploadStatus.textContent =
+   "❌ Upload မအောင်မြင်ပါ။\n" + error.message;
+
+  // Cancel incomplete multipart upload
+  if(fileId && !completed){
+   try{
+    await workerRequest("/upload/cancel",{
+     fileId:fileId
+    });
+   }catch(cancelError){
+    console.error("Cancel error:",cancelError);
+   }
+  }
+
+ }finally{
+  uploading = false;
+  uploadBtn.disabled = false;
+  fileInput.disabled = false;
+ }
+};
 
 </script>
 </body>
