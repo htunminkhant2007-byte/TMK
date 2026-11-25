@@ -1,0 +1,824 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090910">
+<title>TMK VIDEO - Super Admin</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#090910;color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:18px;background:#151520;
+ border-bottom:1px solid #303040;
+ display:flex;justify-content:space-between;
+ align-items:center;position:sticky;top:0;z-index:5;
+}
+h1{font-size:21px;margin:0;color:#ff315b}
+main{max-width:850px;margin:auto;padding:18px}
+.panel{
+ background:#171722;border:1px solid #303040;
+ border-radius:14px;padding:18px;margin-bottom:18px;
+}
+input,textarea{
+ width:100%;padding:14px;margin:8px 0;
+ background:#090910;color:white;
+ border:1px solid #454556;border-radius:9px;
+ font-size:16px;
+}
+textarea{min-height:90px;resize:vertical}
+button{
+ border:0;border-radius:9px;padding:13px 17px;
+ background:#ff315b;color:white;
+ font-weight:bold;font-size:15px;cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.secondary{background:#343444}
+.delete{background:#d62845}
+.video{
+ background:#222230;border-radius:10px;
+ padding:14px;margin-top:12px;overflow-wrap:anywhere;
+}
+.video h3{margin:0 0 8px;font-size:16px}
+.small{color:#aaa;font-size:13px;line-height:1.7}
+#dashboard{display:none}
+#status{white-space:pre-wrap;color:#28e0c0;line-height:1.7}
+#login{max-width:450px;margin:50px auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.uploadBox{
+ border:1px dashed #55556b;border-radius:12px;
+ padding:15px;margin-top:12px;
+}
+.fileInfo{color:#28e0c0;overflow-wrap:anywhere}
+.progress{
+ width:100%;height:15px;background:#303040;
+ border-radius:20px;overflow:hidden;margin:15px 0;
+}
+#progressBar{
+ width:0%;height:100%;background:#28e0c0;
+ transition:width .2s;
+}
+#progressText{color:#28e0c0;font-weight:bold}
+#uploadStatus{
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.note{
+ background:#242435;border-radius:9px;
+ padding:12px;margin-top:12px;
+ color:#ccc;font-size:13px;line-height:1.7;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <h1>TMK VIDEO ADMIN</h1>
+ <button id="logout" class="secondary" style="display:none">
+  Logout
+ </button>
+</header>
+
+<main>
+
+<!-- ADMIN LOGIN -->
+<section id="login" class="panel">
+ <h2>Super Admin Login</h2>
+ <p class="small">Admin အကောင့်ဖြင့်သာ ဝင်ရောက်နိုင်သည်။</p>
+
+ <input id="email" type="email" placeholder="Admin Email">
+ <input id="password" type="password" placeholder="Password">
+
+ <button id="loginBtn">Login</button>
+ <p id="loginStatus" class="small"></p>
+</section>
+
+<section id="dashboard">
+
+ <!-- ADMIN DASHBOARD -->
+ <div class="panel">
+  <h2>ဗဟိုထိန်းချုပ်ရေး</h2>
+  <p class="small">TMK VIDEO Super Admin</p>
+
+  <div class="actions">
+   <button id="refreshBtn">Video စာရင်းပြန်စစ်မယ်</button>
+  </div>
+
+  <p id="status">စောင့်ဆိုင်းနေသည်...</p>
+ </div>
+
+ <!-- ADMIN VIDEO UPLOAD -->
+ <div class="panel">
+  <h2>📤 Admin Video Upload</h2>
+
+  <p class="small">
+   Backblaze B2 Storage သို့ Multipart Upload လုပ်မည်။
+   1GB ကျော် Video များကို အပိုင်းလိုက်တင်နိုင်သည်။
+  </p>
+
+  <div class="uploadBox">
+
+   <label class="small">Video ဖိုင်ရွေးရန်</label>
+   <input
+    id="adminVideoFile"
+    type="file"
+    accept="video/mp4,video/webm,video/quicktime,video/*"
+   >
+
+   <p id="fileInfo" class="fileInfo small">
+    Video ဖိုင် မရွေးရသေးပါ။
+   </p>
+
+   <label class="small">Video Title</label>
+   <input
+    id="adminVideoTitle"
+    type="text"
+    maxlength="100"
+    placeholder="Video Title"
+   >
+
+   <label class="small">Video Caption</label>
+   <textarea
+    id="adminVideoCaption"
+    maxlength="500"
+    placeholder="Video အကြောင်းအရာ ရေးပါ"
+   ></textarea>
+
+   <div class="progress">
+    <div id="progressBar"></div>
+   </div>
+
+   <p id="progressText">0%</p>
+
+   <button id="adminUploadBtn" disabled>
+    🚀 Video Upload လုပ်မယ်
+   </button>
+
+   <p id="uploadStatus" class="small"></p>
+
+   <div class="note">
+    အများဆုံးဖိုင်အရွယ်အစား 5GB သတ်မှတ်ထားသည်။
+    အင်တာနက်ပြတ်တောက်ခြင်း၊ B2 CORS သို့မဟုတ် Worker
+    အမှားများကြောင့် Upload မအောင်မြင်နိုင်ပါ။
+   </div>
+
+  </div>
+ </div>
+
+ <!-- VIDEO MANAGEMENT -->
+ <div class="panel">
+  <h2>Video Management</h2>
+  <p class="small">Firebase Video Records</p>
+  <div id="videoList">Video စာရင်း မရှိသေးပါ။</div>
+ </div>
+
+</section>
+
+</main>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+ getAuth,
+ signInWithEmailAndPassword,
+ onAuthStateChanged,
+ signOut
+}
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+import {
+ getDatabase,
+ ref,
+ push
+}
+from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig = {
+ apiKey: "AIzaSyAQxjXOcFEBRv-yrFsxU1Z7tSLjT74UC_M",
+ authDomain: "tmk-video.firebaseapp.com",
+ databaseURL: "https://tmk-video-default-rtdb.firebaseio.com",
+ projectId: "tmk-video",
+ appId: "1:763253894514:web:5b671edd58fe2d312381eb"
+};
+
+const ADMIN_WORKER =
+ "https://tmk-admin-api.htunminkhant2007.workers.dev";
+
+const VIDEO_WORKER =
+ "https://tmk-video-api.htunminkhant2007.workers.dev";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024;
+const MIN_PART_SIZE = 5 * 1024 * 1024;
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const loginBox = document.getElementById("login");
+const dashboard = document.getElementById("dashboard");
+const loginStatus = document.getElementById("loginStatus");
+const statusBox = document.getElementById("status");
+const videoList = document.getElementById("videoList");
+const logoutBtn = document.getElementById("logout");
+
+const fileInput = document.getElementById("adminVideoFile");
+const fileInfo = document.getElementById("fileInfo");
+const titleInput = document.getElementById("adminVideoTitle");
+const captionInput = document.getElementById("adminVideoCaption");
+const uploadBtn = document.getElementById("adminUploadBtn");
+const uploadStatus = document.getElementById("uploadStatus");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+let currentAdmin = null;
+let uploading = false;
+
+function showStatus(message){
+ statusBox.textContent = message;
+}
+
+function setProgress(percent){
+ const value = Math.max(0,Math.min(100,percent));
+ progressBar.style.width = value + "%";
+ progressText.textContent = value.toFixed(1) + "%";
+}
+
+function formatBytes(bytes){
+ if(bytes < 1024*1024){
+  return (bytes/1024).toFixed(1) + " KB";
+ }
+ if(bytes < 1024*1024*1024){
+  return (bytes/1024/1024).toFixed(2) + " MB";
+ }
+ return (bytes/1024/1024/1024).toFixed(2) + " GB";
+}
+
+function getErrorMessage(error){
+ return error?.message || String(error);
+}
+
+/* =========================
+   ADMIN WORKER REQUEST
+========================= */
+
+async function adminRequest(path,method="GET"){
+ if(!currentAdmin){
+  throw new Error("Admin Login မဝင်ရသေးပါ။");
+ }
+
+ const token = await currentAdmin.getIdToken();
+
+ const response = await fetch(ADMIN_WORKER + path,{
+  method,
+  headers:{
+   "Authorization":"Bearer " + token,
+   "Content-Type":"application/json"
+  }
+ });
+
+ const result = await response.json();
+
+ if(!response.ok || result.success === false){
+  throw new Error(result.message || "Admin Request Failed");
+ }
+
+ return result;
+}
+
+/* =========================
+   VIDEO WORKER REQUEST
+========================= */
+
+async function workerRequest(path,data){
+ if(!currentAdmin){
+  throw new Error("Admin Login မဝင်ရသေးပါ။");
+ }
+
+ const token = await currentAdmin.getIdToken();
+
+ const response = await fetch(VIDEO_WORKER + path,{
+  method:"POST",
+  headers:{
+   "Authorization":"Bearer " + token,
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify(data)
+ });
+
+ const text = await response.text();
+
+ let result;
+
+ try{
+  result = JSON.parse(text);
+ }catch(error){
+  throw new Error(
+   "Worker မှ JSON မဟုတ်သော တုံ့ပြန်ချက် ရရှိသည်။ HTTP " +
+   response.status + ": " + text.slice(0,300)
+  );
+ }
+
+ if(!response.ok || result.success === false){
+  throw new Error(
+   result.message || result.error || "Worker Request Failed"
+  );
+ }
+
+ return result;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+document.getElementById("loginBtn").onclick = async ()=>{
+ const email = document.getElementById("email").value.trim();
+ const password = document.getElementById("password").value;
+ const button = document.getElementById("loginBtn");
+
+ if(!email || !password){
+  loginStatus.textContent = "Email နှင့် Password ဖြည့်ပါ။";
+  return;
+ }
+
+ button.disabled = true;
+ loginStatus.textContent = "Login ဝင်နေသည်...";
+
+ try{
+  await signInWithEmailAndPassword(auth,email,password);
+  loginStatus.textContent = "Login စစ်ဆေးနေသည်...";
+ }catch(error){
+  loginStatus.textContent =
+   "Login မအောင်မြင်ပါ: " + getErrorMessage(error);
+ }finally{
+  button.disabled = false;
+ }
+};
+
+/* =========================
+   AUTH STATE
+========================= */
+
+onAuthStateChanged(auth,async user=>{
+ currentAdmin = user;
+
+ if(!user){
+  loginBox.style.display = "block";
+  dashboard.style.display = "none";
+  logoutBtn.style.display = "none";
+  return;
+ }
+
+ loginBox.style.display = "none";
+ dashboard.style.display = "block";
+ logoutBtn.style.display = "block";
+
+ showStatus("Admin အခွင့်အရေး စစ်ဆေးနေသည်...");
+
+ try{
+  await loadVideos();
+ }catch(error){
+  showStatus("Admin စစ်ဆေးမှု မအောင်မြင်ပါ: " +
+   getErrorMessage(error));
+ }
+});
+
+logoutBtn.onclick = async ()=>{
+ if(uploading){
+  alert("Upload လုပ်နေစဉ် Logout မလုပ်ပါနှင့်။");
+  return;
+ }
+
+ await signOut(auth);
+};
+
+document.getElementById("refreshBtn").onclick = loadVideos;
+
+/* =========================
+   VIDEO LIST
+========================= */
+
+function getVideoTitle(video,id){
+ return video.title ||
+  video.caption ||
+  video.description ||
+  video.name ||
+  id;
+}
+
+async function loadVideos(){
+ videoList.textContent = "Video စာရင်း ရယူနေသည်...";
+ showStatus("Firebase မှ Video စာရင်း ရယူနေသည်...");
+
+ try{
+  const result = await adminRequest("/admin/videos");
+  const videos = result.videos || result.data || {};
+
+  videoList.replaceChildren();
+
+  const entries = Object.entries(videos);
+
+  if(entries.length === 0){
+   videoList.textContent = "Video မရှိသေးပါ။";
+  }else{
+   for(const [id,videoValue] of entries){
+    const video = videoValue || {};
+
+    const card = document.createElement("div");
+    card.className = "video";
+
+    const title = document.createElement("h3");
+    title.textContent = getVideoTitle(video,id);
+
+    const details = document.createElement("div");
+    details.className = "small";
+    details.textContent =
+     "Video ID: " + id +
+     "\nUser: " +
+     (video.username || video.userName || video.uid || "မသိရသေး") +
+     "\nStorage: " +
+     (video.storageProvider || "မသိရသေး") +
+     "\nURL: " +
+     (video.videoUrl || video.url || "မရှိသေး");
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete";
+    deleteBtn.textContent = "Video Record ဖျက်မယ်";
+
+    deleteBtn.onclick = async ()=>{
+     if(!confirm(
+      "ဒီ Video Record ကို Firebase မှ ဖျက်မှာ သေချာပါသလား။"
+     )) return;
+
+     deleteBtn.disabled = true;
+
+     try{
+      await adminRequest(
+       "/admin/videos/" + encodeURIComponent(id),
+       "DELETE"
+      );
+
+      card.remove();
+      showStatus("Video Record ဖျက်ပြီးပါပြီ။");
+     }catch(error){
+      alert("ဖျက်မရပါ: " + getErrorMessage(error));
+      deleteBtn.disabled = false;
+     }
+    };
+
+    actions.appendChild(deleteBtn);
+    card.append(title,details,actions);
+    videoList.appendChild(card);
+   }
+  }
+
+  showStatus(
+   "Admin API ချိတ်ဆက်မှု အောင်မြင်ပါသည်။ Video " +
+   entries.length + " ခု ရှိသည်။"
+  );
+
+ }catch(error){
+  videoList.textContent = "Video စာရင်း ရယူမရပါ။";
+  showStatus("အမှား: " + getErrorMessage(error));
+ }
+}
+
+/* =========================
+   FILE SELECTION
+========================= */
+
+fileInput.onchange = ()=>{
+ const file = fileInput.files[0];
+
+ uploadBtn.disabled = true;
+ uploadStatus.textContent = "";
+ setProgress(0);
+
+ if(!file){
+  fileInfo.textContent = "Video ဖိုင် မရွေးရသေးပါ။";
+  return;
+ }
+
+ fileInfo.textContent =
+  file.name + " | " + formatBytes(file.size);
+
+ titleInput.value = file.name;
+
+ if(!file.type.startsWith("video/")){
+  uploadStatus.textContent =
+   "Video ဖိုင်အမျိုးအစားကိုသာ ရွေးချယ်ပါ။";
+  return;
+ }
+
+ if(file.size > MAX_FILE_SIZE){
+  uploadStatus.textContent =
+   "ဖိုင်အရွယ်အစား 5GB ထက်ကျော်နေပါသည်။";
+  return;
+ }
+
+ uploadBtn.disabled = false;
+};
+
+/* =========================
+   SHA-1 HASH
+========================= */
+
+async function sha1Hex(blob){
+ const buffer = await blob.arrayBuffer();
+
+ const hash = await crypto.subtle.digest(
+  "SHA-1",
+  buffer
+ );
+
+ return Array.from(new Uint8Array(hash))
+  .map(b=>b.toString(16).padStart(2,"0"))
+  .join("");
+}
+
+/* =========================
+   ADMIN VIDEO UPLOAD
+========================= */
+
+uploadBtn.onclick = async ()=>{
+ if(uploading) return;
+
+ const file = fileInput.files[0];
+
+ if(!file){
+  alert("Video ဖိုင် အရင်ရွေးပါ။");
+  return;
+ }
+
+ if(!file.type.startsWith("video/")){
+  alert("Video ဖိုင်အမျိုးအစားကိုသာ ရွေးချယ်ပါ။");
+  return;
+ }
+
+ if(file.size > MAX_FILE_SIZE){
+  alert("5GB ထက်ကျော်သောဖိုင်ကို တင်၍မရပါ။");
+  return;
+ }
+
+ if(!currentAdmin){
+  alert("Admin Login ဝင်ပါ။");
+  return;
+ }
+
+ const title = titleInput.value.trim() || file.name;
+ const caption = captionInput.value.trim();
+
+ uploading = true;
+ uploadBtn.disabled = true;
+ fileInput.disabled = true;
+
+ setProgress(0);
+ uploadStatus.textContent = "Upload စတင်နေသည်...";
+
+ let fileId = null;
+ let completed = false;
+
+ try{
+
+  /* 1. INITIALIZE */
+
+  uploadStatus.textContent =
+   "Backblaze B2 Upload စတင်နေသည်...";
+
+  const init = await workerRequest("/upload/init",{
+   fileName:file.name,
+   fileSize:file.size,
+   contentType:file.type || "video/mp4"
+  });
+
+  fileId = init.fileId;
+
+  if(!fileId){
+   throw new Error(
+    "Worker မှ fileId မရရှိပါ။ Worker /upload/init ကို စစ်ဆေးပါ။"
+   );
+  }
+
+  const partSize = Number(
+   init.partSize || 16*1024*1024
+  );
+
+  const partCount = Number(
+   init.partCount ||
+   Math.ceil(file.size / partSize)
+  );
+
+  if(
+   !Number.isFinite(partSize) ||
+   partSize < MIN_PART_SIZE ||
+   !Number.isInteger(partCount) ||
+   partCount < 1 ||
+   partCount > 10000
+  ){
+   throw new Error(
+    "Upload အပိုင်းအချက်အလက် မမှန်ပါ။"
+   );
+  }
+
+  const hashes = [];
+  let uploadedBytes = 0;
+
+  /* 2. UPLOAD PARTS */
+
+  for(
+   let partNumber=1;
+   partNumber<=partCount;
+   partNumber++
+  ){
+
+   const start = (partNumber-1)*partSize;
+   const end = Math.min(start+partSize,file.size);
+   const chunk = file.slice(start,end);
+
+   uploadStatus.textContent =
+    "Upload လုပ်နေသည်...\n" +
+    "အပိုင်း " + partNumber + " / " + partCount +
+    "\nတင်ပြီး: " + formatBytes(uploadedBytes) +
+    " / " + formatBytes(file.size);
+
+   const partInfo = await workerRequest(
+    "/upload/part-url",
+    {
+     fileId:fileId,
+     partNumber:partNumber
+    }
+   );
+
+   if(
+    !partInfo.uploadUrl ||
+    !partInfo.authorizationToken
+   ){
+    throw new Error(
+     "B2 Part URL သို့မဟုတ် Authorization Token မရရှိပါ။"
+    );
+   }
+
+   const hash = await sha1Hex(chunk);
+
+   const response = await fetch(partInfo.uploadUrl,{
+    method:"POST",
+    headers:{
+     "Authorization":partInfo.authorizationToken,
+     "X-Bz-Part-Number":String(partNumber),
+     "X-Bz-Content-Sha1":hash,
+     "Content-Type":"application/octet-stream"
+    },
+    body:chunk
+   });
+
+   if(!response.ok){
+    const errorText = await response.text();
+
+    throw new Error(
+     "B2 Upload Error (Part " + partNumber + "): " +
+     response.status + " " + errorText.slice(0,300)
+    );
+   }
+
+   hashes.push(hash);
+   uploadedBytes += chunk.size;
+
+   setProgress(uploadedBytes/file.size*100);
+  }
+
+  /* 3. FINISH MULTIPART */
+
+  uploadStatus.textContent =
+   "B2 Upload ပြီးဆုံးရန် စောင့်နေသည်...";
+
+  const finished = await workerRequest(
+   "/upload/finish",
+   {
+    fileId:fileId,
+    partSha1Array:hashes
+   }
+  );
+
+  completed = true;
+
+  const videoUrl =
+   finished.videoUrl ||
+   finished.url ||
+   init.videoUrl ||
+   init.url;
+
+  if(!videoUrl){
+   throw new Error(
+    "Upload ပြီးသော်လည်း Video URL မရရှိပါ။"
+   );
+  }
+
+  /* 4. SAVE FIREBASE METADATA */
+
+  uploadStatus.textContent =
+   "Firebase ထဲ Video အချက်အလက် သိမ်းနေသည်...";
+
+  const videoData = {
+   title:title.slice(0,100),
+   caption:caption.slice(0,500),
+   description:caption.slice(0,500),
+
+   videoUrl:videoUrl,
+   url:videoUrl,
+
+   storagePath:
+    finished.fileName ||
+    init.fileName ||
+    file.name,
+
+   storageProvider:"Backblaze B2",
+
+   uid:currentAdmin.uid,
+
+   username:
+    currentAdmin.displayName ||
+    (
+     currentAdmin.email
+      ? currentAdmin.email.split("@")[0]
+      : "TMK Admin"
+    ),
+
+   createdAt:Date.now(),
+   timestamp:Date.now(),
+
+   fileSize:file.size,
+   contentType:file.type || "video/mp4",
+
+   likes:0,
+   comments:0,
+   views:0
+  };
+
+  await push(ref(db,"videos"),videoData);
+
+  /* 5. SUCCESS */
+
+  setProgress(100);
+
+  uploadStatus.textContent =
+   "✅ Video Upload အောင်မြင်ပါသည်။\n" +
+   "Backblaze B2 တွင် သိမ်းပြီးပါပြီ။\n" +
+   "Firebase ထဲသို့လည်း Metadata သိမ်းပြီးပါပြီ။\n" +
+   "ဖိုင်အရွယ်အစား: " + formatBytes(file.size);
+
+  fileInput.value = "";
+  fileInfo.textContent = "Video ဖိုင် မရွေးရသေးပါ။";
+  titleInput.value = "";
+  captionInput.value = "";
+
+  await loadVideos();
+
+ }catch(error){
+
+  console.error("TMK Admin Upload:",error);
+
+  uploadStatus.textContent =
+   "❌ Upload မအောင်မြင်ပါ။\n" +
+   getErrorMessage(error);
+
+  /* CANCEL INCOMPLETE MULTIPART */
+
+  if(fileId && !completed){
+   try{
+    await workerRequest(
+     "/upload/cancel",
+     {fileId:fileId}
+    );
+   }catch(cancelError){
+    console.error(
+     "B2 Cancel Error:",
+     cancelError
+    );
+   }
+  }
+
+ }finally{
+
+  uploading = false;
+  fileInput.disabled = false;
+
+  uploadBtn.disabled = !fileInput.files[0];
+
+ }
+};
+
+</script>
+</body>
+</html>
+
