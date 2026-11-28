@@ -1458,7 +1458,43 @@ async function uploadVideoFile(file,title,caption){
   caption
  );
 }
+/* UPLOAD BUTTON CLICK */
+$("uploadFileBtn").addEventListener("click", async () => {
+  const button = $("uploadFileBtn");
 
+  if (button.disabled) return;
+
+  button.disabled = true;
+
+  try {
+    const file = $("videoFile").files[0];
+    const title = $("videoTitle").value.trim();
+    const caption = $("videoCaption").value.trim();
+
+    setUploadStatus("Upload စတင်နေပါတယ်...");
+
+    await uploadVideoFile(file, title, caption);
+
+    alert("Video တင်ပြီးပါပြီ ❤️");
+
+    $("videoFile").value = "";
+    $("videoTitle").value = "";
+    $("videoCaption").value = "";
+
+    $("fileProgressBar").style.width = "100%";
+    setUploadStatus("✅ Upload Complete!");
+
+    showPage("homePage");
+
+  } catch (error) {
+    console.error("TMK Upload Error:", error);
+    setUploadStatus("Upload Error: " + error.message);
+    alert("Upload Error: " + error.message);
+
+  } finally {
+    button.disabled = false;
+  }
+});
 
 /* CAMERA */
 const camera=$("tmkCamera");
