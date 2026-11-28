@@ -1267,41 +1267,54 @@ async function uploadLargeVideoToB2(file, title, caption) {
   try {
     setUploadStatus("B2 Upload စတင်နေပါတယ်...");
 
-    // Start multipart upload
     const init = await workerPost("/upload/init", {
       fileName: file.name,
       fileSize: file.size,
-      contentType: file.type || "application/octet-stream"
+      contentType: file.type || "video/mp4"
     });
 
-    if (!init.fileId || !init.partSize || !init.partCount) {
-      throw Error("Worker Init Response မပြည့်စုံပါ");
+    fileId = init.fileId;
+
+    const partSize = Number(init.partSize);
+    const partCount = Number(init.partCount);
+
+    if (
+      !fileId ||
+      !Number.isFinite(partSize) ||
+      partSize < 5 * 1024 * 1024 ||
+      !Number.isInteger(partCount) ||
+      partCount < 1 ||
+      partCount > 10000
+    ) {
+      throw Error("Worker Init Response မမှန်ပါ။");
     }
 
-    fileId = init.fileId;
+    if (partCount !== Math.ceil(file.size / partSize)) {
+      throw Error("Upload အပိုင်းအရေအတွက် မကိုက်ညီပါ။");
+    }
 
     const hashes = [];
     let uploaded = 0;
 
-    for (let i = 0; i < init.partCount; i++) {
+    for (let i = 0; i < partCount; i++) {
       const partNumber = i + 1;
-      const start = i * init.partSize;
-      const end = Math.min(start + init.partSize, file.size);
+      const start = i * partSize;
+      const end = Math.min(start + partSize, file.size);
       const chunk = file.slice(start, end);
 
       setUploadStatus(
-        "B2 Part " + partNumber + "/" + init.partCount
+        "B2 Part " + partNumber + "/" + partCount
       );
 
       const sha1 = await sha1Hex(chunk);
 
       const info = await workerPost("/upload/part-url", {
-        fileId,
-        partNumber
+        fileId: fileId,
+        partNumber: partNumber
       });
 
       if (!info.uploadUrl || !info.authorizationToken) {
-        throw Error("B2 Upload URL မရပါ");
+        throw Error("B2 Upload URL မရပါ။");
       }
 
       await uploadB2Part(
@@ -1325,36 +1338,49 @@ async function uploadLargeVideoToB2(file, title, caption) {
       hashes.push(sha1);
     }
 
-    setUploadStatus("Video သိမ်းဆည်းနေပါတယ်...");
+    setUploadStatus("B2 Video သိမ်းဆည်းနေပါတယ်...");
 
     const finished = await workerPost("/upload/finish", {
-      fileId,
+      fileId: fileId,
       partSha1Array: hashes
     });
 
-    if (!finished.videoUrl) {
-      throw Error("B2 Video URL မရပါ");
+    const videoUrl =
+      finished.videoUrl ||
+      finished.url ||
+      init.videoUrl ||
+      init.url;
+
+    if (!videoUrl) {
+      throw Error("B2 Video URL မရပါ။");
     }
 
-    // Save video information to Firebase
+    // B2 Upload ပြီးဆုံးသွားပြီ
+    uploadCompleted = true;
+
+    setUploadStatus("Firebase ထဲ သိမ်းဆည်းနေပါတယ်...");
+
     await saveVideoRecord({
       title: title || file.name,
       caption: caption || "",
-      videoUrl: finished.videoUrl,
-      storagePath: finished.fileName || init.fileName || "",
+      videoUrl: videoUrl,
+      storagePath:
+        finished.fileName ||
+        init.fileName ||
+        file.name,
       storageProvider: "Backblaze B2"
     });
 
-    uploadCompleted = true;
-
     $("fileProgressBar").style.width = "100%";
-    setUploadStatus("Upload Complete!");
+    setUploadStatus("✅ Upload Complete!");
 
   } catch (error) {
-    // Cancel unfinished B2 upload when possible
+
     if (fileId && !uploadCompleted) {
       try {
-        await workerPost("/upload/cancel", { fileId });
+        await workerPost("/upload/cancel", {
+          fileId: fileId
+        });
       } catch (cancelError) {
         console.warn("B2 Cancel Error:", cancelError);
       }
@@ -1363,6 +1389,7 @@ async function uploadLargeVideoToB2(file, title, caption) {
     throw error;
   }
 }
+
 
 async function uploadSmallVideo(file,title,caption){
  setUploadStatus("Supabase Permission တောင်းနေပါတယ်...");
