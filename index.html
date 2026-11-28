@@ -1404,45 +1404,32 @@ async function saveVideoRecord(data){
 }
 
 async function uploadVideoFile(file,title,caption){
- if(!currentUser)throw Error("Login အရင်ဝင်ပါ");
- if(!file)throw Error("Video ရွေးပါ");
- if(file.size>MAX_FILE_SIZE)throw Error("အများဆုံး 5GB သာတင်နိုင်ပါတယ်");
 
- const allowed=["video/mp4","video/webm","video/quicktime"];
+ if(!currentUser) throw Error("Login အရင်ဝင်ပါ");
+ if(!file) throw Error("Video ရွေးပါ");
+ if(file.size>MAX_FILE_SIZE)
+  throw Error("အများဆုံး 5GB သာတင်နိုင်ပါတယ်");
+
+ const allowed=[
+  "video/mp4",
+  "video/webm",
+  "video/quicktime"
+ ];
+
  if(!allowed.includes(file.type)){
   throw Error("MP4, WebM, MOV ဖိုင်သာတင်ပါ");
  }
 
  $("fileProgressBar").style.width="0%";
 
- if(file.size>SUPABASE_LIMIT){
-  await uploadLargeVideoToB2(file,title||file.name,caption);
- }else{
-  await uploadSmallVideo(file,title||file.name,caption);
- }
+ // Video အားလုံးကို Backblaze B2 သို့ပို့မည်
+ await uploadLargeVideoToB2(
+  file,
+  title || file.name,
+  caption
+ );
 }
 
-$("uploadFileBtn").addEventListener("click",async()=>{
- const button=$("uploadFileBtn");
- button.disabled=true;
- try{
-  await uploadVideoFile(
-   $("videoFile").files[0],
-   $("videoTitle").value.trim(),
-   $("videoCaption").value.trim()
-  );
-  alert("Video တင်ပြီးပါပြီ ❤️");
-  $("videoFile").value="";
-  $("videoTitle").value="";
-  $("videoCaption").value="";
-  showPage("homePage");
- }catch(e){
-  setUploadStatus(e.message);
-  alert("Upload Error: "+e.message);
- }finally{
-  button.disabled=false;
- }
-});
 
 /* CAMERA */
 const camera=$("tmkCamera");
