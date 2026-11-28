@@ -297,6 +297,7 @@ async function adminRequest(path,method="GET"){
    VIDEO WORKER REQUEST
 ========================= */
 
+
 async function workerRequest(path,data){
  if(!currentAdmin){
   throw new Error("Admin Login မဝင်ရသေးပါ။");
@@ -321,19 +322,23 @@ async function workerRequest(path,data){
   result = JSON.parse(text);
  }catch(error){
   throw new Error(
-   "Worker မှ JSON မဟုတ်သော တုံ့ပြန်ချက် ရရှိသည်။ HTTP " +
-   response.status + ": " + text.slice(0,300)
+   "Worker JSON Error | Path: " + path +
+   " | HTTP: " + response.status +
+   " | " + text.slice(0,300)
   );
  }
 
  if(!response.ok || result.success === false){
   throw new Error(
-   result.message || result.error || "Worker Request Failed"
+   "Path: " + path +
+   " | HTTP: " + response.status +
+   " | " + (result.message || result.error || "Worker Request Failed")
   );
  }
 
  return result;
 }
+
 
 /* =========================
    LOGIN
